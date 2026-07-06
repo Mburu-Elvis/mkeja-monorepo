@@ -1,0 +1,110 @@
+<div class="loan-request platform-page">
+  @if (loading) {
+    <app-loading-spinner [fullScreen]="true" message="Loading..."></app-loading-spinner>
+  } @else {
+    <div class="credit-score-card">
+      <div class="score-header">
+        <span class="tier">{{ creditTier }} Tier</span>
+        <span class="score">Score: {{ creditScore }}</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="((creditScore - 300) / 550) * 100"></div>
+      </div>
+      <div class="score-footer">
+        <span>Next tier: Gold (650+)</span>
+        <span>Need {{ 650 - creditScore }} more points</span>
+      </div>
+    </div>
+    
+    <div class="card limit-card">
+      <div class="limit-info">
+        <div>
+          <span class="label">Your Loan Limit</span>
+          <span class="limit-amount">KES {{ creditLimit | number }}</span>
+          <span class="sub">{{ (creditLimit / monthlyRent) * 100 }}% of monthly rent</span>
+        </div>
+        <div class="fee-badge">Monthly fee: {{ feePercent }}%</div>
+      </div>
+    </div>
+    
+    <div class="card request-form">
+      <div class="shortfall-info">
+        <span>Current rent progress: {{ paidAmount | number }} / {{ monthlyRent | number }}</span>
+        <span class="shortfall">Shortfall: KES {{ getShortfall() | number }}</span>
+      </div>
+      
+      <div class="form-group">
+        <label>Amount to borrow</label>
+        <div class="amount-input">
+          <span class="currency">KES</span>
+          <input 
+            type="number" 
+            [(ngModel)]="requestedAmount"
+            (ngModelChange)="onAmountChange()"
+            [min]="100"
+            [max]="creditLimit"
+            step="100">
+        </div>
+        <div class="input-hint">
+          Min: KES 100 | Max: KES {{ creditLimit | number }}
+        </div>
+      </div>
+      
+      <div class="slider-container">
+        <input 
+          type="range" 
+          [(ngModel)]="requestedAmount"
+          (ngModelChange)="onAmountChange()"
+          [min]="100"
+          [max]="creditLimit"
+          step="100">
+        <div class="slider-labels">
+          <span>KES 100</span>
+          <span>KES {{ creditLimit | number }}</span>
+        </div>
+      </div>
+      
+      <div class="fee-calculation">
+        <div class="fee-row">
+          <span>Principal</span>
+          <span>KES {{ requestedAmount | number }}</span>
+        </div>
+        <div class="fee-row">
+          <span>Fee ({{ feePercent }}%)</span>
+          <span>KES {{ fee | number }}</span>
+        </div>
+        <div class="fee-row total">
+          <span>Total repayable</span>
+          <span>KES {{ totalRepayable | number }}</span>
+        </div>
+      </div>
+      
+      <button 
+        class="btn-primary"
+        [disabled]="submitting || requestedAmount < 100"
+        (click)="requestLoan()">
+        @if (submitting) {
+          <span class="spinner-small"></span>
+          Processing...
+        } @else {
+          Request Loan
+        }
+      </button>
+      
+      <div class="info-note">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M12 8V12M12 16H12.01M3 12C3 13.1819 3.23279 14.3522 3.68508 15.4442C4.13738 16.5361 4.80031 17.5282 5.63604 18.364C6.47177 19.1997 7.46392 19.8626 8.55585 20.3149C9.64778 20.7672 10.8181 21 12 21C13.1819 21 14.3522 20.7672 15.4442 20.3149C16.5361 19.8626 17.5282 19.1997 18.364 18.364C19.1997 17.5282 19.8626 16.5361 20.3149 15.4442C20.7672 14.3522 21 13.1819 21 12C21 9.61305 20.0518 7.32387 18.364 5.63604C16.6761 3.94821 14.3869 3 12 3C9.61305 3 7.32387 3.94821 5.63604 5.63604C3.94821 7.32387 3 9.61305 3 12Z" stroke="#9E9E9E" stroke-width="2"/>
+        </svg>
+        Loan will be auto-deducted from your future contributions
+      </div>
+    </div>
+  }
+  
+  @if (showToast) {
+    <app-toast 
+      [type]="toastType" 
+      [message]="toastMessage"
+      (close)="closeToast()">
+    </app-toast>
+  }
+</div>

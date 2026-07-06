@@ -1,0 +1,133 @@
+.remittances-history {
+  background-color: var(--mpesa-gray-light);
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+.summary-card {
+  background: linear-gradient(135deg, var(--mpesa-primary), var(--mpesa-primary-dark));
+  margin: 16px;
+  padding: 20px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  color: white;
+}
+
+.summary-card .summary-item {
+  text-align: center;
+}
+
+.summary-card .summary-item .label {
+  font-size: 12px;
+  opacity: 0.9;
+  display: block;
+}
+
+.summary-card .summary-item .value {
+  font-size: 18px;
+  font-weight: 700;
+  display: block;
+  margin-top: 4px;
+}
+
+.remittances-list {
+  padding: 0 16px;
+}
+
+.remittances-list .remittance-card {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.remittances-list .remittance-card .remittance-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.remittances-list .remittance-card .remittance-header h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--mpesa-black);
+  margin: 0 0 6px 0;
+}
+
+.remittances-list .remittance-card .remittance-header .status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.remittances-list .remittance-card .remittance-header .status-badge.success {
+  background: #E8F5E9;
+  color: #2E7D32;
+}
+
+.remittances-list .remittance-card .remittance-header .status-badge.warning {
+  background: #FFF3E0;
+  color: #E65100;
+}
+
+.remittances-list .remittance-card .remittance-header .status-badge.danger {
+  background: #FFEBEE;
+  color: #C62828;
+}
+
+.remittances-list .remittance-card .remittance-header .remittance-date {
+  font-size: 12px;
+  color: var(--mpesa-gray);
+}
+
+.remittances-list .remittance-card .remittance-details {
+  border-top: 1px solid #F0F0F0;
+  border-bottom: 1px solid #F0F0F0;
+  padding: 12px 0;
+  margin-bottom: 12px;
+}
+
+.remittances-list .remittance-card .remittance-details .detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 14px;
+}
+
+.remittances-list .remittance-card .remittance-details .detail-row.fee {
+  color: var(--mpesa-error);
+}
+
+.remittances-list .remittance-card .remittance-details .detail-row.total {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--mpesa-primary);
+  padding-top: 8px;
+  margin-top: 4px;
+  border-top: 1px solid #F0F0F0;
+}
+
+.remittances-list .remittance-card .remittance-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: var(--mpesa-gray);
+}
+
+.remittances-list .remittance-card .remittance-footer .download-btn {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--mpesa-primary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}

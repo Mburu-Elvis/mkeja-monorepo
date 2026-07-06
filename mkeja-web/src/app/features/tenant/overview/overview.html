@@ -1,0 +1,290 @@
+<!-- components/overview/overview.component.html -->
+<div class="dashboard-grid">
+    <!-- Wallet Card -->
+    <div class="card wallet-card premium">
+        <div class="card-header">
+            <span>M-Pesa Wallet</span>
+            <div class="header-actions">
+                <button class="visibility-btn" (click)="toggleBalance()" matTooltip="Toggle balance visibility">
+                    <mat-icon [svgIcon]="balanceHidden ? 'eyeOff' : 'eye'"></mat-icon>
+                </button>
+            </div>
+        </div>
+        <div class="balance-figure">
+            <span class="currency">KES</span>
+            <span class="amount" [class.blurred]="balanceHidden">
+                {{ balanceHidden ? '••••••' : (financialData?.currentBalance | number) }}
+            </span>
+        </div>
+        <div class="wallet-breakdown">
+            <div class="breakdown-item">
+                <mat-icon svgIcon="wallet"></mat-icon>
+                <span>Available</span>
+                <strong>KES {{ financialData?.currentBalance | number }}</strong>
+            </div>
+            <div class="breakdown-item">
+                <mat-icon svgIcon="lock"></mat-icon>
+                <span>Security Hold</span>
+                <strong>KES {{ financialData?.securityDeposit | number }}</strong>
+            </div>
+            <div class="breakdown-item" *ngIf="financialData?.pendingSweep > 0">
+                <mat-icon svgIcon="clock"></mat-icon>
+                <span>Pending Sweep</span>
+                <strong>KES {{ financialData?.pendingSweep | number }}</strong>
+            </div>
+            <div class="breakdown-item" *ngIf="fulizaData?.outstandingLoan > 0">
+                <mat-icon svgIcon="zap"></mat-icon>
+                <span>Loan Balance</span>
+                <strong class="text-warning">KES {{ fulizaData?.outstandingLoan | number }}</strong>
+            </div>
+        </div>
+        <div class="card-actions">
+            <button class="btn-primary" (click)="addMoneyToWallet()">
+                <mat-icon svgIcon="plus"></mat-icon>
+                Add Money
+            </button>
+            <button class="btn-outline" (click)="triggerManualPayment()">
+                <mat-icon svgIcon="banknote"></mat-icon>
+                Pay Rent
+            </button>
+        </div>
+    </div>
+
+    <!-- Rent Progress Card -->
+    <div class="card rent-card">
+        <div class="card-header">
+            <span>Rent Progress</span>
+            <span class="plan-badge">{{ financialData?.paymentPlan }}</span>
+        </div>
+        <div class="rent-progress-section">
+            <div class="rent-figures">
+                <div>
+                    <span class="rent-label">Paid this month</span>
+                    <span class="rent-value">KES {{ financialData?.paidToDate | number }}</span>
+                </div>
+                <div>
+                    <span class="rent-label">Total rent</span>
+                    <span class="rent-value">KES {{ financialData?.monthlyRent | number }}</span>
+                </div>
+            </div>
+            <div class="rent-progress-wrap">
+                <div class="rent-progress-track">
+                    <div class="rent-progress-fill" [style.width.%]="currentMonthProgress"></div>
+                </div>
+                <span class="progress-pct">{{ currentMonthProgress | number:'1.0-0' }}%</span>
+            </div>
+            <div class="rent-status" [class]="'status-' + getStatusColor('progress')">
+                <div class="status-dot"></div>
+                <span *ngIf="currentMonthProgress >= 100">Complete - Rent fully paid!</span>
+                <span *ngIf="currentMonthProgress >= 80 && currentMonthProgress < 100">On track for due date</span>
+                <span *ngIf="currentMonthProgress >= 40 && currentMonthProgress < 80">Partial - Keep contributing</span>
+                <span *ngIf="currentMonthProgress < 40">Behind schedule - Top up recommended</span>
+            </div>
+        </div>
+        <div class="rent-details">
+            <div class="detail-row">
+                <span>Due date</span>
+                <strong>{{ formatDate(financialData?.nextDueDate) }}</strong>
+            </div>
+            <div class="detail-row">
+                <span>Days remaining</span>
+                <strong [class.text-warning]="daysUntilDue <= 5" [class.text-danger]="daysUntilDue <= 2">
+                    {{ daysUntilDue }} days
+                </strong>
+            </div>
+            <div class="detail-row">
+                <span>Remaining amount</span>
+                <strong class="text-warning">KES {{ (financialData?.monthlyRent - financialData?.paidToDate) | number }}</strong>
+            </div>
+            <div class="detail-row" *ngIf="ratibaData?.active">
+                <span>Next auto-deduction</span>
+                <strong>{{ formatDate(ratibaData.active.nextDeduction) }} · KES {{ ratibaData.active.amount | number }}</strong>
+            </div>
+        </div>
+        <div class="projected-timeline" *ngIf="currentMonthProgress < 100">
+            <div class="timeline-label">
+                <mat-icon svgIcon="calendar"></mat-icon>
+                <span>Projected completion</span>
+            </div>
+            <div class="timeline-date">{{ projectedCompletionDate | date:'MMM d, yyyy' }}</div>
+            <div class="timeline-progress">
+                <div class="timeline-fill" [style.width.%]="(financialData?.paidToDate / financialData?.monthlyRent) * 100"></div>
+            </div>
+        </div>
+        <button class="btn-link btn-link--icon" (click)="triggerManualPayment()">
+          Make manual payment
+          <span class="material-icons" aria-hidden="true">arrow_forward</span>
+        </button>
+    </div>
+
+    <!-- Rent Fuliza Card -->
+    <div class="card fuliza-card">
+        <div class="card-header">
+            <span>Rent Fuliza</span>
+            <span class="tier-badge" [class]="'tier-' + fulizaData?.creditTier?.toLowerCase()">
+                {{ fulizaData?.creditTier }} Tier
+            </span>
+        </div>
+        <div class="credit-score-section">
+            <div class="score-circle" [style.--score-color]="creditScoreColor">
+                <svg viewBox="0 0 36 36">
+                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#E0E0E0" stroke-width="3"/>
+                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" [style.stroke]="creditScoreColor" stroke-width="3" stroke-dasharray="100" [attr.stroke-dashoffset]="100 - creditPercentage"/>
+                    <text x="18" y="20.5" text-anchor="middle" [style.fill]="creditScoreColor">{{ fulizaData?.creditScore }}</text>
+                </svg>
+            </div>
+            <div class="score-info">
+                <div class="credit-limit">
+                    <span>Available Credit</span>
+                    <strong>KES {{ fulizaData?.availableLimit | number }}</strong>
+                </div>
+                <div class="credit-used" *ngIf="fulizaData?.utilizedAmount > 0">
+                    <span>Utilized</span>
+                    <strong>KES {{ fulizaData?.utilizedAmount | number }}</strong>
+                </div>
+            </div>
+        </div>
+        <div class="auto-fuliza-row">
+            <div class="auto-label">
+                <mat-icon svgIcon="zap"></mat-icon>
+                <span>Auto-Fuliza</span>
+            </div>
+            <label class="toggle-switch">
+                <input type="checkbox" [checked]="fulizaData?.autoTopUpEnabled" (change)="toggleAutoFuliza()">
+                <span class="toggle-slider"></span>
+            </label>
+            <span class="status-text">
+                {{ fulizaData?.autoTopUpEnabled ? 'ON – We\'ll cover shortfalls' : 'OFF – Manual loans only' }}
+            </span>
+        </div>
+        <div *ngIf="fulizaData?.activeLoan" class="loan-repayment">
+            <div class="loan-repayment-header">
+                <mat-icon svgIcon="trendingUp"></mat-icon>
+                <span>Active Loan Repayment</span>
+            </div>
+            <div class="loan-progress">
+                <div class="loan-progress-bar">
+                    <div class="loan-progress-fill" [style.width.%]="calculateLoanRepaymentProgress(fulizaData.activeLoan)"></div>
+                </div>
+                <span class="loan-progress-text">{{ calculateLoanRepaymentProgress(fulizaData.activeLoan) | number:'1.0-0' }}% repaid</span>
+            </div>
+            <div class="loan-details">
+                <span>Auto-deducting KES {{ (fulizaData.activeLoan.totalRepayable / 30) | number:'1.0-0' }}/day</span>
+                <strong>Remaining: KES {{ fulizaData.activeLoan.totalRepayable - fulizaData.activeLoan.repaid | number }}</strong>
+            </div>
+        </div>
+        <button class="btn-link btn-link--icon" (click)="setActiveTab.emit('fuliza')">
+          View full credit details
+          <span class="material-icons" aria-hidden="true">arrow_forward</span>
+        </button>
+    </div>
+
+    <!-- Auto-Deductions Card -->
+    <div class="card ratiba-card">
+        <div class="card-header">
+            <span>Auto-Deductions</span>
+            <span class="plan-badge" [class.active]="ratibaData?.active">
+                {{ ratibaData?.active ? ratibaData.active.planName : 'Not Set Up' }}
+            </span>
+        </div>
+        <div *ngIf="ratibaData?.active" class="ratiba-details">
+            <div class="detail-row">
+                <span>Amount per deduction</span>
+                <strong>{{ formatCurrency(ratibaData.active.amount) }}</strong>
+            </div>
+            <div class="detail-row">
+                <span>Frequency</span>
+                <strong>{{ ratibaData.active.planName }}</strong>
+            </div>
+            <div class="detail-row">
+                <span>Next deduction</span>
+                <strong>{{ formatDateTime(ratibaData.active.nextDeduction) }}</strong>
+            </div>
+            <div class="detail-row">
+                <span>Total deducted to date</span>
+                <strong>{{ formatCurrency(ratibaData.active.totalDeducted) }}</strong>
+            </div>
+        </div>
+        <div *ngIf="!ratibaData?.active" class="no-ratiba-message">
+            <mat-icon svgIcon="calendar"></mat-icon>
+            <p>No active auto-deductions set up.</p>
+            <p class="subtext">Set up daily or weekly rent deductions for peace of mind.</p>
+        </div>
+        <div class="card-actions">
+            <button class="btn-primary" (click)="openSetupForm()">
+                {{ ratibaData?.active ? 'Manage Schedule' : 'Set Up Auto-Deductions' }}
+            </button>
+            <button *ngIf="ratibaData?.active" class="btn-danger" (click)="cancelRatiba()">Cancel</button>
+        </div>
+        <div *ngIf="ratibaData?.failedDeductions?.length > 0" class="failed-alert">
+            <mat-icon svgIcon="alert"></mat-icon>
+            <span>{{ ratibaData.failedDeductions.length }} failed {{ ratibaData.failedDeductions.length === 1 ? 'deduction' : 'deductions' }}. Tap to resolve.</span>
+        </div>
+    </div>
+
+    <!-- Recent Transactions Card -->
+    <div class="card transactions-card">
+        <div class="card-header">
+            <span>Recent Transactions</span>
+            <div class="tx-filters">
+                <button class="tx-filter" [class.active]="transactionFilter === 'all'" (click)="transactionFilter = 'all'">All</button>
+                <button class="tx-filter" [class.active]="transactionFilter === 'credit'" (click)="transactionFilter = 'credit'">In</button>
+                <button class="tx-filter" [class.active]="transactionFilter === 'debit'" (click)="transactionFilter = 'debit'">Out</button>
+            </div>
+        </div>
+        <div class="tx-list">
+            <div class="tx-row" *ngFor="let tx of filteredTransactions">
+                <div class="tx-icon" [class.credit]="tx.type === 'credit'" [class.debit]="tx.type === 'debit'">
+                    <mat-icon [svgIcon]="tx.type === 'credit' ? 'arrowUp' : 'arrowDown'"></mat-icon>
+                </div>
+                <div class="tx-info">
+                    <div class="tx-desc">{{ tx.description }}</div>
+                    <div class="tx-meta">{{ formatDateTime(tx.date) }} · {{ tx.reference }}</div>
+                </div>
+                <div class="tx-amount" [class.credit]="tx.type === 'credit'" [class.debit]="tx.type === 'debit'">
+                    {{ tx.type === 'credit' ? '+' : '−' }}{{ formatCurrency(tx.amount) }}
+                </div>
+            </div>
+            <div *ngIf="filteredTransactions.length === 0" class="tx-empty">
+                <mat-icon svgIcon="fileText"></mat-icon>
+                <p>No transactions found</p>
+            </div>
+        </div>
+        <button class="btn-link btn-link--icon view-all" (click)="setActiveTab.emit('transactions')">
+          View all transactions
+          <span class="material-icons" aria-hidden="true">arrow_forward</span>
+        </button>
+    </div>
+</div>
+
+<!-- Quick Stats Section -->
+<div class="quick-stats">
+    <div class="stat-card">
+        <mat-icon svgIcon="shield"></mat-icon>
+        <div class="stat-info">
+            <span class="stat-label">Payment Consistency</span>
+            <strong class="stat-value">{{ financialData?.paymentStats?.consistencyScore }}%</strong>
+        </div>
+    </div>
+    <div class="stat-card">
+        <mat-icon svgIcon="check"></mat-icon>
+        <div class="stat-info">
+            <span class="stat-label">On-Time Rate</span>
+            <strong class="stat-value">{{ financialData?.paymentStats?.onTimeRate }}%</strong>
+        </div>
+    </div>
+    <div class="stat-card">
+        <mat-icon svgIcon="trendingUp"></mat-icon>
+        <div class="stat-info">
+            <span class="stat-label">Lifetime Paid</span>
+            <strong class="stat-value">{{ formatCurrency(financialData?.paymentStats?.totalPaidLifetime) }}</strong>
+        </div>
+    </div>
+    <div class="stat-card">
+        <mat-icon svgIcon="zap"></mat-icon>
+        <div class="stat-info">
+            <span class="stat-label">Credit Score</span>
+            <strong class="stat-value">{{ fulizaData?.creditScore }}</strong>
+        </div>
+    </div>
+</div>

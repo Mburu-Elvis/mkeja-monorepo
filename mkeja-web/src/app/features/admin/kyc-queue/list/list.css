@@ -1,0 +1,130 @@
+@import '../../../../shared/styles/admin-page.css';
+
+:host {
+  display: block;
+}
+
+.card-header {
+  padding: 18px 20px 0;
+  font-weight: 600;
+}
+
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  border-top: 1px solid var(--gray-200);
+}
+
+.list-main strong {
+  display: block;
+  font-size: 14px;
+}
+
+.list-main span {
+  font-size: 12px;
+  color: var(--gray-500);
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  gap: 16px;
+  color: var(--gray-500);
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--primary-light);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.application-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  border-top: 1px solid var(--gray-200);
+  cursor: pointer;
+}
+
+.app-main strong {
+  display: block;
+  font-size: 15px;
+  color: var(--gray-900);
+  margin-bottom: 4px;
+}
+
+.app-main span,
+.app-main .meta {
+  display: block;
+  font-size: 12px;
+  color: var(--gray-500);
+  margin-top: 2px;
+}
+
+.app-side {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.status-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+.submitted {
+  font-size: 11px;
+  color: var(--gray-400);
+  white-space: nowrap;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--gray-500);
+}
+
+.empty-state .btn-secondary {
+  margin-top: 16px;
+}
+
+@media (max-width: 768px) {
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .application-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .app-side {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+  }
+}

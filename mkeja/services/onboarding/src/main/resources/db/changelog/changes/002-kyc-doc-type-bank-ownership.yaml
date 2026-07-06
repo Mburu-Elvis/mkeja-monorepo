@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: kyc-doc-type-proof-of-bank-ownership
+      author: mkeja
+      dbms: postgresql
+      changes:
+        - sql:
+            sql: |
+              ALTER TABLE tbl_kyc_documents DROP CONSTRAINT IF EXISTS tbl_kyc_documents_doc_type_check;
+              ALTER TABLE tbl_kyc_documents ADD CONSTRAINT tbl_kyc_documents_doc_type_check
+                CHECK (doc_type IN (
+                  'ID_FRONT', 'ID_BACK', 'SELFIE',
+                  'PROOF_OF_RESIDENCE', 'PROOF_OF_BANK_OWNERSHIP',
+                  'INCORPORATION', 'CR12', 'BIZ_ADDRESS', 'BOARD_RESOLUTION',
+                  'SACCO_LICENSE', 'SACCO_BYLAWS'
+                ));

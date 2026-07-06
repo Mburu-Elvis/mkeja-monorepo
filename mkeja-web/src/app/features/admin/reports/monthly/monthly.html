@@ -1,0 +1,72 @@
+<div class="admin-page monthly-report">
+  <div class="page-header">
+    <div>
+      <p class="greeting-label">Reports</p>
+      <h1 class="page-title">Monthly Report</h1>
+      <p class="page-subtitle">{{ months[selectedMonth] }} {{ selectedYear }} platform summary</p>
+    </div>
+  </div>
+
+  <div class="month-selector card">
+    <button class="nav-btn" (click)="previousMonth()">←</button>
+    <span class="month-year">{{ months[selectedMonth] }} {{ selectedYear }}</span>
+    <button class="nav-btn" (click)="nextMonth()">→</button>
+    <button class="download-btn" (click)="downloadCSV()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path d="M12 3V16M12 16L9 13M12 16L15 13M5 21H19" stroke="currentColor" stroke-width="2"/>
+      </svg>
+      Export
+    </button>
+  </div>
+  
+  @if (loading) {
+    <app-loading-spinner [fullScreen]="true" message="Loading report..."></app-loading-spinner>
+  } @else {
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <span class="kpi-value">KES {{ (report.totalAmount / 1000000) | number:'1.1-1' }}M</span>
+        <span class="kpi-label">Total Volume</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-value">KES {{ (report.mkejaFees / 1000000) | number:'1.1-1' }}M</span>
+        <span class="kpi-label">Platform Fees</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-value">{{ report.activeTenants | number }}</span>
+        <span class="kpi-label">Active Tenants</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-value">{{ report.activeLandlords | number }}</span>
+        <span class="kpi-label">Active Landlords</span>
+      </div>
+    </div>
+    
+    <div class="report-section">
+      <h3>Contributions</h3>
+      <div class="stats-grid">
+        <div><span class="label">Total Contributions</span><span class="value">{{ report.totalContributions | number }}</span></div>
+        <div><span class="label">Total Amount</span><span class="value">KES {{ report.totalAmount | number }}</span></div>
+        <div><span class="label">Unique Payers</span><span class="value">{{ report.uniquePayers | number }}</span></div>
+      </div>
+    </div>
+    
+    <div class="report-section">
+      <h3>Rent Fuliza</h3>
+      <div class="stats-grid">
+        <div><span class="label">Disbursements</span><span class="value">{{ report.loanDisbursements | number }}</span></div>
+        <div><span class="label">Loan Amount</span><span class="value">KES {{ report.loanAmount | number }}</span></div>
+        <div><span class="label">Loan Fees</span><span class="value">KES {{ report.loanFees | number }}</span></div>
+        <div><span class="label">Default Rate</span><span class="value">{{ report.loanDefaultRate }}%</span></div>
+        <div><span class="label">Recovery Rate</span><span class="value">{{ report.recoveryRate }}%</span></div>
+      </div>
+    </div>
+    
+    <div class="report-section">
+      <h3>Growth</h3>
+      <div class="stats-grid">
+        <div><span class="label">New Tenants</span><span class="value">{{ report.newTenants | number }}</span></div>
+        <div><span class="label">New Landlords</span><span class="value">{{ report.newLandlords | number }}</span></div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,11 @@
+package co.ke.mkeja.notification.dto;
+
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
+public class RealtimeMessage {
+    private String type;
+    private Object payload;
+}

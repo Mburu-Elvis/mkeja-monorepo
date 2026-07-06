@@ -1,0 +1,62 @@
+<div class="ledger-screen platform-page">
+  <div class="filters">
+    <div class="filter-tabs">
+      <button class="filter-tab" [class.active]="filterType === 'all'" (click)="filterType = 'all'; applyFilters()">
+        All
+      </button>
+      <button class="filter-tab" [class.active]="filterType === 'CREDIT'" (click)="filterType = 'CREDIT'; applyFilters()">
+        Credits
+      </button>
+      <button class="filter-tab" [class.active]="filterType === 'DEBIT'" (click)="filterType = 'DEBIT'; applyFilters()">
+        Debits
+      </button>
+    </div>
+    
+    <div class="filter-dates">
+      <input type="date" [(ngModel)]="startDate" (change)="applyFilters()" placeholder="From">
+      <span>to</span>
+      <input type="date" [(ngModel)]="endDate" (change)="applyFilters()" placeholder="To">
+      <button class="clear-btn" (click)="clearFilters()">Clear</button>
+    </div>
+  </div>
+  
+  @if (loading) {
+    <app-loading-spinner [fullScreen]="true" message="Loading transactions..."></app-loading-spinner>
+  } @else {
+    <div class="ledger-list">
+      @for (entry of filteredEntries; track entry.id) {
+        <div class="ledger-entry" [class.credit]="entry.direction === 'CREDIT'">
+          <div class="entry-icon"><span class="material-icons">{{ getTypeIcon(entry.type) }}</span></div>
+          <div class="entry-details">
+            <div class="entry-header">
+              <span class="entry-type">{{ getTypeLabel(entry.type) }}</span>
+              <span class="entry-amount" [class.credit]="entry.direction === 'CREDIT'">
+                {{ entry.direction === 'CREDIT' ? '+' : '-' }} KES {{ entry.amount | number }}
+              </span>
+            </div>
+            <div class="entry-description">{{ entry.description }}</div>
+            <div class="entry-footer">
+              <span class="entry-date">{{ entry.createdAt | date:'MMM d, yyyy h:mm a' }}</span>
+              @if (entry.mpesaRef) {
+                <span class="entry-ref">Ref: {{ entry.mpesaRef }}</span>
+              }
+              <span class="entry-balance">Balance: KES {{ entry.balanceAfter | number }}</span>
+            </div>
+          </div>
+        </div>
+      }
+      
+      @if (filteredEntries.length === 0) {
+        <div class="empty-state app-empty-state">
+          <div class="app-empty-icon"><span class="material-icons">receipt_long</span></div>
+          <h3 class="app-empty-title">No transactions found</h3>
+          <p class="app-empty-text">Adjust your filters or date range to see ledger entries.</p>
+        </div>
+      }
+      
+      @if (filteredEntries.length < total) {
+        <button class="load-more" (click)="loadMore()">Load More</button>
+      }
+    </div>
+  }
+</div>

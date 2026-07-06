@@ -1,0 +1,87 @@
+.payments-history {
+  background-color: var(--mpesa-gray-light);
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+.filters {
+  background: white;
+  padding: 16px;
+  margin: 16px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.filters .filter-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.filters .filter-tabs .filter-tab {
+  flex: 1;
+  padding: 10px;
+  background: #F5F5F5;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--mpesa-gray-dark);
+  cursor: pointer;
+}
+
+.filters .filter-tabs .filter-tab.active {
+  background: var(--mpesa-primary);
+  color: white;
+}
+
+.filters .filter-dates {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filters .filter-dates input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.filters .filter-dates span {
+  color: var(--mpesa-gray);
+}
+
+.filters .filter-dates .clear-btn {
+  padding: 10px 16px;
+  background: none;
+  border: 1px solid var(--mpesa-error);
+  border-radius: 8px;
+  color: var(--mpesa-error);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.transactions-list {
+  background: white;
+  margin: 0 16px;
+  border-radius: 12px;
+  padding: 0 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 16px;
+}
+
+.empty-state svg {
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state p {
+  color: var(--mpesa-gray);
+  font-size: 14px;
+}

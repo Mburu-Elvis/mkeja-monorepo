@@ -1,0 +1,32 @@
+.select-container {
+  position: relative;
+}
+
+.select-field {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid #D1D9E0;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #2C3E50;
+  background: #FFFFFF;
+  outline: none;
+  box-sizing: border-box;
+  font-family: 'Nunito Sans', sans-serif;
+  appearance: none;
+  transition: border-color .2s;
+}
+
+.select-focused {
+  border-color: #006633;
+}
+
+.select-arrow {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #6B7A8D;
+  font-size: 12px;
+}

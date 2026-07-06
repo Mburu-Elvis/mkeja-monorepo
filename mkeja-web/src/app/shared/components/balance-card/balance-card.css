@@ -1,0 +1,85 @@
+.balance-card {
+  background: linear-gradient(135deg, var(--mpesa-primary) 0%, var(--mpesa-primary-dark) 100%);
+  color: white;
+  padding: 24px;
+  margin: 16px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.balance-card .balance-label {
+  font-size: 14px;
+  opacity: 0.9;
+  margin-bottom: 8px;
+}
+
+.balance-card .balance-amount {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+}
+
+.balance-card .balance-amount .currency {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.balance-card .balance-amount .amount {
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.balance-card .balance-sub {
+  font-size: 12px;
+  opacity: 0.8;
+  margin-top: 8px;
+}
+
+.balance-card .balance-actions {
+  margin-top: 16px;
+}
+
+.balance-card .balance-actions .action-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 40px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.balance-card .balance-actions .action-btn:active {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(0.98);
+}
+
+.balance-card .loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.balance-card .loading-state .spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

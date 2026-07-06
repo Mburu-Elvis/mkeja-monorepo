@@ -1,0 +1,71 @@
+<div class="admin-page">
+  <button class="back-btn" type="button" (click)="onBack()">Back to properties</button>
+
+  @if (loading) {
+    <div class="loading-state"><div class="spinner"></div><p>Loading property...</p></div>
+  } @else if (detail) {
+    <div class="page-header card admin-hero">
+      <div>
+        <p class="greeting-label">Property #{{ detail.property.id }}</p>
+        <h1 class="page-title">{{ detail.property.name }}</h1>
+        <p class="page-subtitle">
+          {{ detail.property.address || detail.property.city || 'No address' }}
+          · {{ detail.property.propertyStatus || '—' }}
+        </p>
+      </div>
+      <div class="header-actions">
+        @if (detail.property.propertyStatus === 'PENDING_VERIFICATION') {
+          <button class="btn-primary" type="button" [disabled]="acting" (click)="verifyProperty()">Verify</button>
+        }
+        @if (detail.property.propertyStatus !== 'REJECTED') {
+          <button class="btn-warning" type="button" [disabled]="acting" (click)="rejectProperty()">Reject</button>
+        }
+        <button class="btn-danger" type="button" [disabled]="acting" (click)="deleteProperty()">Delete</button>
+      </div>
+    </div>
+
+    @if (error) { <div class="alert-banner alert-danger">{{ error }}</div> }
+
+    <div class="stats-grid">
+      <div class="card stat-card"><strong>{{ detail.property.totalUnits || detail.units.length }}</strong><span>Units</span></div>
+      <div class="card stat-card"><strong>{{ detail.property.occupiedUnits || 0 }}</strong><span>Occupied</span></div>
+      <div class="card stat-card"><strong>{{ detail.property.vacantUnits || 0 }}</strong><span>Vacant</span></div>
+      <div class="card stat-card"><strong>{{ detail.property.pendingInvites || 0 }}</strong><span>Pending invites</span></div>
+    </div>
+
+    <div class="card details-section">
+      <div class="section-title">Landlord</div>
+      @if (detail.landlordUserId) {
+        <a class="link-row" [routerLink]="['/admin/users', detail.landlordUserId]">
+          {{ detail.landlordName || 'View landlord' }}
+        </a>
+      } @else {
+        <p class="muted">No landlord linked</p>
+      }
+    </div>
+
+    <div class="card details-section">
+      <div class="section-title">Units ({{ detail.units.length }})</div>
+      @if (detail.units.length === 0) {
+        <p class="muted">No units on this property.</p>
+      } @else {
+        @for (unit of detail.units; track trackUnit($index, unit)) {
+          <div class="list-item">
+            <div class="list-main">
+              <strong>{{ unit.unitNumber }}</strong>
+              <span>
+                Floor {{ unit.floorNumber ?? '—' }}
+                · {{ unit.unitType || 'Type n/a' }}
+                · KES {{ unit.rent | number }}/mo
+              </span>
+              @if (unit.tenantName) {
+                <span class="meta">Tenant: {{ unit.tenantName }} · {{ unit.tenantPhone || '—' }}</span>
+              }
+            </div>
+            <span class="status-badge" [class]="unitStatusClass(unit.status)">{{ unit.status }}</span>
+          </div>
+        }
+      }
+    </div>
+  }
+</div>

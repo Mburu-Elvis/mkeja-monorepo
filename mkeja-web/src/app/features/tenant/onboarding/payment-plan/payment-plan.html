@@ -1,0 +1,129 @@
+<div class="payment-plan-page">
+
+  <header class="auth-brand">
+    <div class="auth-brand-badge">
+      <img src="/logo-mkeja.png" alt="Mkeja" class="auth-brand-logo">
+    </div>
+    <h1>Welcome to Mkeja</h1>
+    <p>Choose how you'd like to pay your rent</p>
+  </header>
+
+  <div class="payment-plan-card">
+
+    <div class="plan-header">
+      <div class="plan-icon">
+        <span class="material-icons">check_circle</span>
+      </div>
+
+      <h2>Setup Complete</h2>
+
+      <p>
+        Your account is ready. Select a payment plan that works best
+        for your budget and cash flow.
+      </p>
+    </div>
+
+    <div class="wallet-preview">
+
+      <div class="wallet-item">
+        <span>Available Balance</span>
+        <strong>KES 0</strong>
+      </div>
+
+      <div class="wallet-item">
+        <span>Security Deposit</span>
+        <strong>KES {{ monthlyRent | number }}</strong>
+      </div>
+
+      <div class="wallet-item">
+        <span>Loan Limit</span>
+        <strong>KES {{ (monthlyRent * 0.75) | number }}</strong>
+      </div>
+
+    </div>
+
+    <div class="plan-options">
+
+      <div
+        class="plan-card"
+        [class.selected]="selectedPlan === 'DAILY'"
+        (click)="selectPlan('DAILY')">
+
+        <div class="plan-radio">
+          <div
+            class="radio"
+            [class.checked]="selectedPlan === 'DAILY'">
+          </div>
+        </div>
+
+        <div class="plan-info">
+          <strong>Daily</strong>
+          <span class="amount">
+            KES {{ dailyAmount | number }}/day
+          </span>
+          <span class="description">
+            Auto-deducted every morning at 6:00 AM
+          </span>
+        </div>
+
+      </div>
+
+      <div
+        class="plan-card"
+        [class.selected]="selectedPlan === 'WEEKLY'"
+        (click)="selectPlan('WEEKLY')">
+
+        <div class="plan-radio">
+          <div
+            class="radio"
+            [class.checked]="selectedPlan === 'WEEKLY'">
+          </div>
+        </div>
+
+        <div class="plan-info">
+          <strong>Weekly</strong>
+          <span class="amount">
+            KES {{ weeklyAmount | number }}/week
+          </span>
+          <span class="description">
+            Auto-deducted every Monday at 7:00 AM
+          </span>
+        </div>
+
+      </div>
+
+      <div
+        class="plan-card"
+        [class.selected]="selectedPlan === 'MONTHLY'"
+        (click)="selectPlan('MONTHLY')">
+
+        <div class="plan-radio">
+          <div
+            class="radio"
+            [class.checked]="selectedPlan === 'MONTHLY'">
+          </div>
+        </div>
+
+        <div class="plan-info">
+          <strong>Monthly</strong>
+          <span class="amount">
+            KES {{ monthlyRent | number }}/month
+          </span>
+          <span class="description">
+            Pay the full rent amount on the due date
+          </span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <button
+      class="continue-btn"
+      (click)="continue()">
+      Continue
+    </button>
+
+  </div>
+
+</div>

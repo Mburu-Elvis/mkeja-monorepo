@@ -1,0 +1,88 @@
+@import '../auth-shared.css';
+
+.verify-otp-page .auth-brand p strong {
+  color: var(--sf-text-1);
+  font-weight: 700;
+}
+
+.verify-context {
+  font-size: 13px;
+  color: var(--sf-text-3);
+  line-height: 1.55;
+  margin: 0 0 20px;
+  text-align: center;
+}
+
+.otp-container {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.otp-input {
+  width: 44px;
+  height: 52px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--sf-text-1);
+  border: 1px solid var(--sf-border);
+  border-radius: var(--radius-md);
+  background: var(--sf-surface);
+  transition: var(--transition);
+}
+
+.otp-input:focus {
+  outline: none;
+  border-color: var(--sf-green);
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
+}
+
+.verify-resend {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--sf-text-3);
+}
+
+.verify-resend-btn {
+  background: none;
+  border: none;
+  color: var(--sf-green-dark);
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+
+.verify-resend-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.verify-links {
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.verify-back-btn {
+  background: none;
+  border: none;
+  color: var(--sf-green-dark);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+}
+
+@media (max-width: 420px) {
+  .otp-container {
+    gap: 8px;
+  }
+
+  .otp-input {
+    width: 40px;
+    height: 48px;
+    font-size: 20px;
+  }
+}

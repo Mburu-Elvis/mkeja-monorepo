@@ -1,0 +1,17 @@
+/* Pages rendered inside dashboard shells */
+app-tenant-layout .dashboard-main .profile-page,
+app-tenant-layout .dashboard-main .wallet-screen,
+app-tenant-layout .dashboard-main .ledger-screen,
+app-tenant-layout .dashboard-main .payments-history,
+app-tenant-layout .dashboard-main .loan-screen,
+app-tenant-layout .dashboard-main .loan-request,
+app-tenant-layout .dashboard-main .topup-screen,
+app-tenant-layout .dashboard-main .tenancies-page,
+app-tenant-layout .dashboard-main .support-container,
+app-tenant-layout .dashboard-main .upload-documents,
+app-tenant-layout .dashboard-main .kyc-pending.platform-page,
+.dashboard-main .profile-page.platform-page {
+  min-height: auto;
+  padding-bottom: 0;
+  background: transparent;
+}

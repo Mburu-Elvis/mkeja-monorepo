@@ -1,0 +1,306 @@
+/* sidebar.component.css */
+:host {
+  display: block;
+  font-family: var(--font-sans);
+}
+
+.desktop-sidebar {
+  width: 280px;
+  background: var(--sf-surface);
+  backdrop-filter: blur(0px);
+  border-right: 1px solid var(--sf-border);
+  display: flex;
+  flex-direction: column;
+  transition: width 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  z-index: 100;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.desktop-sidebar.collapsed {
+  width: 88px;
+}
+
+/* Sidebar Header */
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 20px;
+  border-bottom: 1px solid var(--sf-border);
+}
+
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.logo-area .mkeja-logo {
+  height: 36px;
+  width: auto;
+  max-width: 120px;
+  object-fit: contain;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+
+.logo-area.collapsed .mkeja-logo {
+  height: 32px;
+  max-width: 36px;
+  object-fit: cover;
+  object-position: left center;
+  border-radius: 6px;
+}
+
+.collapse-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-light);
+  color: var(--primary-color);
+  transition: var(--transition-fast);
+  cursor: pointer;
+  border: none;
+}
+
+.collapse-btn:hover {
+  background: var(--primary-color);
+  color: white;
+  transform: scale(1.02);
+  box-shadow: var(--shadow-sm);
+}
+
+.collapse-btn mat-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Navigation */
+.sidebar-nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px 16px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  border-radius: var(--radius-lg);
+  color: var(--sf-text-2);
+  font-weight: 500;
+  font-size: 15px;
+  transition: var(--transition-fast);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.sidebar-item mat-icon {
+  width: 22px;
+  height: 22px;
+  color: currentColor;
+  flex-shrink: 0;
+  transition: var(--transition-fast);
+}
+
+.sidebar-item:hover {
+  background: var(--primary-light);
+  color: var(--primary-color);
+  transform: translateX(4px);
+}
+
+.sidebar-item.active {
+  background: linear-gradient(135deg, var(--primary-light), var(--sf-green-xpale));
+  color: var(--primary-color);
+  font-weight: 600;
+  border-left: 3px solid var(--primary-color);
+}
+
+.sidebar-item.active mat-icon {
+  color: var(--primary-color);
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+  padding: 20px 16px;
+  border-top: 1px solid var(--sf-border);
+  background: var(--gray-50);
+  margin: 0 8px 16px 8px;
+  border-radius: var(--radius-lg);
+}
+
+.user-mini {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px;
+  border-radius: var(--radius-lg);
+  background: transparent;
+  transition: var(--transition-fast);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.user-mini:hover {
+  background: var(--primary-light);
+  transform: translateX(4px);
+}
+
+.avatar-mini {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 18px;
+  color: white;
+  box-shadow: 0 2px 8px rgba(15, 76, 58, 0.2);
+  transition: var(--transition-fast);
+}
+
+.user-mini:hover .avatar-mini {
+  transform: scale(1.05);
+}
+
+.user-info {
+  flex: 1;
+  overflow: hidden;
+}
+
+.user-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--sf-text-1);
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-unit {
+  font-size: 12px;
+  color: var(--sf-text-4);
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Collapsed state adjustments */
+.desktop-sidebar.collapsed .sidebar-item span {
+  display: none;
+}
+
+.desktop-sidebar.collapsed .sidebar-item {
+  justify-content: center;
+  padding: 12px;
+}
+
+.desktop-sidebar.collapsed .sidebar-item mat-icon {
+  margin: 0;
+}
+
+.desktop-sidebar.collapsed .user-info {
+  display: none;
+}
+
+.desktop-sidebar.collapsed .user-mini {
+  justify-content: center;
+  padding: 0;
+}
+
+.desktop-sidebar.collapsed .avatar-mini {
+  margin: 0;
+}
+
+.desktop-sidebar.collapsed .sidebar-footer {
+  padding: 16px 0;
+}
+
+/* Scrollbar styling */
+.desktop-sidebar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.desktop-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.desktop-sidebar::-webkit-scrollbar-thumb {
+  background: var(--sf-border);
+  border-radius: 4px;
+}
+
+.desktop-sidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--sf-text-4);
+}
+
+/* Hover effect for sidebar items in collapsed mode */
+.desktop-sidebar.collapsed .sidebar-item {
+  position: relative;
+}
+
+.desktop-sidebar.collapsed .sidebar-item:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--sf-text-1);
+  color: white;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 1000;
+  margin-left: 12px;
+  box-shadow: var(--shadow-lg);
+  pointer-events: none;
+}
+
+/* Responsive: hide on mobile */
+@media (max-width: 1023px) {
+  .desktop-sidebar {
+    display: none;
+  }
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.sidebar-item {
+  animation: slideIn 0.3s ease backwards;
+}
+
+.sidebar-item:nth-child(1) { animation-delay: 0.05s; }
+.sidebar-item:nth-child(2) { animation-delay: 0.1s; }
+.sidebar-item:nth-child(3) { animation-delay: 0.15s; }
+.sidebar-item:nth-child(4) { animation-delay: 0.2s; }
+.sidebar-item:nth-child(5) { animation-delay: 0.25s; }
+.sidebar-item:nth-child(6) { animation-delay: 0.3s; }
+.sidebar-item:nth-child(7) { animation-delay: 0.35s; }

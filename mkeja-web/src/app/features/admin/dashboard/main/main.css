@@ -1,0 +1,253 @@
+@import '../../../../shared/styles/platform-page.css';
+@import '../../../../shared/styles/admin-page.css';
+@import '../../../../shared/styles/chart-grid.css';
+
+:host {
+  display: block;
+}
+
+.admin-overview .growth-chart .bar.users {
+  background: var(--primary-color);
+}
+
+.admin-overview .growth-chart .bar.props {
+  background: var(--info);
+}
+
+.admin-overview .growth-chart .bar-value.users {
+  color: var(--primary-color);
+  font-size: 10px;
+}
+
+.admin-overview .growth-chart .bar-value.props {
+  color: var(--info);
+  font-size: 10px;
+}
+
+.admin-overview .chart-bars {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  min-height: 240px;
+  padding-top: 8px;
+}
+
+.admin-overview .chart-bar-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+
+.admin-overview .bars {
+  display: flex;
+  gap: 4px;
+  align-items: flex-end;
+  height: 200px;
+  width: 100%;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+.admin-overview .bar {
+  width: 14px;
+  border-radius: 4px 4px 0 0;
+  min-height: 4px;
+  transition: height 0.3s ease;
+}
+
+.admin-overview .bar-label {
+  font-size: 11px;
+  color: var(--gray-500);
+  margin-top: 8px;
+}
+
+.admin-overview .bar-values {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: 6px;
+  min-height: 28px;
+}
+
+.admin-overview .trend-line {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  min-height: 180px;
+  position: relative;
+}
+
+.admin-overview .trend-point {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+
+.admin-overview .trend-plot {
+  height: 120px;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+.admin-overview .trend-bar {
+  width: 24px;
+  background: var(--primary-color);
+  border-radius: 4px 4px 0 0;
+  min-height: 4px;
+}
+
+.admin-overview .trend-bar.financial {
+  background: var(--success);
+}
+
+.admin-overview .trend-value {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--gray-600);
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.admin-overview .trend-label {
+  font-size: 11px;
+  color: var(--gray-500);
+  margin-top: 6px;
+}
+
+.admin-overview .mini-trend {
+  padding: 16px 20px 24px;
+  min-height: 140px;
+}
+
+.admin-overview .mini-trend .trend-plot {
+  height: 80px;
+}
+
+.kyc-summary {
+  padding: 20px;
+  margin-bottom: 28px;
+}
+
+.kyc-pills {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.kyc-pill span {
+  font-size: 12px;
+}
+
+.left-col,
+.right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.panel-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--gray-200);
+  cursor: pointer;
+}
+
+.list-main strong {
+  display: block;
+  font-size: 14px;
+  color: var(--gray-900);
+}
+
+.list-main span {
+  font-size: 12px;
+  color: var(--gray-500);
+}
+
+.status-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+.badge {
+  background: var(--gray-50);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-500);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 32px 20px;
+  color: var(--gray-500);
+}
+
+.empty-state mat-icon {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 8px;
+}
+
+.actions-card .action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 20px 20px;
+}
+
+.btn-primary,
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.btn-primary mat-icon,
+.btn-secondary mat-icon {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+}
+
+.spinner-small {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--info-light);
+  border-top-color: var(--info);
+  border-radius: 50%;
+  animation: admin-spin 0.6s linear infinite;
+}
+
+@keyframes admin-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 1100px) {
+  .kyc-pills {
+    grid-template-columns: 1fr;
+  }
+}

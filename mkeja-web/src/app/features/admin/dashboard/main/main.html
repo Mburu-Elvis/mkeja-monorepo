@@ -1,0 +1,452 @@
+<div class="admin-page platform-page admin-overview">
+  @if (loading && !isRefreshing) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading platform overview...</p>
+    </div>
+  } @else {
+    @if (error) {
+      <div class="alert-banner alert-danger">{{ error }}</div>
+    }
+
+    @if (isRefreshing) {
+      <div class="refresh-indicator">
+        <div class="spinner-small"></div>
+        <span>Refreshing dashboard...</span>
+      </div>
+    }
+
+    <div class="hero-section">
+      <div class="hero-flex">
+        <div class="hero-text">
+          <p class="greeting-label">{{ greeting }},</p>
+          <h1 class="page-title">{{ currentUser?.fullName || 'Admin' }}</h1>
+          <p class="hero-subtitle">
+            {{ formatCurrency(stats?.financial?.estimatedMonthlyVolume || 0) }} est. monthly volume ·
+            {{ stats?.business?.occupancyRate || 0 }}% occupancy ·
+            {{ stats?.totalUsers || 0 }} users on platform
+          </p>
+          <div class="hero-meta">
+            <span class="unit-pill">
+              <mat-icon svgIcon="shield"></mat-icon>
+              Source of Truth
+            </span>
+            <span class="unit-pill online">
+              <span class="status-dot"></span>
+              API {{ stats?.apiStatus || 'UP' }}
+            </span>
+          </div>
+        </div>
+        <div class="hero-actions">
+          <button class="refresh-btn" type="button" (click)="refreshData()" [disabled]="isRefreshing">
+            <mat-icon svgIcon="refresh"></mat-icon>
+          </button>
+          <div class="avatar-large">{{ userInitials }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-navigation">
+      <button class="tab-btn" [class.active]="activeTab === 'overview'" type="button" (click)="setActiveTab('overview')">
+        <mat-icon svgIcon="pieChart"></mat-icon>
+        Overview
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'business'" type="button" (click)="setActiveTab('business')">
+        <mat-icon svgIcon="building"></mat-icon>
+        Business
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'financials'" type="button" (click)="setActiveTab('financials')">
+        <mat-icon svgIcon="banknote"></mat-icon>
+        Financials
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'operations'" type="button" (click)="setActiveTab('operations')">
+        <mat-icon svgIcon="activity"></mat-icon>
+        Operations
+        @if (kycActionCount > 0) {
+          <span class="tab-count warning">{{ kycActionCount }}</span>
+        }
+      </button>
+    </div>
+
+    @if (activeTab === 'overview') {
+      <div class="tab-content">
+        <div class="dashboard-grid">
+          <div class="card stat-card">
+            <div class="card-icon"><mat-icon svgIcon="users"></mat-icon></div>
+            <div class="card-content">
+              <span class="stat-label">Total Users</span>
+              <strong class="stat-value">{{ stats?.totalUsers || 0 }}</strong>
+            </div>
+          </div>
+          <div class="card stat-card">
+            <div class="card-icon"><mat-icon svgIcon="building"></mat-icon></div>
+            <div class="card-content">
+              <span class="stat-label">Properties</span>
+              <strong class="stat-value">{{ stats?.business?.totalProperties || 0 }}</strong>
+            </div>
+          </div>
+          <div class="card stat-card">
+            <div class="card-icon"><mat-icon svgIcon="banknote"></mat-icon></div>
+            <div class="card-content">
+              <span class="stat-label">Monthly Rent Roll</span>
+              <strong class="stat-value">{{ formatCurrency(stats?.financial?.monthlyRentRoll || 0) }}</strong>
+            </div>
+          </div>
+          <div class="card stat-card highlight">
+            <div class="card-icon"><mat-icon svgIcon="shield"></mat-icon></div>
+            <div class="card-content">
+              <span class="stat-label">KYC Actions</span>
+              <strong class="stat-value">{{ kycActionCount }}</strong>
+            </div>
+          </div>
+        </div>
+
+        @if (growthData.length > 0) {
+          <div class="chart-card">
+            <div class="card-header">
+              <div>
+                <h3>Platform Growth — Last 6 Months</h3>
+                <p class="chart-subtitle">New users and properties registered each month</p>
+              </div>
+            </div>
+            <div class="chart-bars growth-chart">
+              <div class="chart-grid" aria-hidden="true"></div>
+              @for (point of growthData; track point.period) {
+                <div class="chart-bar-group">
+                  <div class="bar-values">
+                    <span class="bar-value users">{{ point.users }} users</span>
+                    <span class="bar-value props">{{ point.properties }} props</span>
+                  </div>
+                  <div class="bars">
+                    <div class="bar users" [style.height.%]="barHeightPercent(point.users, maxGrowthUsers)"></div>
+                    <div class="bar props" [style.height.%]="barHeightPercent(point.properties, maxGrowthUsers)"></div>
+                  </div>
+                  <div class="bar-label">{{ point.shortLabel }}</div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <div class="two-columns">
+          <div class="left-col">
+            <div class="card panel-card">
+              <div class="card-header">
+                <span>Recent KYC Applications</span>
+                <a class="btn-link-small" routerLink="/admin/kyc-queue">View all</a>
+              </div>
+              @if (recentKyc.length === 0) {
+                <div class="empty-state">
+                  <mat-icon svgIcon="check"></mat-icon>
+                  <p>No pending KYC applications</p>
+                </div>
+              } @else {
+                @for (app of recentKyc; track app.id + app.applicantType) {
+                  <div class="list-item" (click)="reviewKyc(app)">
+                    <div class="list-main">
+                      <strong>{{ app.fullName }}</strong>
+                      <span>{{ getApplicantTypeLabel(app.applicantType) }} · {{ app.idNumber }}</span>
+                    </div>
+                    <span class="status-badge" [ngClass]="getStatusClass(app.status)">{{ getStatusLabel(app.status) }}</span>
+                  </div>
+                }
+              }
+            </div>
+          </div>
+
+          <div class="right-col">
+            <div class="card panel-card actions-card">
+              <div class="card-header"><span>Quick Actions</span></div>
+              <div class="action-buttons">
+                <a class="btn-primary" routerLink="/admin/kyc-queue">
+                  <mat-icon svgIcon="shield"></mat-icon>
+                  Review KYC
+                </a>
+                <a class="btn-secondary" routerLink="/admin/users">
+                  <mat-icon svgIcon="users"></mat-icon>
+                  Manage Users
+                </a>
+                <a class="btn-secondary" routerLink="/admin/reports">
+                  <mat-icon svgIcon="barChart"></mat-icon>
+                  Reports & Ledger
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (activeTab === 'business') {
+      <div class="tab-content">
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon"><mat-icon svgIcon="users"></mat-icon></div>
+            <div>
+              <span class="kpi-label">Landlords</span>
+              <span class="kpi-value">{{ stats?.totalLandlords || 0 }}</span>
+              <span class="kpi-sub">+{{ stats?.business?.newLandlordsLast30Days || 0 }} last 30 days</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon"><mat-icon svgIcon="users"></mat-icon></div>
+            <div>
+              <span class="kpi-label">Tenants</span>
+              <span class="kpi-value">{{ stats?.totalTenants || 0 }}</span>
+              <span class="kpi-sub">+{{ stats?.business?.newTenantsLast30Days || 0 }} last 30 days</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon"><mat-icon svgIcon="building"></mat-icon></div>
+            <div>
+              <span class="kpi-label">Properties</span>
+              <span class="kpi-value">{{ stats?.business?.totalProperties || 0 }}</span>
+              <span class="kpi-sub">{{ stats?.business?.verifiedProperties || 0 }} verified · {{ stats?.business?.pendingProperties || 0 }} pending</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon"><mat-icon svgIcon="pieChart"></mat-icon></div>
+            <div>
+              <span class="kpi-label">Occupancy</span>
+              <span class="kpi-value">{{ stats?.business?.occupancyRate || 0 }}%</span>
+              <span class="kpi-sub">{{ stats?.business?.occupiedUnits || 0 }}/{{ stats?.business?.totalUnits || 0 }} units occupied</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="card stat-card">
+            <div class="card-content">
+              <span class="stat-label">Active Tenancies</span>
+              <strong class="stat-value">{{ stats?.activeTenancies || 0 }}</strong>
+            </div>
+          </div>
+          <div class="card stat-card">
+            <div class="card-content">
+              <span class="stat-label">Vacant Units</span>
+              <strong class="stat-value">{{ stats?.business?.vacantUnits || 0 }}</strong>
+            </div>
+          </div>
+          <div class="card stat-card">
+            <div class="card-content">
+              <span class="stat-label">Pending Invites</span>
+              <strong class="stat-value">{{ stats?.business?.pendingInvitations || 0 }}</strong>
+            </div>
+          </div>
+          <div class="card stat-card">
+            <div class="card-content">
+              <span class="stat-label">New Users (30d)</span>
+              <strong class="stat-value">{{ stats?.business?.newUsersLast30Days || 0 }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="card kyc-summary">
+          <div class="card-header">
+            <span>User Growth Trend</span>
+          </div>
+          @if (growthData.length > 0) {
+            <div class="trend-line mini-trend">
+              <div class="chart-grid" aria-hidden="true"></div>
+              @for (point of growthData; track point.period) {
+                <div class="trend-point">
+                  <div class="trend-value">{{ point.users }}</div>
+                  <div class="trend-plot">
+                    <div class="trend-bar" [style.height.%]="barHeightPercent(point.users, maxGrowthUsers)"></div>
+                  </div>
+                  <div class="trend-label">{{ point.shortLabel }}</div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    @if (activeTab === 'financials') {
+      <div class="tab-content">
+        <span class="source-badge">Onboarding data · Payment service integration pending</span>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon"><mat-icon svgIcon="banknote"></mat-icon></div>
+            <div>
+              <span class="kpi-label">Monthly Rent Roll</span>
+              <span class="kpi-value">{{ formatCurrency(stats?.financial?.monthlyRentRoll || 0) }}</span>
+              <span class="kpi-sub">From {{ stats?.activeTenancies || 0 }} active tenancies</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon"><mat-icon svgIcon="banknote"></mat-icon></div>
+            <div>
+              <span class="kpi-label">Security Deposits Held</span>
+              <span class="kpi-value">{{ formatCurrency(stats?.financial?.totalSecurityDeposits || 0) }}</span>
+              <span class="kpi-sub">{{ stats?.financial?.securityDepositsApproved || 0 }} approved · {{ stats?.financial?.securityDepositsPending || 0 }} pending</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon"><mat-icon svgIcon="activity"></mat-icon></div>
+            <div>
+              <span class="kpi-label">Standing Orders (Ratiba)</span>
+              <span class="kpi-value">{{ stats?.financial?.activeStandingOrders || 0 }}</span>
+              <span class="kpi-sub">{{ formatCurrency(stats?.financial?.standingOrderVolume || 0) }}/mo active volume</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon"><mat-icon svgIcon="barChart"></mat-icon></div>
+            <div>
+              <span class="kpi-label">Est. Monthly Volume</span>
+              <span class="kpi-value">{{ formatCurrency(stats?.financial?.estimatedMonthlyVolume || 0) }}</span>
+              <span class="kpi-sub">Rent roll + active ratiba</span>
+            </div>
+          </div>
+        </div>
+
+        @if (growthData.length > 0) {
+          <div class="chart-card">
+            <div class="card-header">
+              <div>
+                <h3>Rent Roll Growth</h3>
+                <p class="chart-subtitle">New tenancy rent added each month (onboarding records)</p>
+              </div>
+            </div>
+            <div class="trend-line">
+              <div class="chart-grid" aria-hidden="true"></div>
+              @for (point of growthData; track point.period) {
+                <div class="trend-point">
+                  <div class="trend-value">{{ formatCurrency(point.rentRoll) }}</div>
+                  <div class="trend-plot">
+                    <div class="trend-bar financial" [style.height.%]="barHeightPercent(point.rentRoll, maxGrowthRent)"></div>
+                  </div>
+                  <div class="trend-label">{{ point.shortLabel }}</div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <div class="card panel-card">
+          <div class="card-header">
+            <span>Financial Records</span>
+            <a class="btn-link-small" routerLink="/admin/reports" [queryParams]="{ tab: 'ledger' }">Full ledger →</a>
+          </div>
+          <p class="chart-subtitle" style="padding: 0 20px 16px;">Use Reports & Ledger for transaction-level dispute resolution across tenant types.</p>
+        </div>
+      </div>
+    }
+
+    @if (activeTab === 'operations') {
+      <div class="tab-content">
+        <div class="card kyc-summary">
+          <div class="card-header">
+            <span>KYC Pipeline</span>
+            <a class="btn-link" routerLink="/admin/kyc-queue">Open queue →</a>
+          </div>
+          <div class="kyc-pills">
+            <div class="kyc-pill pending">
+              <strong>{{ stats?.kycPending || 0 }}</strong>
+              <span>Pending</span>
+            </div>
+            <div class="kyc-pill review">
+              <strong>{{ stats?.kycManualReview || 0 }}</strong>
+              <span>Manual Review</span>
+            </div>
+            <div class="kyc-pill rejected">
+              <strong>{{ stats?.kycRejected || 0 }}</strong>
+              <span>Rejected</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon"><mat-icon svgIcon="alert"></mat-icon></div>
+            <div>
+              <span class="kpi-label">Suspended Users</span>
+              <span class="kpi-value">{{ stats?.operational?.suspendedUsers || 0 }}</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon"><mat-icon svgIcon="shield"></mat-icon></div>
+            <div>
+              <span class="kpi-label">Locked Accounts</span>
+              <span class="kpi-value">{{ stats?.operational?.lockedUsers || 0 }}</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon"><mat-icon svgIcon="building"></mat-icon></div>
+            <div>
+              <span class="kpi-label">Properties Pending</span>
+              <span class="kpi-value">{{ stats?.propertiesPendingVerification || 0 }}</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon"><mat-icon svgIcon="activity"></mat-icon></div>
+            <div>
+              <span class="kpi-label">Failed Ratiba</span>
+              <span class="kpi-value">{{ stats?.operational?.failedStandingOrders || 0 }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="two-columns">
+          <div class="left-col">
+            <div class="card panel-card">
+              <div class="card-header">
+                <span>Properties Pending Verification</span>
+                <span class="badge">{{ stats?.propertiesPendingVerification || 0 }}</span>
+              </div>
+              @if (pendingProperties.length === 0) {
+                <div class="empty-state">
+                  <mat-icon svgIcon="check"></mat-icon>
+                  <p>All properties verified</p>
+                </div>
+              } @else {
+                @for (property of pendingProperties; track property.id) {
+                  <div class="list-item">
+                    <div class="list-main">
+                      <strong>{{ property.name }}</strong>
+                      <span>{{ property.address || property.city || 'No address' }}</span>
+                    </div>
+                    <button class="btn-verify" type="button"
+                      [disabled]="verifyingPropertyId === property.id"
+                      (click)="verifyProperty(property); $event.stopPropagation()">
+                      {{ verifyingPropertyId === property.id ? 'Verifying…' : 'Verify' }}
+                    </button>
+                  </div>
+                }
+              }
+            </div>
+          </div>
+
+          <div class="right-col">
+            <div class="card panel-card">
+              <div class="card-header"><span>System Health</span></div>
+              <div class="list-item" style="cursor: default;">
+                <div class="list-main">
+                  <strong>API Status</strong>
+                  <span>Onboarding service</span>
+                </div>
+                <span class="status-badge status-pending">{{ stats?.apiStatus || 'UP' }}</span>
+              </div>
+              <div class="list-item" style="cursor: default;">
+                <div class="list-main">
+                  <strong>Pending Tenancies</strong>
+                  <span>Awaiting activation</span>
+                </div>
+                <strong>{{ stats?.operational?.pendingTenancies || 0 }}</strong>
+              </div>
+              <div class="list-item" style="cursor: default;">
+                <div class="list-main">
+                  <strong>Total Invitations</strong>
+                  <span>All-time tenant invites</span>
+                </div>
+                <strong>{{ stats?.operational?.totalInvitations || 0 }}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>

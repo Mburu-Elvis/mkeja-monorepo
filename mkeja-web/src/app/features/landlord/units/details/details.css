@@ -1,0 +1,141 @@
+@import '../../../../shared/styles/platform-page.css';
+@import '../../../../shared/styles/landlord-page.css';
+
+:host { display: block; }
+
+.page-top { margin-bottom: 16px; }
+
+.back-link {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--sf-text-2);
+  text-decoration: none;
+}
+
+.compact { margin-bottom: 20px; }
+
+.listing-link {
+  display: inline-block;
+  margin-top: 12px;
+  color: #00A651;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.demo-banner {
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  background: var(--sf-warning-bg, #FFF3E0);
+  color: var(--sf-warning, #E65100);
+  font-size: 13px;
+  font-weight: 600;
+  border-left: 3px solid var(--sf-warning, #E65100);
+}
+
+.history-panel { padding: 0; overflow: hidden; }
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 20px 0;
+}
+
+.panel-header h2 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.panel-header span {
+  font-size: 12px;
+  color: var(--sf-text-3);
+}
+
+.timeline {
+  padding: 20px;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 16px;
+  padding-bottom: 24px;
+  position: relative;
+}
+
+.timeline-item:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 18px;
+  bottom: 0;
+  width: 2px;
+  background: var(--gray-200);
+}
+
+.timeline-marker {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 4px;
+  background: var(--gray-300);
+}
+
+.timeline-marker.active { background: var(--primary-color, #0F4C3A); }
+.timeline-marker.ended { background: var(--gray-400); }
+.timeline-marker.pending { background: var(--warning); }
+
+.timeline-body {
+  flex: 1;
+  min-width: 0;
+  padding: 14px 16px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  background: white;
+}
+
+.timeline-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+
+.timeline-meta {
+  font-size: 13px;
+  color: var(--sf-text-3);
+  margin: 0 0 12px;
+}
+
+.timeline-dates {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px 16px;
+  font-size: 13px;
+}
+
+.timeline-dates label {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--sf-text-4);
+  margin-bottom: 2px;
+}
+
+.status-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  text-transform: uppercase;
+}
+
+.status-badge.active { background: var(--primary-light, #E8F5E9); color: var(--primary-color, #0F4C3A); }
+.status-badge.ended { background: var(--gray-100); color: var(--gray-600); }
+.status-badge.pending { background: #FFF3E0; color: var(--warning); }
+
+@media (max-width: 640px) {
+  .timeline-dates { grid-template-columns: 1fr; }
+}

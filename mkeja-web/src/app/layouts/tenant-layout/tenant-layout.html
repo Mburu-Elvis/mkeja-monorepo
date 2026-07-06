@@ -1,0 +1,84 @@
+<div class="global-status-strip"></div>
+
+<app-header
+  [userName]="currentUser?.fullName || 'Tenant'"
+  [userEmail]="userEmail"
+  userRoleLabel="Tenant"
+  profileLink="/tenant/profile"
+  supportLink="/tenant/support"
+  (logout)="logout()"
+></app-header>
+
+<div class="platform-dashboard" [class.sidebar-collapsed]="sidebarCollapsed">
+  <aside class="desktop-sidebar">
+    <div class="sidebar-header">
+      <div class="logo-area" [class.collapsed]="sidebarCollapsed">
+        <img src="/logo-mkeja.png" alt="Mkeja" class="mkeja-logo">
+      </div>
+      <button class="collapse-btn" type="button" (click)="toggleSidebar()" aria-label="Toggle sidebar">
+        <mat-icon [svgIcon]="sidebarCollapsed ? 'chevronRight' : 'chevronLeft'"></mat-icon>
+      </button>
+    </div>
+
+    <!-- <nav class="sidebar-nav">
+      <a class="sidebar-item" routerLink="/tenant/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon svgIcon="pieChart"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Financial Hub</span>
+      </a>
+      <a class="sidebar-item" routerLink="/tenant/wallet" routerLinkActive="active">
+        <mat-icon svgIcon="wallet"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Wallet</span>
+      </a>
+      <a class="sidebar-item" routerLink="/tenant/payments" routerLinkActive="active">
+        <mat-icon svgIcon="creditCard"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Payments</span>
+      </a>
+      <a class="sidebar-item" routerLink="/tenant/loan" routerLinkActive="active">
+        <mat-icon svgIcon="zap"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Rent Fuliza</span>
+      </a>
+      <a class="sidebar-item" routerLink="/tenant/tenancies" routerLinkActive="active">
+        <mat-icon svgIcon="building"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Tenancies</span>
+      </a>
+      <a class="sidebar-item" routerLink="/tenant/onboarding/upload-documents" routerLinkActive="active">
+        <mat-icon svgIcon="shield"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">KYC Upload</span>
+      </a>
+      <a class="sidebar-item" routerLink="/tenant/profile" routerLinkActive="active">
+        <mat-icon svgIcon="user"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Profile</span>
+      </a>
+      <a class="sidebar-item" routerLink="/tenant/support" routerLinkActive="active">
+        <mat-icon svgIcon="help"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Support</span>
+      </a>
+    </nav> -->
+
+    <div class="sidebar-footer" *ngIf="!sidebarCollapsed">
+      <div class="user-mini">
+        <div class="avatar-mini">{{ userInitials }}</div>
+        <div class="user-info">
+          <span class="user-name">{{ currentUser?.fullName || 'Tenant' }}</span>
+          <span class="user-unit">Mkeja Tenant</span>
+        </div>
+      </div>
+      <button class="logout-btn" type="button" (click)="logout()">
+        <mat-icon svgIcon="logout"></mat-icon>
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <main class="dashboard-main">
+    <div class="mobile-status">
+      <span class="status-time">{{ currentTime }}</span>
+      <div class="status-icons">
+        <mat-icon svgIcon="signal"></mat-icon>
+        <mat-icon svgIcon="wifi"></mat-icon>
+        <mat-icon svgIcon="battery"></mat-icon>
+      </div>
+    </div>
+    <router-outlet></router-outlet>
+  </main>
+</div>

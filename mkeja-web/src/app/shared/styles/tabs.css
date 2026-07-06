@@ -1,0 +1,256 @@
+/* ============================================================
+   Mkeja horizontal tab switcher — loaded last in angular.json
+   Beats Tailwind preflight, global * reset, and component styles.
+   ============================================================ */
+
+/* --- Pill tab container (admin, landlord, property details) --- */
+div.tab-navigation:not(.underline),
+.tab-navigation:not(.underline) {
+  display: flex;
+  gap: 4px;
+  width: 100%;
+  background-color: var(--sf-surface, #fff);
+  border-radius: var(--radius-xl, 16px);
+  padding: 6px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+  border: 1px solid var(--gray-200, #e5e7eb);
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.tab-navigation:not(.underline) > button.tab-btn,
+.tab-navigation:not(.underline) > .tab-btn,
+.tab-navigation:not(.underline) button.tab-btn,
+.tab-navigation:not(.underline) .tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  margin: 0;
+  background-color: transparent;
+  background-image: none;
+  border: none;
+  border-radius: var(--radius-lg, 12px);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.25;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  color: var(--gray-600, #4b5563);
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.tab-navigation:not(.underline) > button.tab-btn:hover,
+.tab-navigation:not(.underline) > .tab-btn:hover,
+.tab-navigation:not(.underline) button.tab-btn:hover,
+.tab-navigation:not(.underline) .tab-btn:hover {
+  background-color: var(--gray-100, #f3f4f6);
+  color: var(--gray-800, #1f2937);
+}
+
+.tab-navigation:not(.underline) > button.tab-btn.active,
+.tab-navigation:not(.underline) > .tab-btn.active,
+.tab-navigation:not(.underline) button.tab-btn.active,
+.tab-navigation:not(.underline) .tab-btn.active {
+  background-color: var(--primary-light, #e8f5e9);
+  color: var(--primary-color, #0f4c3a);
+  font-weight: 600;
+}
+
+/* --- Underline tab container (tenant dashboard, support) --- */
+div.tab-navigation.underline,
+.tab-navigation.underline {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid var(--sf-border, #e5e7eb);
+  overflow-x: auto;
+  padding-bottom: 0;
+  scrollbar-width: thin;
+  background-color: transparent;
+}
+
+.tab-navigation.underline > button.tab-btn,
+.tab-navigation.underline > .tab-btn,
+.tab-navigation.underline button.tab-btn,
+.tab-navigation.underline .tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  margin: 0;
+  border-radius: 0;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--sf-text-3, #6b7280);
+  background-color: transparent;
+  background-image: none;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.25;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: none;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.tab-navigation.underline > button.tab-btn:hover,
+.tab-navigation.underline > .tab-btn:hover,
+.tab-navigation.underline button.tab-btn:hover,
+.tab-navigation.underline .tab-btn:hover {
+  background-color: transparent;
+  color: var(--primary-color, #0f4c3a);
+}
+
+.tab-navigation.underline > button.tab-btn.active,
+.tab-navigation.underline > .tab-btn.active,
+.tab-navigation.underline button.tab-btn.active,
+.tab-navigation.underline .tab-btn.active {
+  background-color: transparent;
+  color: var(--primary-color, #0f4c3a);
+  border-bottom-color: var(--primary-color, #0f4c3a);
+  font-weight: 600;
+}
+
+/* --- Segmented tab bar (reports hub, legacy) --- */
+div.tab-bar,
+.tab-bar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  margin-bottom: 24px;
+  padding-bottom: 4px;
+}
+
+.tab-bar > button.tab-btn,
+.tab-bar > .tab-btn,
+.tab-bar button.tab-btn,
+.tab-bar .tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  margin: 0;
+  background-color: transparent;
+  background-image: none;
+  border: none;
+  border-radius: var(--radius-lg, 12px);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.25;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  color: var(--gray-600, #4b5563);
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.tab-bar > button.tab-btn:hover,
+.tab-bar > .tab-btn:hover,
+.tab-bar button.tab-btn:hover,
+.tab-bar .tab-btn:hover {
+  background-color: var(--gray-100, #f3f4f6);
+  color: var(--gray-800, #1f2937);
+}
+
+.tab-bar > button.tab-btn.active,
+.tab-bar > .tab-btn.active,
+.tab-bar button.tab-btn.active,
+.tab-bar .tab-btn.active {
+  background-color: var(--primary-light, #e8f5e9);
+  color: var(--primary-color, #0f4c3a);
+  font-weight: 600;
+}
+
+/* Tab adornments */
+.tab-navigation button.tab-btn mat-icon,
+.tab-navigation .tab-btn mat-icon,
+.tab-bar button.tab-btn mat-icon,
+.tab-bar .tab-btn mat-icon {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+}
+
+.tab-navigation button.tab-btn.active .tab-count,
+.tab-navigation .tab-btn.active .tab-count,
+.tab-bar button.tab-btn.active .tab-count,
+.tab-bar .tab-btn.active .tab-count {
+  background: var(--primary-color, #0f4c3a);
+  color: #fff;
+}
+
+.tab-badge {
+  background: var(--primary-light, #e8f5e9);
+  color: var(--primary-color, #0f4c3a);
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill, 999px);
+  margin-left: 6px;
+  font-weight: 600;
+}
+
+.tab-badge.warning {
+  background: var(--sf-warning-bg, #fff3e0);
+  color: var(--sf-warning, #e65100);
+}
+
+.tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  background: var(--gray-200, #e5e7eb);
+  border-radius: var(--radius-pill, 999px);
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray-600, #4b5563);
+}
+
+.tab-count.warning {
+  background: var(--danger-light, #ffebee);
+  color: var(--danger, #c62828);
+}
+
+@media (max-width: 640px) {
+  div.tab-navigation:not(.underline),
+  .tab-navigation:not(.underline) {
+    margin-bottom: 20px;
+  }
+
+  .tab-navigation:not(.underline) button.tab-btn,
+  .tab-navigation:not(.underline) .tab-btn {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+
+  .tab-navigation.underline .tab-btn span {
+    display: none;
+  }
+
+  .tab-navigation.underline .tab-btn mat-icon {
+    margin: 0;
+  }
+
+  .tab-navigation.underline button.tab-btn,
+  .tab-navigation.underline .tab-btn {
+    padding: 12px;
+  }
+}

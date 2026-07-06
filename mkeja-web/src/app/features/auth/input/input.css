@@ -1,0 +1,25 @@
+.input-field {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--sf-border);
+  border-radius: var(--btn-radius, 12px);
+  font-size: 15px;
+  color: var(--sf-text-1);
+  background: var(--sf-surface);
+  outline: none;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-weight: 500;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-field:focus,
+.input-focused {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(15, 76, 58, 0.12);
+}
+
+.input-field:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

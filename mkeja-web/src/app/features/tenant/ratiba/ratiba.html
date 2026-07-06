@@ -1,0 +1,224 @@
+<!-- components/ratiba/ratiba.component.html -->
+<div class="ratiba-container">
+    <!-- Current Active Ratiba -->
+    <div class="card active-ratiba-card" *ngIf="ratibaData?.active">
+        <div class="card-header">
+            <span>Active Standing Order</span>
+            <span class="status-badge success">ACTIVE</span>
+        </div>
+        <div class="ratiba-summary">
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <span class="label">Plan</span>
+                    <strong class="value">{{ ratibaData.active.planName }}</strong>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Amount</span>
+                    <strong class="value">{{ formatCurrency(ratibaData.active.amount) }}</strong>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Frequency</span>
+                    <strong class="value">
+                        {{ ratibaData.active.planName === 'Daily' ? 'Every day at 6:00 AM' : 'Every Monday at 7:00 AM' }}
+                    </strong>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Started</span>
+                    <strong class="value">{{ formatDate(ratibaData.active.startDate) }}</strong>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Expires</span>
+                    <strong class="value">{{ formatDate(ratibaData.active.endDate) }}</strong>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Remaining</span>
+                    <strong class="value">{{ ratibaData.active.remainingDeductions }} deductions</strong>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Total Deducted</span>
+                    <strong class="value">{{ formatCurrency(ratibaData.active.totalDeducted) }}</strong>
+                </div>
+            </div>
+        </div>
+        <div class="ratiba-actions">
+            <button class="btn-secondary" (click)="openSetupForm()">Modify Schedule</button>
+            <button class="btn-warning" (click)="pauseRatiba()">Pause</button>
+            <button class="btn-danger" (click)="cancelRatiba()" [disabled]="isCancelling">
+                {{ isCancelling ? 'Cancelling...' : 'Cancel Standing Order' }}
+            </button>
+        </div>
+    </div>
+
+    <!-- No Active Ratiba - Setup Prompt -->
+    <div class="card setup-prompt-card" *ngIf="!ratibaData?.active">
+        <div class="prompt-icon">
+            <mat-icon svgIcon="calendar"></mat-icon>
+        </div>
+        <h3>Set Up Automatic Rent Deductions</h3>
+        <p>Never miss a rent payment again. Set up daily or weekly auto-deductions from your M-Pesa account.</p>
+        <div class="prompt-benefits">
+            <div class="benefit-item">
+                <mat-icon svgIcon="check"></mat-icon>
+                <span>Build credit history automatically</span>
+            </div>
+            <div class="benefit-item">
+                <mat-icon svgIcon="check"></mat-icon>
+                <span>Avoid late payment penalties</span>
+            </div>
+            <div class="benefit-item">
+                <mat-icon svgIcon="check"></mat-icon>
+                <span>Smaller, manageable payments</span>
+            </div>
+            <div class="benefit-item">
+                <mat-icon svgIcon="check"></mat-icon>
+                <span>Cancel anytime with no fees</span>
+            </div>
+        </div>
+        <button class="btn-primary btn-large" (click)="openSetupForm()">Get Started</button>
+    </div>
+
+    <!-- Deduction History -->
+    <div class="card history-card" *ngIf="ratibaData?.recentDeductions?.length > 0">
+        <div class="card-header">
+            <span>Deduction History</span>
+            <button class="refresh-small" (click)="dataChanged.emit()" matTooltip="Refresh">
+                <mat-icon svgIcon="refresh"></mat-icon>
+            </button>
+        </div>
+        <div class="history-list">
+            <div class="history-item" *ngFor="let deduction of ratibaData.recentDeductions" [class.failed]="deduction.status === 'FAILED'">
+                <div class="history-date">
+                    <span class="day">{{ deduction.date | date:'dd' }}</span>
+                    <span class="month">{{ deduction.date | date:'MMM' }}</span>
+                </div>
+                <div class="history-details">
+                    <div class="history-amount">
+                        <span *ngIf="deduction.status === 'SUCCESS'">+</span>
+                        <span *ngIf="deduction.status === 'FAILED'" class="material-icons status-warning-icon">warning</span>
+                        {{ formatCurrency(deduction.amount) }}
+                    </div>
+                    <div class="history-status">
+                        <span class="status-badge" [class.status-success]="deduction.status === 'SUCCESS'" [class.status-danger]="deduction.status === 'FAILED'">
+                            {{ deduction.status }}
+                        </span>
+                        <span class="ref">{{ deduction.reference }}</span>
+                    </div>
+                    <div class="history-desc">{{ deduction.description }}</div>
+                </div>
+                <div class="history-action" *ngIf="deduction.status === 'FAILED'">
+                    <button class="retry-btn" (click)="retryFailedDeduction(deduction)" [disabled]="isRetrying">
+                        <mat-icon svgIcon="refresh"></mat-icon>
+                        Retry
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Information Box -->
+    <div class="info-box">
+        <mat-icon svgIcon="help"></mat-icon>
+        <div class="info-content">
+            <strong>How M-Pesa Ratiba Works</strong>
+            <ul>
+                <li>You authorize once via STK Push - this is a ONE-TIME authorization</li>
+                <li>Deductions happen automatically at the scheduled time</li>
+                <li>If you have insufficient M-Pesa balance, the deduction will fail</li>
+                <li>Failed deductions will trigger an alert and can be retried</li>
+                <li>Auto-Fuliza can cover shortfalls if enabled</li>
+                <li>Cancel anytime with no penalty through this dashboard</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Setup Form Modal -->
+<div class="modal-overlay" *ngIf="showSetupForm" (click)="closeSetupForm()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div *ngIf="awaitingStkAuth" class="stk-waiting">
+            <div class="stk-icon">
+                <mat-icon svgIcon="phone"></mat-icon>
+            </div>
+            <h3>Check Your Phone</h3>
+            <p>We've sent an M-Pesa STK Push to</p>
+            <p class="phone-number"><strong>{{ maskPhoneNumber(tenantData?.phone) }}</strong></p>
+            <div class="countdown">
+                <div class="countdown-circle">{{ stkCountdown }}s</div>
+            </div>
+            <p class="instruction">Enter your M-Pesa PIN to authorize automatic deductions</p>
+            <p class="timeout-note">This is a ONE-TIME authorization. You won't be prompted daily.</p>
+            <button class="btn-secondary" (click)="closeSetupForm()">Cancel Setup</button>
+        </div>
+
+        <div *ngIf="!awaitingStkAuth">
+            <div class="modal-header">
+                <h2>Set Up Auto-Deductions</h2>
+                <button class="close-modal" (click)="closeSetupForm()">
+                    <mat-icon svgIcon="x-circle"></mat-icon>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="subtitle">Choose how you want to pay your <strong>{{ formatCurrency(financialData?.monthlyRent) }}</strong> monthly rent</p>
+
+                <div class="plan-options">
+                    <div class="plan-card" *ngFor="let plan of availablePlans" 
+                         [class.selected]="selectedPlan?.id === plan.id"
+                         (click)="selectPlan(plan)">
+                        <div class="plan-icon">
+                            <mat-icon [svgIcon]="plan.icon"></mat-icon>
+                        </div>
+                        <div class="plan-info">
+                            <div class="plan-header">
+                                <h4>{{ plan.name }}</h4>
+                                <span class="plan-amount">{{ formatCurrency(plan.amount) }}</span>
+                            </div>
+                            <p class="plan-frequency">{{ plan.frequencyLabel }}</p>
+                            <p class="plan-description">{{ plan.description }}</p>
+                            <div class="plan-features">
+                                <div class="feature" *ngFor="let feature of plan.features">
+                                    <mat-icon svgIcon="check"></mat-icon>
+                                    <span>{{ feature }}</span>
+                                </div>
+                            </div>
+                            <span class="recommended-badge" *ngIf="plan.recommended">Recommended</span>
+                        </div>
+                        <div class="plan-radio">
+                            <div class="radio-circle" [class.selected]="selectedPlan?.id === plan.id"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="terms-section" [formGroup]="setupForm">
+                    <label class="checkbox-label">
+                        <input type="checkbox" formControlName="agreeTerms">
+                        <span>I agree to the <a href="#" (click)="$event.preventDefault()">Terms and Conditions</a> of Mkeja services</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" formControlName="agreeAutoDebit">
+                        <span>I authorize Mkeja to deduct the above amount from my M-Pesa account according to the selected schedule</span>
+                    </label>
+                </div>
+
+                <div class="info-box">
+                    <mat-icon svgIcon="help"></mat-icon>
+                    <div>
+                        <strong>How it works:</strong>
+                        <ul>
+                            <li>You'll receive an M-Pesa STK Push to authorize</li>
+                            <li>Enter your PIN once - this is a ONE-TIME authorization</li>
+                            <li>Deductions happen automatically as scheduled</li>
+                            <li>Cancel anytime with no penalty</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-secondary" (click)="closeSetupForm()">Cancel</button>
+                <button class="btn-primary" (click)="submitSetup()" [disabled]="setupForm.invalid || isSettingUp">
+                    {{ isSettingUp ? 'Processing...' : 'Authorize & Activate' }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

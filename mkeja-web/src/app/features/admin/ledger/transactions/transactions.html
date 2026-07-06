@@ -1,0 +1,73 @@
+<div class="admin-page ledger-transactions">
+  <div class="page-header">
+    <div>
+      <p class="greeting-label">Finance</p>
+      <h1 class="page-title">Ledger Transactions</h1>
+      <p class="page-subtitle">Search and filter platform wallet movements</p>
+    </div>
+  </div>
+
+  <div class="filters card">
+    <div class="search-box">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="#9E9E9E" stroke-width="2"/>
+      </svg>
+      <input 
+        type="text" 
+        [(ngModel)]="searchTerm" 
+        (ngModelChange)="applyFilters()"
+        placeholder="Search by tenant, wallet or reference">
+    </div>
+    
+    <div class="filter-row">
+      <select [(ngModel)]="filterType" (change)="applyFilters()">
+        <option value="all">All Types</option>
+        <option value="CONTRIBUTION">Contributions</option>
+        <option value="LOAN_DRAW">Loan Draws</option>
+        <option value="LOAN_FEE">Loan Fees</option>
+        <option value="RENT_SWEEP">Rent Sweeps</option>
+      </select>
+      
+      <input type="date" [(ngModel)]="startDate" (change)="applyFilters()" placeholder="From">
+      <input type="date" [(ngModel)]="endDate" (change)="applyFilters()" placeholder="To">
+      <button class="clear-btn" (click)="clearFilters()">Clear</button>
+    </div>
+  </div>
+  
+  @if (loading) {
+    <app-loading-spinner [fullScreen]="true" message="Loading transactions..."></app-loading-spinner>
+  } @else {
+    <div class="transactions-table">
+      <div class="table-header">
+        <span>Date & Time</span>
+        <span>Type</span>
+        <span>Tenant</span>
+        <span>Amount</span>
+        <span>Reference</span>
+        <span>Status</span>
+      </div>
+      @for (tx of filteredTransactions; track tx.id) {
+        <div class="table-row">
+          <span class="date">{{ tx.timestamp | date:'MMM d, h:mm a' }}</span>
+          <span class="type">{{ getTypeLabel(tx.type) }}</span>
+          <span>{{ tx.tenantName }}</span>
+          <span class="amount" [class.credit]="tx.direction === 'CREDIT'">
+            {{ tx.direction === 'CREDIT' ? '+' : '-' }} KES {{ tx.amount | number }}
+          </span>
+          <span class="ref">{{ tx.reference }}</span>
+          <span class="status-badge" [class]="getStatusClass(tx.status)">
+            {{ tx.status }}
+          </span>
+        </div>
+      }
+      
+      @if (filteredTransactions.length === 0) {
+        <div class="empty-state app-empty-state">
+          <div class="app-empty-icon"><span class="material-icons">receipt_long</span></div>
+          <h3 class="app-empty-title">No transactions found</h3>
+          <p class="app-empty-text">Adjust your filters to find ledger entries.</p>
+        </div>
+      }
+    </div>
+  }
+</div>

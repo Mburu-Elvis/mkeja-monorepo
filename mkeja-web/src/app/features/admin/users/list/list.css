@@ -1,0 +1,162 @@
+@import '../../../../shared/styles/admin-page.css';
+
+:host {
+  display: block;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  gap: 16px;
+  color: var(--gray-500);
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--primary-light);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.users-table {
+  overflow: hidden;
+  padding-bottom: 8px;
+}
+
+.table-header,
+.table-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1.2fr 0.8fr 0.8fr 1.2fr 0.6fr;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 20px;
+}
+
+.table-row {
+  border-top: 1px solid var(--gray-200);
+  cursor: pointer;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.user-name {
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+.user-meta,
+.user-email {
+  font-size: 12px;
+  color: var(--gray-500);
+}
+
+.summary-cell {
+  font-size: 12px;
+  color: var(--gray-500);
+}
+
+.role-badge,
+.status-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  text-transform: capitalize;
+}
+
+.role-badge.tenant {
+  background: var(--info-light);
+  color: var(--info);
+}
+
+.role-badge.admin {
+  background: #F3E5F5;
+  color: #6A1B9A;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--gray-500);
+}
+
+.empty-state .btn-secondary {
+  margin-top: 16px;
+}
+
+@media (max-width: 900px) {
+  .table-header {
+    display: none;
+  }
+
+  .table-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
+.create-admin-panel {
+  margin-bottom: 20px;
+  padding: 20px;
+}
+
+.create-admin-panel h3 {
+  margin: 0 0 8px;
+}
+
+.panel-subtitle {
+  margin: 0 0 16px;
+  color: var(--gray-500);
+}
+
+.create-admin-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.create-admin-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.9rem;
+}
+
+.create-admin-form input {
+  padding: 10px 12px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+}
+
+.panel-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}

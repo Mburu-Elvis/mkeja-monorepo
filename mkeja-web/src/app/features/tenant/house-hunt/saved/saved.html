@@ -1,0 +1,43 @@
+<div class="house-hunt-shell platform-page">
+  <a routerLink="/tenant/house-hunt" class="back-link">Browse listings</a>
+
+  <div class="hero-section">
+    <div class="hero-text">
+      <p class="greeting-label">Your shortlist</p>
+      <h1 class="page-title">Saved units</h1>
+      <p class="hero-subtitle">Units you bookmarked while exploring properties.</p>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading-state"><div class="spinner"></div><p>Loading saved listings...</p></div>
+  } @else if (error) {
+    <div class="error-card">{{ error }}</div>
+  } @else if (listings.length === 0) {
+    <div class="empty-card app-empty-state">
+      <div class="app-empty-icon"><span class="material-icons">bookmark_border</span></div>
+      <h3 class="app-empty-title">No saved units</h3>
+      <p class="app-empty-text">Units you bookmark while browsing will appear here.</p>
+      <a class="btn-primary" routerLink="/tenant/house-hunt">Browse listings</a>
+    </div>
+  } @else {
+    <div class="listing-grid">
+      @for (item of listings; track item.unitId) {
+        <a class="listing-card" [routerLink]="['/tenant/house-hunt/property', item.propertyId]">
+          <div class="listing-media">
+            @if (item.coverImageUrl) {
+              <img [src]="item.coverImageUrl" [alt]="item.propertyName" />
+            } @else {
+              <div class="media-placeholder">Property photos coming soon</div>
+            }
+          </div>
+          <div class="listing-body">
+            <strong>{{ item.propertyName }}</strong>
+            <p class="unit-line">Saved: Unit {{ item.unitNumber }}</p>
+            <p class="rent-line">KES {{ item.rent | number }}/mo</p>
+          </div>
+        </a>
+      }
+    </div>
+  }
+</div>

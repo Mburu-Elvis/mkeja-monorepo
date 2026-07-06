@@ -1,0 +1,11 @@
+<div class="stepper-container">
+  <div *ngFor="let step of steps; let i = index" class="step-wrapper" [class.step-wrapper-last]="i === steps.length - 1">
+    <div class="step-container">
+      <div class="step-circle" [class.step-circle-done]="current > step" [class.step-circle-active]="current === step">
+        {{ current > step ? '✓' : step }}
+      </div>
+      <span class="step-label" [class.step-label-active]="current === step">{{ labels[i] }}</span>
+    </div>
+    <div *ngIf="i < total - 1" class="step-line" [class.step-line-done]="current > step"></div>
+  </div>
+</div>

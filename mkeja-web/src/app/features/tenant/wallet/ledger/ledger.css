@@ -1,0 +1,176 @@
+/* Suggested global CSS variables (define elsewhere):
+:root {
+  --mpesa-primary: #yourColor;
+  --mpesa-primary-dark: #yourColorDark;
+  --mpesa-gray: #yourGray;
+  --mpesa-gray-dark: #yourGrayDark;
+  --mpesa-gray-light: #yourGrayLight;
+  --mpesa-black: #000;
+  --mpesa-error: #yourErrorColor;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+}
+*/
+
+.ledger-screen {
+  background-color: var(--mpesa-gray-light);
+  min-height: 100vh;
+  padding-bottom: 32px;
+}
+
+.filters {
+  background: white;
+  padding: 16px;
+  margin: 16px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.filters .filter-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.filters .filter-tabs .filter-tab {
+  flex: 1;
+  padding: 10px;
+  background: #F5F5F5;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--mpesa-gray-dark);
+  cursor: pointer;
+}
+
+.filters .filter-tabs .filter-tab.active {
+  background: var(--mpesa-primary);
+  color: white;
+}
+
+.filters .filter-dates {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filters .filter-dates input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.filters .filter-dates span {
+  color: var(--mpesa-gray);
+}
+
+.filters .filter-dates .clear-btn {
+  padding: 10px 16px;
+  background: none;
+  border: 1px solid var(--mpesa-error);
+  border-radius: 8px;
+  color: var(--mpesa-error);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.ledger-list {
+  padding: 0 16px;
+}
+
+.ledger-list .ledger-entry {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.ledger-list .ledger-entry .entry-icon {
+  font-size: 32px;
+}
+
+.ledger-list .ledger-entry .entry-details {
+  flex: 1;
+}
+
+.ledger-list .ledger-entry .entry-details .entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.ledger-list .ledger-entry .entry-details .entry-header .entry-type {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--mpesa-black);
+}
+
+.ledger-list .ledger-entry .entry-details .entry-header .entry-amount {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.ledger-list .ledger-entry .entry-details .entry-header .entry-amount.credit {
+  color: var(--mpesa-primary);
+}
+
+.ledger-list .ledger-entry .entry-details .entry-header .entry-amount:not(.credit) {
+  color: var(--mpesa-error);
+}
+
+.ledger-list .ledger-entry .entry-details .entry-description {
+  font-size: 12px;
+  color: var(--mpesa-gray);
+  margin-bottom: 8px;
+}
+
+.ledger-list .ledger-entry .entry-details .entry-footer {
+  display: flex;
+  gap: 12px;
+  font-size: 10px;
+  color: var(--mpesa-gray);
+}
+
+.ledger-list .ledger-entry .entry-details .entry-footer .entry-balance {
+  color: var(--mpesa-primary);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 64px 16px;
+  background: white;
+  border-radius: 16px;
+}
+
+.empty-state svg {
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state p {
+  color: var(--mpesa-gray);
+  font-size: 14px;
+}
+
+.load-more {
+  width: 100%;
+  padding: 14px;
+  background: white;
+  border: 1px solid #E0E0E0;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--mpesa-primary);
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.load-more:active {
+  transform: scale(0.98);
+}

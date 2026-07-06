@@ -1,0 +1,85 @@
+<div class="property-media-panel">
+  @if (error) { <p class="error">{{ error }}</p> }
+  @if (success) { <p class="success">{{ success }}</p> }
+
+  <div class="media-section">
+    <div class="section-head">
+      <div>
+        <h3>Property overview photos</h3>
+        <p>Exterior, lobby, parking, and shared spaces tenants browse first.</p>
+      </div>
+      <label class="btn-primary upload-label">
+        {{ uploadingOverview ? 'Uploading...' : '+ Add overview photo' }}
+        <input type="file" accept="image/*" hidden (change)="onOverviewSelected($event)" />
+      </label>
+    </div>
+    @if (overviewImages.length === 0) {
+      <div class="empty app-empty-state">
+        <div class="app-empty-icon"><span class="material-icons">photo_library</span></div>
+        <h3 class="app-empty-title">No overview photos yet</h3>
+        <p class="app-empty-text">Upload exterior, lobby, parking, and shared space photos tenants browse first.</p>
+      </div>
+    } @else {
+      <div class="photo-grid">
+        @for (photo of overviewImages; track photo.id) {
+          <img [src]="photo.url" [alt]="photo.caption || 'Overview photo'" />
+        }
+      </div>
+    }
+  </div>
+
+  <div class="media-section">
+    <div class="section-head">
+      <div>
+        <h3>Unit type photos</h3>
+        <p>Select a configuration, then upload sample photos for that type (e.g. all studios share these images).</p>
+      </div>
+    </div>
+
+    @if (loading) {
+      <div class="empty app-empty-state">
+        <div class="app-empty-icon"><span class="material-icons">hourglass_empty</span></div>
+        <p class="app-empty-text">Loading unit types...</p>
+      </div>
+    } @else if (unitTypes.length === 0) {
+      <div class="empty app-empty-state">
+        <div class="app-empty-icon"><span class="material-icons">meeting_room</span></div>
+        <h3 class="app-empty-title">No unit types found</h3>
+        <p class="app-empty-text">Add units with a type (e.g. Studio, 1 Bedroom) under the Units tab first.</p>
+      </div>
+    } @else {
+      <div class="type-tabs">
+        @for (type of unitTypes; track type) {
+          <button type="button"
+                  class="type-tab"
+                  [class.active]="selectedUnitType === type"
+                  (click)="selectUnitType(type)">
+            {{ labelFor(type) }}
+            <span class="count">{{ typeImagesFor(type).length }}</span>
+          </button>
+        }
+      </div>
+
+      @if (selectedUnitType) {
+        <div class="type-media-card">
+          <div class="type-head">
+            <strong>{{ labelFor(selectedUnitType) }} photos</strong>
+            <label class="upload-label btn-primary">
+              {{ uploadingType ? 'Uploading...' : '+ Add photo for ' + labelFor(selectedUnitType) }}
+              <input type="file" accept="image/*" hidden (change)="onTypeSampleSelected($event)" />
+            </label>
+          </div>
+          @if (typeImagesFor(selectedUnitType).length) {
+            <div class="photo-grid compact">
+              @for (photo of typeImagesFor(selectedUnitType); track photo.id) {
+                <img [src]="photo.url" [alt]="labelFor(selectedUnitType)" />
+              }
+            </div>
+          } @else {
+            <p class="hint">No photos uploaded for {{ labelFor(selectedUnitType) }} yet.</p>
+          }
+        </div>
+      }
+    }
+  </div>
+</div>

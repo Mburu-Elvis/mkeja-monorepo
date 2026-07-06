@@ -1,0 +1,127 @@
+.property-media-panel {
+  display: grid;
+  gap: 20px;
+}
+
+.media-section {
+  border: 1px solid #ECECEC;
+  border-radius: 16px;
+  padding: 18px;
+  background: #fff;
+}
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.section-head h3 {
+  margin: 0 0 4px;
+}
+
+.section-head p,
+.hint {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.photo-grid.compact {
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+}
+
+.photo-grid img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.empty {
+  padding: 24px;
+  text-align: center;
+  color: #777;
+  background: #FAFAFA;
+  border-radius: 12px;
+  border: 1px dashed #DDD;
+}
+
+.type-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.type-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid #E5E7EB;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.type-tab.active {
+  background: #F1FAF3;
+  border-color: #1B5E20;
+  color: #1B5E20;
+  font-weight: 600;
+}
+
+.type-tab .count {
+  background: #E8F5E9;
+  color: #1B5E20;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 11px;
+}
+
+.type-media-list {
+  display: grid;
+  gap: 12px;
+}
+
+.type-media-card {
+  border: 1px solid #F0F0F0;
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.type-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.upload-label {
+  cursor: pointer;
+}
+
+.btn-primary.upload-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 14px;
+  border-radius: 8px;
+  background: var(--primary-color, #00A651);
+  color: #fff;
+  font-size: 13px;
+}
+
+.error { color: #B71C1C; }
+.success { color: #1B5E20; }

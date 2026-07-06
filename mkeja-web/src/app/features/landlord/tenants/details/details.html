@@ -1,0 +1,73 @@
+<div class="platform-page landlord-page tenant-details-page">
+  <div class="page-top">
+    <a class="back-link" routerLink="/landlord/tenants">← Back to tenants</a>
+  </div>
+
+  @if (loading) {
+    <app-loading-spinner [fullScreen]="true" message="Loading tenant details..."></app-loading-spinner>
+  } @else if (error || !tenant) {
+    <div class="empty-state card">{{ error || 'Tenant not found' }}</div>
+  } @else {
+    <div class="hero-section compact">
+      <div class="hero-flex">
+        <div class="hero-text">
+          <p class="greeting-label">Tenant</p>
+          <h1 class="page-title">{{ tenant.tenantName }}</h1>
+          <p class="hero-subtitle">+{{ tenant.tenantPhone }}</p>
+        </div>
+        <span class="status-badge" [class]="getStatusBadgeClass(tenant.tenancyStatus)">{{ tenant.tenancyStatus }}</span>
+      </div>
+    </div>
+
+    <div class="details-grid">
+      <div class="card detail-section">
+        <h3>Current tenancy</h3>
+        <div class="info-row">
+          <span class="label">Property</span>
+          <span class="value">{{ tenant.propertyName }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Unit</span>
+          <span class="value">
+            <a [routerLink]="['/landlord/units', tenant.unitId]">Unit {{ tenant.unitNumber }}</a>
+          </span>
+        </div>
+        @if (locationLabel()) {
+          <div class="info-row">
+            <span class="label">Location</span>
+            <span class="value">{{ locationLabel() }}</span>
+          </div>
+        }
+        <div class="info-row">
+          <span class="label">Monthly rent</span>
+          <span class="value">KES {{ tenant.monthlyRent | number }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Rent due day</span>
+          <span class="value">{{ tenant.rentDueDay || '—' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Lease start</span>
+          <span class="value">{{ tenant.leaseStartDate | date:'MMM d, yyyy' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Lease end</span>
+          <span class="value">{{ tenant.leaseEndDate ? (tenant.leaseEndDate | date:'MMM d, yyyy') : 'Open-ended' }}</span>
+        </div>
+      </div>
+
+      <div class="card detail-section">
+        <h3>Compliance</h3>
+        <div class="info-row">
+          <span class="label">KYC status</span>
+          <span class="value kyc-badge" [class]="getKycBadgeClass(tenant.kycStatus)">{{ tenant.kycStatus }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Linked via</span>
+          <span class="value">{{ tenant.source }}</span>
+        </div>
+        <a class="btn-secondary" [routerLink]="['/landlord/units', tenant.unitId]">View unit tenancy history</a>
+      </div>
+    </div>
+  }
+</div>

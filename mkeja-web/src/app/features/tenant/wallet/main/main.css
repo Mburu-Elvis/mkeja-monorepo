@@ -1,0 +1,80 @@
+.wallet-screen {
+  background-color: var(--mpesa-gray-light);
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+.wallet-details {
+  padding: 0 16px;
+}
+
+.wallet-details .detail-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.wallet-details .detail-card.warning {
+  border-left: 4px solid var(--mpesa-warning);
+}
+
+.wallet-details .detail-card .detail-icon {
+  width: 48px;
+  height: 48px;
+  background: #E8F5E9;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wallet-details .detail-card .detail-info {
+  flex: 1;
+}
+
+.wallet-details .detail-card .detail-info .label {
+  font-size: 12px;
+  color: var(--mpesa-gray);
+  display: block;
+}
+
+.wallet-details .detail-card .detail-info .value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--mpesa-black);
+  display: block;
+}
+
+.wallet-details .detail-card .detail-info .sub {
+  font-size: 11px;
+  color: var(--mpesa-gray);
+}
+
+.quick-links {
+  padding: 16px;
+}
+
+.quick-links .link-btn {
+  width: 100%;
+  background: white;
+  border: none;
+  padding: 14px 16px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--mpesa-primary);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+
+.quick-links .link-btn:active {
+  transform: scale(0.98);
+}

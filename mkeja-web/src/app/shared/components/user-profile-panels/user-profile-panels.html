@@ -1,0 +1,142 @@
+@if (profile) {
+  <div class="card details-section">
+    <div class="section-title">Identity & KYC</div>
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="label">KYC Status</span>
+        <span class="value">{{ profile.kycStatus || '—' }}</span>
+      </div>
+      @if (profile.kycVerifiedAt) {
+        <div class="info-item">
+          <span class="label">KYC Verified</span>
+          <span class="value">{{ profile.kycVerifiedAt | date:'MMM d, yyyy h:mm a' }}</span>
+        </div>
+      }
+      @if (profile.idType) {
+        <div class="info-item">
+          <span class="label">ID Type</span>
+          <span class="value">{{ profile.idType }}</span>
+        </div>
+      }
+      @if (profile.idNumber) {
+        <div class="info-item">
+          <span class="label">ID Number</span>
+          <span class="value">{{ profile.idNumber }}</span>
+        </div>
+      }
+      @if (profile.idVerified != null) {
+        <div class="info-item">
+          <span class="label">ID Verified</span>
+          <span class="value">{{ profile.idVerified ? 'Yes' : 'No' }}</span>
+        </div>
+      }
+      @if (profile.gender) {
+        <div class="info-item">
+          <span class="label">Gender</span>
+          <span class="value">{{ profile.gender }}</span>
+        </div>
+      }
+      @if (isLandlordOrAgent) {
+        <div class="info-item">
+          <span class="label">Entity Type</span>
+          <span class="value">{{ profile.entityType || profile.agentType || '—' }}</span>
+        </div>
+        @if (profile.ownerSubtype) {
+          <div class="info-item">
+            <span class="label">Owner Subtype</span>
+            <span class="value">{{ profile.ownerSubtype }}</span>
+          </div>
+        }
+        <div class="info-item">
+          <span class="label">KRA PIN</span>
+          <span class="value">{{ profile.kraPin || '—' }}</span>
+        </div>
+        @if (profile.companyName) {
+          <div class="info-item">
+            <span class="label">Company</span>
+            <span class="value">{{ profile.companyName }}</span>
+          </div>
+        }
+        @if (profile.companyRegistrationNumber) {
+          <div class="info-item">
+            <span class="label">Company Registration</span>
+            <span class="value">{{ profile.companyRegistrationNumber }}</span>
+          </div>
+        }
+        @if (profile.registrationNumber) {
+          <div class="info-item">
+            <span class="label">Registration Number</span>
+            <span class="value">{{ profile.registrationNumber }}</span>
+          </div>
+        }
+        @if (profile.role === 'AGENT' && profile.licenseNumber) {
+          <div class="info-item">
+            <span class="label">Agency License</span>
+            <span class="value">{{ profile.licenseNumber }}</span>
+          </div>
+        }
+        @if (profile.licenseExpiry) {
+          <div class="info-item">
+            <span class="label">License Expiry</span>
+            <span class="value">{{ profile.licenseExpiry | date:'MMM d, yyyy' }}</span>
+          </div>
+        }
+        @if (profile.physicalAddress) {
+          <div class="info-item">
+            <span class="label">Physical Address</span>
+            <span class="value">{{ profile.physicalAddress }}</span>
+          </div>
+        }
+        @if (profile.city) {
+          <div class="info-item">
+            <span class="label">City</span>
+            <span class="value">{{ profile.city }}</span>
+          </div>
+        }
+        @if (profile.county) {
+          <div class="info-item">
+            <span class="label">County</span>
+            <span class="value">{{ profile.county }}</span>
+          </div>
+        }
+        @if (profile.website) {
+          <div class="info-item">
+            <span class="label">Website</span>
+            <span class="value">{{ profile.website }}</span>
+          </div>
+        }
+      }
+    </div>
+  </div>
+
+  @if (showAccountMeta) {
+    <div class="card details-section">
+      <div class="section-title">Account Security</div>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">OTP Verified</span>
+          <span class="value">{{ profile.otpVerified ? 'Yes' : 'No' }}</span>
+        </div>
+        @if (profile.lockReason) {
+          <div class="info-item">
+            <span class="label">Lock Reason</span>
+            <span class="value">{{ profile.lockReason }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <div class="card details-section documents-section">
+    <div class="section-header">
+      <div>
+        <div class="section-title">KYC Documents</div>
+        <p class="section-helper">Click any document to open a full-screen preview.</p>
+      </div>
+    </div>
+    <app-kyc-document-gallery
+      [documents]="documentItems"
+      [documentSource]="documentSource">
+    </app-kyc-document-gallery>
+  </div>
+}

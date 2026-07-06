@@ -1,0 +1,126 @@
+<div class="tenancies-page platform-page">
+  <div class="page-header">
+    <h1>Tenancy journey</h1>
+    <p>Your rental history on Mkeja — moves between homes and any gaps in between.</p>
+  </div>
+
+  @if (loading) {
+    <div class="loading-state"><div class="spinner"></div><p>Loading history...</p></div>
+  } @else {
+    @if (usingDemoData) {
+      <div class="demo-banner">{{ demoLabel }}</div>
+    }
+
+    @if (tenancies.length === 0) {
+      <div class="empty-card app-empty-state">
+        <div class="app-empty-icon"><span class="material-icons">history</span></div>
+        <h3 class="app-empty-title">No tenancy history</h3>
+        <p class="app-empty-text">Properties and units you rent on Mkeja will appear here as a timeline.</p>
+      </div>
+    } @else {
+      <div class="journey-summary">
+        <div class="summary-stat">
+          <span class="material-icons">home_work</span>
+          <div>
+            <strong>{{ summaryStats.homes }}</strong>
+            <span>{{ summaryStats.homes === 1 ? 'home on Mkeja' : 'homes on Mkeja' }}</span>
+          </div>
+        </div>
+        @if (summaryStats.gapCount > 0) {
+          <div class="summary-stat gap-stat">
+            <span class="material-icons">more_horiz</span>
+            <div>
+              <strong>{{ summaryStats.gapCount }}</strong>
+              <span>{{ summaryStats.gapCount === 1 ? 'off-platform period' : 'off-platform periods' }}</span>
+            </div>
+          </div>
+        }
+        <div class="summary-stat current-stat">
+          <span class="material-icons">pin_drop</span>
+          <div>
+            <strong class="truncate">{{ summaryStats.activeLabel }}</strong>
+            <span>current home</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline">
+        @for (node of timeline; track trackNode($index, node)) {
+          @switch (node.kind) {
+            @case ('tenancy') {
+              <div class="timeline-row tenancy-row" [class.is-active]="node.item.status === 'ACTIVE'">
+                <div class="timeline-rail">
+                  <span class="timeline-dot" [class.active-dot]="node.item.status === 'ACTIVE'"></span>
+                  <span class="timeline-line"></span>
+                </div>
+                <article class="history-card" [class.active]="node.item.status === 'ACTIVE'">
+                  <div class="card-top">
+                    <div>
+                      <strong>{{ propertyLabel(node.item) }}</strong>
+                      <p>Unit {{ node.item.unitNumber || '—' }} · {{ locationLabel(node.item) }}</p>
+                    </div>
+                    <span class="status-badge" [class]="statusClass(node.item.status)">{{ node.item.status }}</span>
+                  </div>
+                  <p class="period">{{ tenancyPeriod(node.item) }}</p>
+                  @if (node.item.propertyAddress) {
+                    <p class="address">{{ node.item.propertyAddress }}</p>
+                  }
+                  <div class="dates-grid">
+                    <div><label>Landlord</label><span>{{ node.item.landlordName || '—' }}</span></div>
+                    <div><label>Rent</label><span>KES {{ node.item.monthlyRent | number }}/mo</span></div>
+                    <div><label>Move in</label><span>{{ formatDate(node.item.moveInDate) }}</span></div>
+                    <div><label>Lease end</label><span>{{ formatDate(node.item.leaseEndDate) }}</span></div>
+                  </div>
+                </article>
+              </div>
+            }
+            @case ('move') {
+              <div class="timeline-row connector-row">
+                <div class="timeline-rail">
+                  <span class="timeline-connector-icon move-icon">
+                    <span class="material-icons">south</span>
+                  </span>
+                  <span class="timeline-line dashed"></span>
+                </div>
+                <div class="connector-card move-card">
+                  <span class="material-icons">swap_vert</span>
+                  <div>
+                    <p class="connector-title">Moved between homes</p>
+                    <p class="connector-detail">
+                      From <strong>{{ node.fromProperty }}</strong>
+                      to <strong>{{ node.toProperty }}</strong>
+                    </p>
+                    <p class="connector-meta">{{ formatDate(node.moveDate) }}</p>
+                  </div>
+                </div>
+              </div>
+            }
+            @case ('gap') {
+              <div class="timeline-row connector-row">
+                <div class="timeline-rail">
+                  <span class="timeline-connector-icon gap-icon">
+                    <span class="material-icons">more_horiz</span>
+                  </span>
+                  <span class="timeline-line dashed"></span>
+                </div>
+                <div class="connector-card gap-card">
+                  <span class="material-icons">help_outline</span>
+                  <div>
+                    <p class="connector-title">Not on Mkeja</p>
+                    <p class="connector-detail">
+                      {{ formatDate(node.startDate) }} — {{ formatDate(node.endDate) }}
+                      <span class="gap-duration">({{ gapDurationLabel(node.dayCount) }})</span>
+                    </p>
+                    <p class="connector-hint">
+                      No recorded tenancy during this period — you may have lived in a property not managed on the platform.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            }
+          }
+        }
+      </div>
+    }
+  }
+</div>

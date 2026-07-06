@@ -1,0 +1,90 @@
+<div class="platform-page agent-dashboard">
+  @if (kycPending || kycRejected) {
+    <div class="kyc-banner" [class.rejected]="kycRejected">
+      @if (kycRejected) {
+        <strong>KYC rejected.</strong> <a routerLink="/agent/support">Contact support</a> to resubmit your agency documents.
+      } @else {
+        <strong>KYC under review.</strong> You can browse this dashboard, but property and tenant actions unlock after admin approval.
+      }
+    </div>
+  }
+
+  <section class="hero-section">
+    <div class="hero-flex">
+      <div>
+        <p class="greeting-label">Property Management Agent</p>
+        <h1>Agent Functions</h1>
+        <p class="hero-copy">
+          Manage assigned properties on behalf of owners — from listings and tenant acquisition
+          through rent collection, maintenance, and reporting.
+        </p>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-card">
+          <span class="stat-value">{{ groups.length }}</span>
+          <span class="stat-label">Function areas</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="function-groups">
+    @for (group of groups; track trackGroup(group)) {
+      <section class="function-group card">
+        <div class="group-header">
+          <div class="group-icon">
+            <mat-icon [svgIcon]="group.icon"></mat-icon>
+          </div>
+          <div>
+            <h2>{{ group.title }}</h2>
+            <p>{{ group.description }}</p>
+          </div>
+          <span class="live-badge">{{ liveCount(group) }} live</span>
+        </div>
+
+        <div class="function-grid">
+          @for (fn of group.functions; track trackFunction(fn)) {
+            @if (fn.status === 'live' && fn.route && isFunctionAccessible(fn)) {
+              <a class="function-card live" [routerLink]="fn.route">
+                <h3>{{ fn.label }}</h3>
+                <p>{{ fn.description }}</p>
+                <span class="card-cta">Open <span class="material-icons" aria-hidden="true">arrow_forward</span></span>
+              </a>
+            } @else if (fn.status === 'live' && fn.route && !kycApproved && fn.requiresKyc) {
+              <div class="function-card locked">
+                <h3>{{ fn.label }}</h3>
+                <p>{{ fn.description }}</p>
+                <span class="locked-badge">Awaiting KYC approval</span>
+              </div>
+            } @else if (fn.status === 'live' && fn.route) {
+              <a class="function-card live" [routerLink]="fn.route">
+                <h3>{{ fn.label }}</h3>
+                <p>{{ fn.description }}</p>
+                <span class="card-cta">Open <span class="material-icons" aria-hidden="true">arrow_forward</span></span>
+              </a>
+            } @else {
+              <div class="function-card soon">
+                <h3>{{ fn.label }}</h3>
+                <p>{{ fn.description }}</p>
+                <span class="soon-badge">Coming soon</span>
+              </div>
+            }
+          }
+        </div>
+      </section>
+    }
+  </div>
+
+  <div class="support-hub">
+    <div class="support-content">
+      <div class="support-text">
+        <mat-icon svgIcon="help"></mat-icon>
+        <span>Need help managing client properties?</span>
+      </div>
+      <div class="support-actions">
+        <a class="btn-outline" routerLink="/agent/support">Raise a Ticket</a>
+        <a class="help-link" routerLink="/agent/support">FAQs &amp; Support</a>
+      </div>
+    </div>
+  </div>
+</div>

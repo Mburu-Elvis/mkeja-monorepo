@@ -1,0 +1,309 @@
+<div class="upload-documents">
+
+  <header class="auth-brand">
+    <div class="auth-brand-badge">
+      <img src="/logo-mkeja.png" alt="Mkeja" class="auth-brand-logo">
+    </div>
+    <h1>{{ isRegistrationFlow ? 'Complete Your Registration' : 'Verify Your Identity' }}</h1>
+    <p>{{ pageSubtitle }}</p>
+  </header>
+
+  <form class="form-container" (ngSubmit)="onSubmit()">
+
+    @if (kycStatus && !isRegistrationFlow) {
+      <div class="status-pill" [class]="kycStatus.toLowerCase()">
+        KYC Status: {{ kycStatus.replace('_', ' ') }}
+      </div>
+    }
+
+    @if (contextError) {
+      <div class="context-banner error">
+        <p>{{ contextError }}</p>
+
+        @if (invitationCode) {
+          <a
+            routerLink="/tenant/onboarding/verify-identity"
+            [queryParams]="{ code: invitationCode }">
+            Continue identity verification
+          </a>
+        } @else {
+          <a routerLink="/auth/login">Sign in</a>
+        }
+      </div>
+    }
+
+    <!-- Only show existing documents for non-registration flows -->
+    @if (hasExistingDocuments) {
+      <section class="existing-docs-panel">
+
+        <div class="panel-heading">
+          <h3>Uploaded Documents</h3>
+          <p>Tap any document to preview it.</p>
+        </div>
+
+        <app-kyc-document-gallery
+          [documents]="galleryItems"
+          documentSource="profile">
+        </app-kyc-document-gallery>
+
+      </section>
+    }
+
+    <div class="upload-section">
+
+      <!-- ID FRONT -->
+      <div class="upload-card">
+
+        <div class="upload-label">
+          {{ isUpdateMode ? 'Update ID Front' : 'ID Front *' }}
+
+          @if (slotHasNewFile('front') || slotHasExisting('front')) {
+            <span class="upload-check material-icons">check_circle</span>
+          }
+        </div>
+
+        @if (slotHasExisting('front') && !slotHasNewFile('front') && !isRegistrationFlow) {
+          <div class="existing-file-note">
+            Document already uploaded — tap below to replace
+          </div>
+        }
+
+        <div class="upload-area" (click)="fileFront.click()">
+
+          @if (slotPreview('front')) {
+
+            <img [src]="slotPreview('front')" alt="ID Front">
+
+            <button
+              type="button"
+              class="clear-btn"
+              (click)="clearFile('front', $event)">
+              Remove New File
+            </button>
+
+          } @else if (existingPreviews['front']?.loading && !isRegistrationFlow) {
+
+            <span class="slot-state">
+              Loading existing document...
+            </span>
+
+          } @else if (existingPreviews['front']?.url && !isRegistrationFlow) {
+
+            <img
+              [src]="existingPreviews['front']!.url!"
+              alt="ID Front">
+
+            <span class="slot-state">
+              Tap to replace
+            </span>
+
+          } @else {
+
+            <span class="material-icons upload-icon">
+              upload_file
+            </span>
+
+            <span>{{ isRegistrationFlow ? 'Upload front ID' : 'Tap to upload' }}</span>
+
+          }
+
+        </div>
+
+        <input
+          #fileFront
+          hidden
+          type="file"
+          accept="image/*,application/pdf"
+          (change)="onFileSelected($event, 'front')">
+
+        <p class="hint">
+          JPEG, PNG or PDF (max 5MB)
+        </p>
+
+      </div>
+
+      <!-- ID BACK -->
+      <div class="upload-card">
+
+        <div class="upload-label">
+          {{ isUpdateMode ? 'Update ID Back' : 'ID Back *' }}
+
+          @if (slotHasNewFile('back') || slotHasExisting('back')) {
+            <span class="upload-check material-icons">check_circle</span>
+          }
+        </div>
+
+        @if (slotHasExisting('back') && !slotHasNewFile('back') && !isRegistrationFlow) {
+          <div class="existing-file-note">
+            Document already uploaded — tap below to replace
+          </div>
+        }
+
+        <div class="upload-area" (click)="fileBack.click()">
+
+          @if (slotPreview('back')) {
+
+            <img [src]="slotPreview('back')" alt="ID Back">
+
+            <button
+              type="button"
+              class="clear-btn"
+              (click)="clearFile('back', $event)">
+              Remove New File
+            </button>
+
+          } @else if (existingPreviews['back']?.loading && !isRegistrationFlow) {
+
+            <span class="slot-state">
+              Loading existing document...
+            </span>
+
+          } @else if (existingPreviews['back']?.url && !isRegistrationFlow) {
+
+            <img
+              [src]="existingPreviews['back']!.url!"
+              alt="ID Back">
+
+            <span class="slot-state">
+              Tap to replace
+            </span>
+
+          } @else {
+
+            <span class="material-icons upload-icon">
+              upload_file
+            </span>
+
+            <span>{{ isRegistrationFlow ? 'Upload back ID' : 'Tap to upload' }}</span>
+
+          }
+
+        </div>
+
+        <input
+          #fileBack
+          hidden
+          type="file"
+          accept="image/*,application/pdf"
+          (change)="onFileSelected($event, 'back')">
+
+        <p class="hint">
+          JPEG, PNG or PDF (max 5MB)
+        </p>
+
+      </div>
+
+      <!-- SELFIE -->
+      <div class="upload-card">
+
+        <div class="upload-label">
+          {{ isUpdateMode ? 'Update Selfie' : 'Selfie / Liveness Check *' }}
+
+          @if (slotHasNewFile('selfie') || slotHasExisting('selfie')) {
+            <span class="upload-check material-icons">check_circle</span>
+          }
+        </div>
+
+        @if (slotHasExisting('selfie') && !slotHasNewFile('selfie') && !isRegistrationFlow) {
+          <div class="existing-file-note">
+            Selfie already uploaded — tap below to replace
+          </div>
+        }
+
+        <div class="upload-area" (click)="fileSelfie.click()">
+
+          @if (slotPreview('selfie')) {
+
+            <img [src]="slotPreview('selfie')" alt="Selfie">
+
+            <button
+              type="button"
+              class="clear-btn"
+              (click)="clearFile('selfie', $event)">
+              Remove New File
+            </button>
+
+          } @else if (existingPreviews['selfie']?.loading && !isRegistrationFlow) {
+
+            <span class="slot-state">
+              Loading existing document...
+            </span>
+
+          } @else if (existingPreviews['selfie']?.url && !isRegistrationFlow) {
+
+            <img
+              [src]="existingPreviews['selfie']!.url!"
+              alt="Selfie">
+
+            <span class="slot-state">
+              Tap to replace
+            </span>
+
+          } @else {
+
+            <span class="material-icons upload-icon">
+              photo_camera
+            </span>
+
+            <span>{{ isRegistrationFlow ? 'Take a selfie' : 'Take a selfie' }}</span>
+
+          }
+
+        </div>
+
+        <input
+          #fileSelfie
+          hidden
+          type="file"
+          accept="image/*"
+          capture="user"
+          (change)="onFileSelected($event, 'selfie')">
+
+        <p class="hint">
+          Take a clear photo of your face
+        </p>
+
+      </div>
+
+    </div>
+
+    <p class="info-text">
+      Your documents are encrypted and securely stored.
+      Verification typically takes a few minutes once submitted.
+    </p>
+
+  </form>
+
+  <div class="submit-bar">
+
+    <p class="submit-hint">
+      {{ submitHint }}
+    </p>
+
+    <button
+      type="button"
+      class="submit-btn"
+      [class.ready]="canSubmit"
+      [disabled]="!canSubmit"
+      (click)="onSubmit()">
+
+      @if (uploading) {
+        <span class="spinner"></span>
+        Uploading...
+      } @else {
+        {{ submitLabel }}
+      }
+
+    </button>
+
+  </div>
+
+  @if (showToast) {
+    <app-toast
+      [type]="toastType"
+      [message]="toastMessage"
+      (close)="closeToast()">
+    </app-toast>
+  }
+
+</div>

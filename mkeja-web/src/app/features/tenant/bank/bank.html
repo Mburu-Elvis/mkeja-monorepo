@@ -1,0 +1,117 @@
+<!-- components/bank/bank.component.html -->
+<div class="bank-container">
+    <!-- Linked Bank Account -->
+    <div class="card bank-details-card">
+        <div class="card-header">
+            <span>Linked Bank Account</span>
+            <span class="status-badge success" *ngIf="bankData?.verified">Verified</span>
+            <span class="status-badge warning" *ngIf="!bankData?.verified">Pending Verification</span>
+        </div>
+        
+        <div class="bank-info" *ngIf="!showEditForm">
+            <div class="info-row">
+                <span>Bank Name</span>
+                <strong>{{ bankData?.bankName || 'Not set' }}</strong>
+                <button class="copy-btn" *ngIf="bankData?.bankName" (click)="copyToClipboard(bankData.bankName, 'Bank name')" matTooltip="Copy bank name">
+                    <mat-icon svgIcon="copy"></mat-icon>
+                </button>
+            </div>
+            <div class="info-row">
+                <span>Account Name</span>
+                <strong>{{ bankData?.accountName || 'Not set' }}</strong>
+                <button class="copy-btn" *ngIf="bankData?.accountName" (click)="copyToClipboard(bankData.accountName, 'Account name')" matTooltip="Copy account name">
+                    <mat-icon svgIcon="copy"></mat-icon>
+                </button>
+            </div>
+            <div class="info-row">
+                <span>Account Number</span>
+                <strong>{{ bankData?.accountNumber ? maskAccountNumber(bankData.accountNumber) : 'Not set' }}</strong>
+                <button class="copy-btn" *ngIf="bankData?.accountNumber" (click)="copyToClipboard(bankData.accountNumber, 'Account number')" matTooltip="Copy account number">
+                    <mat-icon svgIcon="copy"></mat-icon>
+                </button>
+            </div>
+            <div class="info-row">
+                <span>Branch Code</span>
+                <strong>{{ bankData?.branchCode || 'Not set' }}</strong>
+                <button class="copy-btn" *ngIf="bankData?.branchCode" (click)="copyToClipboard(bankData.branchCode, 'Branch code')" matTooltip="Copy branch code">
+                    <mat-icon svgIcon="copy"></mat-icon>
+                </button>
+            </div>
+            <div class="info-row" *ngIf="bankData?.swiftCode">
+                <span>SWIFT Code</span>
+                <strong>{{ maskSwiftCode(bankData.swiftCode) }}</strong>
+                <button class="copy-btn" (click)="copyToClipboard(bankData.swiftCode, 'SWIFT code')" matTooltip="Copy full SWIFT code">
+                    <mat-icon svgIcon="copy"></mat-icon>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Edit Form -->
+        <div class="edit-form" *ngIf="showEditForm">
+            <div class="form-group">
+                <label>Bank Name</label>
+                <input type="text" [(ngModel)]="editFormData.bankName" placeholder="e.g., KCB Bank Kenya" class="form-input">
+            </div>
+            <div class="form-group">
+                <label>Account Name</label>
+                <input type="text" [(ngModel)]="editFormData.accountName" placeholder="Full name as on bank account" class="form-input">
+            </div>
+            <div class="form-group">
+                <label>Account Number</label>
+                <input type="text" [(ngModel)]="editFormData.accountNumber" placeholder="Account number" class="form-input">
+            </div>
+            <div class="form-group">
+                <label>Branch Code (Optional)</label>
+                <input type="text" [(ngModel)]="editFormData.branchCode" placeholder="Branch code" class="form-input">
+            </div>
+            <div class="form-group">
+                <label>SWIFT Code (Optional)</label>
+                <input type="text" [(ngModel)]="editFormData.swiftCode" placeholder="SWIFT/BIC code" class="form-input">
+            </div>
+            <div class="form-actions">
+                <button class="btn-secondary" (click)="closeEditForm()">Cancel</button>
+                <button class="btn-primary" (click)="saveBankDetails()">Save Changes</button>
+            </div>
+        </div>
+        
+        <div class="card-actions" *ngIf="!showEditForm">
+            <button class="btn-secondary" (click)="editBankDetails()">Edit Details</button>
+            <button class="btn-primary" *ngIf="!bankData?.verified" (click)="verifyBankAccount()">Verify Account</button>
+            <button class="btn-danger" *ngIf="bankData?.linked" (click)="removeBankAccount()">Remove Account</button>
+        </div>
+    </div>
+
+    <!-- Why Add Bank Details -->
+    <div class="info-card">
+        <mat-icon svgIcon="shield"></mat-icon>
+        <div>
+            <strong>Why add your bank account?</strong>
+            <ul>
+                <li>Receive security deposit refunds on lease end</li>
+                <li>Future: Direct rent remittance to your bank</li>
+                <li>Faster withdrawal of wallet funds</li>
+                <li>Secure and encrypted storage</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Security Note -->
+    <div class="security-note">
+        <mat-icon svgIcon="lock"></mat-icon>
+        <div>
+            <strong>Your information is secure</strong>
+            <p>Bank details are encrypted at rest using AES-256. Only authorized personnel have access for verification and processing.</p>
+            <p class="security-badge">PCI DSS Compliant</p>
+        </div>
+    </div>
+
+    <!-- Support Contact -->
+    <div class="support-card" *ngIf="!bankData?.linked">
+        <mat-icon svgIcon="help"></mat-icon>
+        <div>
+            <strong>Need help adding your bank account?</strong>
+            <p>Contact our support team for assistance with linking your bank account.</p>
+            <button class="btn-link" type="button" routerLink="/tenant/support">Contact Support →</button>
+        </div>
+    </div>
+</div>

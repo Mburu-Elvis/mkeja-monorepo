@@ -1,0 +1,107 @@
+<div class="global-status-strip"></div>
+
+<app-header
+  [userName]="currentUser?.fullName || 'Landlord'"
+  [userEmail]="userEmail"
+  userRoleLabel="Property Owner"
+  profileLink="/landlord/profile"
+  supportLink="/landlord/support"
+  (logout)="logout()"
+></app-header>
+
+<div class="platform-dashboard" [class.sidebar-collapsed]="sidebarCollapsed">
+  <aside class="desktop-sidebar">
+    <div class="sidebar-header">
+      <div class="logo-area" [class.collapsed]="sidebarCollapsed">
+        <img src="/logo-mkeja.png" alt="Mkeja" class="mkeja-logo">
+      </div>
+      <button class="collapse-btn" type="button" (click)="toggleSidebar()" aria-label="Toggle sidebar">
+        <mat-icon [svgIcon]="sidebarCollapsed ? 'chevronRight' : 'chevronLeft'"></mat-icon>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-item" routerLink="/landlord/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon svgIcon="pieChart"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Dashboard</span>
+      </a>
+      <a class="sidebar-item" routerLink="/landlord/properties" routerLinkActive="active">
+        <mat-icon svgIcon="building"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Properties</span>
+      </a>
+      <a class="sidebar-item" routerLink="/landlord/tenants" routerLinkActive="active">
+        <mat-icon svgIcon="users"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Tenants</span>
+      </a>
+      <a class="sidebar-item" routerLink="/landlord/leads" routerLinkActive="active">
+        <mat-icon svgIcon="search"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">House Hunt Leads</span>
+      </a>
+      <a class="sidebar-item" routerLink="/landlord/remittances" routerLinkActive="active">
+        <mat-icon svgIcon="creditCard"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Remittances</span>
+      </a>
+      <a class="sidebar-item" routerLink="/landlord/support" routerLinkActive="active">
+        <mat-icon svgIcon="help"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Support</span>
+      </a>
+      <a class="sidebar-item" routerLink="/landlord/profile" routerLinkActive="active">
+        <mat-icon svgIcon="user"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Profile</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer" *ngIf="!sidebarCollapsed">
+      <div class="user-mini">
+        <div class="avatar-mini">{{ userInitials }}</div>
+        <div class="user-info">
+          <span class="user-name">{{ currentUser?.fullName || 'Landlord' }}</span>
+          <span class="user-unit">Property Owner</span>
+        </div>
+      </div>
+      <button class="logout-btn" type="button" (click)="logout()">
+        <mat-icon svgIcon="logout"></mat-icon>
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <main class="dashboard-main">
+    <div class="mobile-status">
+      <span class="status-time">{{ currentTime }}</span>
+      <div class="status-icons">
+        <mat-icon svgIcon="signal"></mat-icon>
+        <mat-icon svgIcon="wifi"></mat-icon>
+        <mat-icon svgIcon="battery"></mat-icon>
+      </div>
+    </div>
+    <router-outlet></router-outlet>
+  </main>
+</div>
+
+<nav class="bottom-nav">
+  <a class="nav-item" routerLink="/landlord/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+    <mat-icon svgIcon="home"></mat-icon>
+    <span>Home</span>
+  </a>
+  <a class="nav-item" routerLink="/landlord/properties" routerLinkActive="active">
+    <mat-icon svgIcon="building"></mat-icon>
+    <span>Properties</span>
+  </a>
+  <a class="nav-item" routerLink="/landlord/tenants" routerLinkActive="active">
+    <mat-icon svgIcon="users"></mat-icon>
+    <span>Tenants</span>
+  </a>
+  <a class="nav-item" routerLink="/landlord/leads" routerLinkActive="active">
+    <mat-icon svgIcon="search"></mat-icon>
+    <span>Leads</span>
+  </a>
+  <a class="nav-item" routerLink="/landlord/remittances" routerLinkActive="active">
+    <mat-icon svgIcon="creditCard"></mat-icon>
+    <span>Payments</span>
+  </a>
+  <a class="nav-item" routerLink="/landlord/profile" routerLinkActive="active">
+    <mat-icon svgIcon="user"></mat-icon>
+    <span>Profile</span>
+  </a>
+</nav>

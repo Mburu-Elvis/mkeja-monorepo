@@ -1,0 +1,93 @@
+.transaction-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #F0F0F0;
+}
+
+.transaction-item.pending {
+  opacity: 0.6;
+}
+
+.transaction-item.failed .transaction-amount {
+  color: var(--mpesa-error) !important;
+}
+
+.transaction-item .transaction-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 22px;
+  background: #F5F5F5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.transaction-item .transaction-icon.credit {
+  background: #E8F5E9;
+  color: var(--mpesa-primary);
+}
+
+.transaction-item .transaction-icon:not(.credit) {
+  color: var(--mpesa-error);
+}
+
+.transaction-item .transaction-details {
+  flex: 1;
+}
+
+.transaction-item .transaction-details .transaction-description {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--mpesa-black);
+  display: block;
+}
+
+.transaction-item .transaction-details .transaction-meta {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.transaction-item .transaction-details .transaction-meta .transaction-date,
+.transaction-item .transaction-details .transaction-meta .transaction-ref {
+  font-size: 11px;
+  color: var(--mpesa-gray);
+}
+
+.transaction-item .transaction-right {
+  text-align: right;
+}
+
+.transaction-item .transaction-right .transaction-amount {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.transaction-item .transaction-right .transaction-amount.credit {
+  color: var(--mpesa-primary);
+}
+
+.transaction-item .transaction-right .transaction-amount:not(.credit) {
+  color: var(--mpesa-error);
+}
+
+.transaction-item .transaction-right .transaction-status {
+  margin-top: 4px;
+}
+
+.transaction-item .transaction-right .transaction-status .status-success {
+  color: var(--mpesa-primary);
+  font-size: 14px;
+}
+
+.transaction-item .transaction-right .transaction-status .status-pending {
+  color: var(--mpesa-warning);
+  font-size: 14px;
+}
+
+.transaction-item .transaction-right .transaction-status .status-failed {
+  color: var(--mpesa-error);
+  font-size: 14px;
+}

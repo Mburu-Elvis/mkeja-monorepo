@@ -1,0 +1,47 @@
+<div class="notifications-page platform-page">
+  <div class="page-header">
+    <div>
+      <h1>Notifications</h1>
+      <p>Stay on top of account activity, approvals, and alerts.</p>
+    </div>
+    <div class="header-actions" *ngIf="notifications.length > 0">
+      <button type="button" class="btn-secondary" (click)="markAllAsRead()">Mark all read</button>
+      <button type="button" class="btn-danger" (click)="clearAll()">Clear all</button>
+    </div>
+  </div>
+
+  <div class="summary-card" *ngIf="!loading">
+    <span>{{ notifications.length }} total</span>
+    <span class="dot">•</span>
+    <span>{{ unreadCount }} unread</span>
+  </div>
+
+  <div class="loading-state" *ngIf="loading">Loading notifications...</div>
+
+  <div class="notifications-list" *ngIf="!loading && notifications.length > 0">
+    <button
+      type="button"
+      class="notification-item"
+      *ngFor="let notification of notifications"
+      [class.unread]="!notification.read"
+      (click)="markAsRead(notification)">
+      <div class="notification-icon" [class]="notification.type">
+        <mat-icon [svgIcon]="getNotificationIcon(notification.type)"></mat-icon>
+      </div>
+      <div class="notification-content">
+        <div class="notification-title">{{ notification.title }}</div>
+        <div class="notification-message">{{ notification.message }}</div>
+        <div class="notification-meta">
+          <span class="notification-time">{{ getTimeAgo(notification.createdAt) }}</span>
+          <span class="notification-category" *ngIf="notification.category">{{ notification.category }}</span>
+        </div>
+      </div>
+    </button>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && notifications.length === 0">
+    <mat-icon svgIcon="bell-off"></mat-icon>
+    <h2>You're all caught up</h2>
+    <p>New alerts about payments, KYC, and listings will show up here.</p>
+  </div>
+</div>

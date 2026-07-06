@@ -1,0 +1,54 @@
+<div class="loan-screen platform-page">
+  @if (loading) {
+    <app-loading-spinner [fullScreen]="true" message="Loading..."></app-loading-spinner>
+  } @else {
+    <div class="credit-score-card">
+      <div class="score-header">
+        <span class="tier">{{ creditTier }} Tier</span>
+        <span class="score">Score: {{ creditScore }}</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="getScorePercentage()"></div>
+      </div>
+      <div class="score-footer">
+        <span>Next tier: {{ getNextTier() }}</span>
+        <span>Need {{ getPointsNeeded() }} more points</span>
+      </div>
+    </div>
+    
+    <div class="card limit-card">
+      <div class="limit-info">
+        <div>
+          <span class="label">Your Loan Limit</span>
+          <span class="limit-amount">KES {{ creditLimit | number }}</span>
+          <span class="sub">{{ (creditLimit / monthlyRent) * 100 }}% of monthly rent</span>
+        </div>
+        <div class="fee-badge">Monthly fee: 4%</div>
+      </div>
+    </div>
+    
+    @if (activeLoan) {
+      <div class="active-loan-card">
+        <div class="warning-icon"><span class="material-icons">warning</span></div>
+        <div class="loan-details">
+          <span class="label">Outstanding Loan</span>
+          <span class="amount">KES {{ activeLoan.outstanding | number }}</span>
+          <span class="repayment">Auto-repaying from daily contributions</span>
+        </div>
+      </div>
+    } @else {
+      <div class="card info-card">
+        <p>Rent Fuliza helps you cover rent shortfalls when you need it most.</p>
+        <ul class="feature-list">
+          <li><span class="material-icons" aria-hidden="true">check_circle</span> Instant approval based on your payment history</li>
+          <li><span class="material-icons" aria-hidden="true">check_circle</span> Auto-repaid from your daily contributions</li>
+          <li><span class="material-icons" aria-hidden="true">check_circle</span> Build credit score with every repayment</li>
+        </ul>
+      </div>
+    }
+    
+    <button class="request-btn" routerLink="/tenant/loan/request">
+      {{ activeLoan ? 'View Loan Details' : 'Request Advance' }}
+    </button>
+  }
+</div>

@@ -1,0 +1,100 @@
+<div class="ratiba-consent-page">
+
+  <header class="auth-brand">
+    <div class="auth-brand-badge">
+      <img src="/logo-mkeja.png" alt="Mkeja" class="auth-brand-logo">
+    </div>
+
+    <h1>Auto-Payment Setup</h1>
+    <p>Authorize automatic rent deductions through M-Pesa</p>
+  </header>
+
+  <div class="auth-card consent-card">
+
+    <div class="consent-icon">
+      <span class="material-icons">schedule</span>
+    </div>
+
+    <h2>Set Up Auto-Payments</h2>
+
+    <p class="consent-subtitle">
+      M-Pesa will automatically deduct your rent based on your selected payment plan.
+    </p>
+
+    <div class="plan-summary-card">
+
+      <div class="plan-badge">
+        {{ plan === 'DAILY' ? 'Daily Plan' : 'Weekly Plan' }}
+      </div>
+
+      <div class="plan-details">
+
+        <div class="detail-row">
+          <span>Amount</span>
+          <strong>KES {{ getAmount() | number }}</strong>
+        </div>
+
+        <div class="detail-row">
+          <span>Frequency</span>
+          <strong>{{ getScheduleText() }}</strong>
+        </div>
+
+        <div class="detail-row">
+          <span>Starting</span>
+          <strong>Tomorrow</strong>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="info-box">
+      <span class="material-icons">info</span>
+
+      <div>
+        <strong>M-Pesa will deduct this amount automatically</strong>
+        <p>
+          You can cancel or modify your payment plan anytime from
+          your M-Pesa app or Mkeja dashboard.
+        </p>
+      </div>
+    </div>
+
+    <div class="auth-btn-row consent-actions">
+
+      <button
+        class="auth-btn-primary"
+        [disabled]="processing"
+        (click)="approve()">
+
+        @if (processing) {
+          <span class="auth-spinner"></span>
+          Setting up...
+        } @else {
+          Approve & Set Up
+        }
+
+      </button>
+
+    </div>
+
+    <button
+      type="button"
+      class="auth-btn-secondary cancel-btn"
+      (click)="onBack()">
+
+      Cancel
+
+    </button>
+
+  </div>
+
+  @if (showToast) {
+    <app-toast
+      [type]="toastType"
+      [message]="toastMessage"
+      (close)="closeToast()">
+    </app-toast>
+  }
+
+</div>

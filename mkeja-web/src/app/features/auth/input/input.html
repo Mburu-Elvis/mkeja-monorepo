@@ -1,0 +1,11 @@
+<input
+  [type]="type"
+  [value]="value"
+  (input)="onInput($event)"
+  [placeholder]="placeholder"
+  [disabled]="disabled"
+  class="input-field"
+  [class.input-focused]="focused"
+  (focus)="focused = true"
+  (blur)="focused = false"
+/>

@@ -1,0 +1,64 @@
+<div class="statement-screen">
+
+  @if (loading) {
+    <app-loading-spinner [fullScreen]="true" message="Loading statement..."></app-loading-spinner>
+  } @else {
+    <div class="statement-header">
+      <h2>{{ statement.period }}</h2>
+      <p>Remittance Statement</p>
+    </div>
+    
+    <div class="summary-card">
+      <div class="summary-row">
+        <span>Gross Rent</span>
+        <span>KES {{ statement.grossRent | number }}</span>
+      </div>
+      <div class="summary-row fee">
+        <span>Mkeja Fee (2.5%)</span>
+        <span>- KES {{ statement.mkejaFees | number }}</span>
+      </div>
+      <div class="summary-row total">
+        <span>Net Remittance</span>
+        <span>KES {{ statement.netRemittance | number }}</span>
+      </div>
+      <div class="summary-row">
+        <span>Remittance Date</span>
+        <span>{{ statement.remittanceDate | date:'MMM d, yyyy' }}</span>
+      </div>
+      <div class="summary-row">
+        <span>Bank Reference</span>
+        <span>{{ statement.bankReference }}</span>
+      </div>
+    </div>
+    
+    <div class="units-table">
+      <div class="table-header">
+        <span>Unit</span>
+        <span>Tenant</span>
+        <span>Rent</span>
+        <span>Paid</span>
+        <span>Status</span>
+      </div>
+      @for (unit of units; track unit.unitRef) {
+        <div class="table-row">
+          <span>{{ unit.unitRef }}</span>
+          <span>{{ unit.tenantName }}</span>
+          <span>KES {{ unit.monthlyRent | number }}</span>
+          <span>KES {{ unit.paidAmount | number }}</span>
+          <span class="status-badge" [class]="unit.status === 'paid' ? 'success' : 'vacant'">
+            {{ unit.status | uppercase }}
+          </span>
+        </div>
+      }
+    </div>
+    
+    <div class="action-buttons">
+      <button class="download-btn" (click)="downloadPDF()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M12 3V16M12 16L9 13M12 16L15 13M5 21H19" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        Download PDF
+      </button>
+    </div>
+  }
+</div>

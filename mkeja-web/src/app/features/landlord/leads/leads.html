@@ -1,0 +1,185 @@
+<div class="leads-page platform-page landlord-page">
+  <div class="hero-section">
+    <div class="hero-flex">
+      <div class="hero-text">
+        <p class="greeting-label">House Hunt</p>
+        <h1 class="page-title">Tenant leads</h1>
+        <p class="hero-subtitle">
+          Tenants who expressed interest in a specific unit. Review, contact, then send an invite with details pre-filled.
+        </p>
+      </div>
+      <div class="hero-actions">
+        <button class="refresh-btn" type="button" (click)="loadLeads()" [disabled]="loading" title="Refresh leads">
+          <span class="material-icons" aria-hidden="true">refresh</span>
+        </button>
+        <a class="btn-secondary hero-btn" routerLink="/landlord/properties">Manage listings</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-grid stats-grid">
+    <div class="card stat-card">
+      <div class="card-content">
+        <span class="stat-label">Total leads</span>
+        <strong class="stat-value">{{ leads.length }}</strong>
+      </div>
+    </div>
+    <div class="card stat-card highlight">
+      <div class="card-content">
+        <span class="stat-label">New</span>
+        <strong class="stat-value">{{ newLeadCount }}</strong>
+      </div>
+    </div>
+    <div class="card stat-card">
+      <div class="card-content">
+        <span class="stat-label">Contacted</span>
+        <strong class="stat-value">{{ contactedCount }}</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="filters card">
+    <div class="search-box">
+      <input
+        type="search"
+        [(ngModel)]="searchTerm"
+        placeholder="Search tenant, phone, property, or unit..." />
+    </div>
+    <select [(ngModel)]="statusFilter">
+      <option value="all">All status</option>
+      <option value="NEW">New only</option>
+      <option value="CONTACTED">Contacted</option>
+    </select>
+  </div>
+
+  @if (loading) {
+    <div class="loading-state card">
+      <div class="spinner"></div>
+      <p>Loading leads...</p>
+    </div>
+  } @else if (error) {
+    <div class="empty-state-panel card error-panel">
+      <h3>Unable to load leads</h3>
+      <p>{{ error }}</p>
+      <button class="btn-primary" type="button" (click)="loadLeads()">Try again</button>
+    </div>
+  } @else if (leads.length === 0) {
+    <div class="empty-state-panel card app-empty-state">
+      <div class="app-empty-icon"><span class="material-icons">inbox</span></div>
+      <h3 class="app-empty-title">No leads yet</h3>
+      <p class="app-empty-text">Enable House Hunt on a verified property with vacant units. Tenants will appear here when they express interest in a specific unit.</p>
+      <a class="btn-primary" routerLink="/landlord/properties">Go to properties</a>
+    </div>
+  } @else if (filteredLeads.length === 0) {
+    <div class="empty-state-panel card app-empty-state">
+      <div class="app-empty-icon"><span class="material-icons">filter_alt_off</span></div>
+      <h3 class="app-empty-title">No matches</h3>
+      <p class="app-empty-text">Try a different search or status filter.</p>
+    </div>
+  } @else {
+    <div class="list-meta-bar">
+      <span>{{ filteredLeads.length }} lead(s)</span>
+    </div>
+
+    <div class="leads-table card">
+      <div class="table-header">
+        <span>Tenant</span>
+        <span>Property / unit</span>
+        <span>Rent</span>
+        <span>Received</span>
+        <span>Status</span>
+        <span>Actions</span>
+      </div>
+
+      @for (lead of filteredLeads; track lead.id) {
+        <div class="table-row" [class.is-new]="lead.status === 'NEW'">
+          <div class="cell-tenant">
+            <div class="tenant-avatar"><span>{{ tenantInitials(lead.tenantName) }}</span></div>
+            <div class="tenant-copy">
+              <strong>{{ lead.tenantName }}</strong>
+              <small>{{ formatPhone(lead.tenantPhone) }}</small>
+            </div>
+          </div>
+
+          <div class="cell-property">
+            <strong>{{ lead.propertyName }}</strong>
+            <small>Unit {{ lead.unitLabel }}</small>
+            @if (lead.message) {
+              <p class="lead-message">“{{ lead.message }}”</p>
+            }
+          </div>
+
+          <div class="cell-rent">
+            @if (lead.monthlyRent) {
+              <strong>KES {{ lead.monthlyRent | number:'1.0-0' }}</strong>
+              <small>/ month</small>
+            } @else {
+              <span class="muted">—</span>
+            }
+          </div>
+
+          <div class="cell-date">
+            {{ formatDate(lead.createdAt) }}
+          </div>
+
+          <div class="cell-status">
+            <span class="status-pill" [ngClass]="statusClass(lead.status)">{{ statusLabel(lead.status) }}</span>
+          </div>
+
+          <div class="cell-actions">
+            @if (lead.status === 'NEW') {
+              <button
+                type="button"
+                class="btn-text"
+                [disabled]="actingLeadId === lead.id"
+                (click)="markContacted(lead)">
+                {{ actingLeadId === lead.id ? 'Saving...' : 'Mark contacted' }}
+              </button>
+            }
+            <button type="button" class="btn-primary compact" (click)="inviteTenant(lead)">
+              Send invite
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (pendingInviteLead) {
+    <div class="modal-backdrop" (click)="cancelInvite()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <p class="modal-label">Confirm invite</p>
+        <h2>Send tenancy invite?</h2>
+        <div class="modal-summary">
+          <div class="summary-row">
+            <span>Tenant</span>
+            <strong>{{ pendingInviteLead.tenantName }}</strong>
+          </div>
+          <div class="summary-row">
+            <span>Phone</span>
+            <strong>{{ formatPhone(pendingInviteLead.tenantPhone) }}</strong>
+          </div>
+          <div class="summary-row">
+            <span>Property</span>
+            <strong>{{ pendingInviteLead.propertyName }}</strong>
+          </div>
+          <div class="summary-row">
+            <span>Unit</span>
+            <strong>{{ pendingInviteLead.unitLabel }}</strong>
+          </div>
+          @if (pendingInviteLead.monthlyRent) {
+            <div class="summary-row">
+              <span>Rent</span>
+              <strong>KES {{ pendingInviteLead.monthlyRent | number:'1.0-0' }}/mo</strong>
+            </div>
+          }
+        </div>
+        <p class="hint">The invite form opens with these details pre-filled. You can review before sending.</p>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="cancelInvite()">Cancel</button>
+          <button type="button" class="btn-primary" (click)="confirmInvite()">Continue to invite</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

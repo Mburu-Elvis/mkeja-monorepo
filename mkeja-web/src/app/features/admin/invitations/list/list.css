@@ -1,0 +1,11 @@
+@import '../../../../shared/styles/admin-page.css';
+@import '../../kyc-queue/list/list.css';
+
+:host {
+  display: block;
+}
+
+/* Invitation rows are not clickable as a whole */
+.applications-list .application-row {
+  cursor: default;
+}

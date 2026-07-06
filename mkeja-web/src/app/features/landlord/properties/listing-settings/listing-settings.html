@@ -1,0 +1,50 @@
+<div class="listing-settings-page platform-page">
+  <a [routerLink]="['/landlord/properties', propertyId]" class="back-link">← Back to property</a>
+
+  @if (loading) {
+    <p>Loading unit...</p>
+  } @else if (!unit) {
+    <p class="error">Unit not found.</p>
+  } @else {
+    <h1>House Hunt listing</h1>
+    <p class="sub">Unit {{ unit.unitNumber }} · {{ unit.status }}</p>
+
+    <div class="eligibility-card" [class.ready]="canEnableListing">
+      <strong>{{ canEnableListing ? 'Ready to list' : 'Requirements pending' }}</strong>
+      <p>{{ eligibilityMessage }}</p>
+      <ul class="checklist">
+        <li [class.done]="isVacant">Vacant unit</li>
+        <li [class.done]="kycApproved">Landlord KYC approved</li>
+        <li [class.done]="property?.verified">Property verified</li>
+      </ul>
+    </div>
+
+    <div class="settings-card">
+      <p class="hint">
+        Discoverability and recommendations are managed at property level.
+        <a [routerLink]="['/landlord/properties', propertyId, 'house-hunt']" [queryParams]="{ unitId }">Open House Hunt setup</a>
+      </p>
+      <div class="status-row">
+        <span>Listed on House Hunt</span>
+        <strong>{{ discoverable ? 'Yes (auto)' : 'No' }}</strong>
+      </div>
+      <div class="status-row">
+        <span>Smart recommendations</span>
+        <strong>{{ autoRecommend ? 'Enabled' : 'Off' }}</strong>
+      </div>
+      <label class="toggle-row">
+        <input type="checkbox" [(ngModel)]="promoted" />
+        <span>Featured placement (promoted)</span>
+      </label>
+      <label>
+        Listing description
+        <textarea rows="4" [(ngModel)]="listingDescription" placeholder="Describe the unit for tenants..."></textarea>
+      </label>
+      <button type="button" class="btn-primary" [disabled]="saving" (click)="save()">
+        {{ saving ? 'Saving...' : 'Save settings' }}
+      </button>
+      @if (success) { <p class="success">{{ success }}</p> }
+      @if (error) { <p class="error">{{ error }}</p> }
+    </div>
+  }
+</div>

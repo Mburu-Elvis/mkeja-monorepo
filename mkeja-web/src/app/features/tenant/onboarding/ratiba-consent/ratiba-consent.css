@@ -1,0 +1,168 @@
+@import '../../../auth/auth-shared.css';
+
+:host {
+  display: block;
+}
+
+.ratiba-consent-page {
+  min-height: 100vh;
+  padding: 32px 16px;
+  background: var(--sf-bg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.auth-brand {
+  max-width: 520px;
+  margin: 0 auto 24px;
+}
+
+.auth-card {
+  max-width: 520px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.consent-icon {
+  width: 88px;
+  height: 88px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: var(--sf-green-xpale);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.consent-icon .material-icons {
+  font-size: 42px;
+  color: var(--sf-green-dark);
+}
+
+.auth-card h2 {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--sf-text-1);
+  margin-bottom: 8px;
+}
+
+.consent-subtitle {
+  text-align: center;
+  color: var(--sf-text-3);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.plan-summary-card {
+  background: var(--sf-bg);
+  border: 1px solid var(--sf-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.plan-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    var(--sf-green),
+    var(--sf-green-dark)
+  );
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  margin-bottom: 18px;
+}
+
+.plan-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--sf-border);
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-row span {
+  color: var(--sf-text-3);
+  font-size: 14px;
+}
+
+.detail-row strong {
+  color: var(--sf-text-1);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.info-box {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  background: var(--sf-green-xpale);
+  border: 1px solid rgba(76, 175, 80, 0.18);
+  margin-bottom: 24px;
+}
+
+.info-box .material-icons {
+  color: var(--sf-green-dark);
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.info-box strong {
+  display: block;
+  color: var(--sf-green-dark);
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.info-box p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--sf-text-3);
+}
+
+.consent-actions {
+  margin-bottom: 12px;
+}
+
+.cancel-btn {
+  width: 100%;
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 24px 20px;
+  }
+
+  .consent-icon {
+    width: 72px;
+    height: 72px;
+  }
+
+  .consent-icon .material-icons {
+    font-size: 36px;
+  }
+
+  .auth-card h2 {
+    font-size: 22px;
+  }
+}

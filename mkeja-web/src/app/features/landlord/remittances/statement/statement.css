@@ -1,0 +1,131 @@
+.statement-screen {
+  background-color: var(--mpesa-gray-light);
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+.statement-header {
+  background: linear-gradient(
+    135deg,
+    var(--mpesa-primary),
+    var(--mpesa-primary-dark)
+  );
+  padding: 24px 16px;
+  text-align: center;
+  color: white;
+}
+
+.statement-header h2 {
+  font-size: 24px;
+  margin: 0 0 4px 0;
+}
+
+.statement-header p {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.summary-card {
+  background: white;
+  margin: 16px;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.summary-card .summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #F0F0F0;
+}
+
+.summary-card .summary-row:last-child {
+  border-bottom: none;
+}
+
+.summary-card .summary-row.fee {
+  color: var(--mpesa-error);
+}
+
+.summary-card .summary-row.total {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--mpesa-primary);
+  padding-top: 12px;
+  margin-top: 4px;
+  border-top: 1px solid #F0F0F0;
+}
+
+.units-table {
+  background: white;
+  margin: 16px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.units-table .table-header {
+  display: grid;
+  grid-template-columns: 70px 1fr 100px 100px 90px;
+  background: #F5F5F5;
+  padding: 14px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mpesa-gray-dark);
+}
+
+.units-table .table-row {
+  display: grid;
+  grid-template-columns: 70px 1fr 100px 100px 90px;
+  padding: 14px 12px;
+  border-bottom: 1px solid #F0F0F0;
+  font-size: 13px;
+}
+
+.units-table .table-row:last-child {
+  border-bottom: none;
+}
+
+.units-table .table-row .status-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+  text-align: center;
+  width: fit-content;
+}
+
+.units-table .table-row .status-badge.success {
+  background: #E8F5E9;
+  color: #2E7D32;
+}
+
+.units-table .table-row .status-badge.vacant {
+  background: #F5F5F5;
+  color: var(--mpesa-gray);
+}
+
+.action-buttons {
+  padding: 16px;
+}
+
+.action-buttons .download-btn {
+  width: 100%;
+  padding: 14px;
+  background: white;
+  border: 1px solid var(--mpesa-primary);
+  border-radius: 12px;
+  color: var(--mpesa-primary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.action-buttons .download-btn:active {
+  transform: scale(0.98);
+}

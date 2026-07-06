@@ -1,0 +1,160 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div>
+      <p class="greeting-label">Operations</p>
+      <h1 class="page-title">Properties</h1>
+      <p class="page-subtitle">
+        {{ properties.length }} total · {{ verifiedCount }} verified · {{ pendingCount }} pending review
+      </p>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="card stat-card">
+      <strong>{{ properties.length }}</strong>
+      <span>All properties</span>
+    </div>
+    <div class="card stat-card">
+      <strong>{{ verifiedCount }}</strong>
+      <span>Verified</span>
+    </div>
+    <div class="card stat-card">
+      <strong>{{ pendingCount }}</strong>
+      <span>Pending review</span>
+    </div>
+    <div class="card stat-card">
+      <strong>{{ totalUnits }}</strong>
+      <span>Total units</span>
+    </div>
+  </div>
+
+  <div class="filters card">
+    <div class="search-box">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="applyFilters()"
+        placeholder="Search by name, address, city, or ID">
+    </div>
+    <div class="filter-selects">
+      <select [(ngModel)]="filterStatus" (change)="load()">
+        <option value="all">All status</option>
+        <option value="PENDING_VERIFICATION">Pending verification</option>
+        <option value="VERIFIED">Verified</option>
+        <option value="REJECTED">Rejected</option>
+        <option value="DRAFT">Draft</option>
+      </select>
+    </div>
+    @if (searchTerm || filterStatus !== 'all') {
+      <button class="btn-secondary" type="button" (click)="resetFilters()">Reset</button>
+    }
+  </div>
+
+  @if (error) {
+    <div class="alert-banner alert-danger">{{ error }}</div>
+  }
+
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading properties...</p>
+    </div>
+  } @else if (filtered.length === 0) {
+    <div class="list-empty-state card">
+      <div class="list-empty-icon" aria-hidden="true"><span class="material-icons">home_work</span></div>
+      <h3 class="list-empty-title">{{ hasActiveFilters ? 'No matching properties' : 'No properties yet' }}</h3>
+      <p class="list-empty-text">
+        @if (hasActiveFilters) {
+          Try a different search term or status filter.
+        } @else {
+          Properties will appear here once landlords add them to the platform.
+        }
+      </p>
+      @if (hasActiveFilters) {
+        <button class="btn-secondary" type="button" (click)="resetFilters()">Clear filters</button>
+      }
+    </div>
+  } @else {
+    <div class="card properties-table">
+      <div class="table-header">
+        <span>Property</span>
+        <span>Location</span>
+        <span>Units</span>
+        <span>Status</span>
+        <span>Actions</span>
+      </div>
+
+      @for (property of filtered; track property.id) {
+        <div class="table-row property-row" (click)="openProperty(property.id)">
+          <div class="property-cell">
+            <div class="property-thumb" [class.has-image]="!!property.coverImageUrl">
+              @if (property.coverImageUrl) {
+                <img [src]="property.coverImageUrl" [alt]="property.name">
+              } @else {
+                <span>{{ property.name.charAt(0) }}</span>
+              }
+            </div>
+            <div>
+              <div class="property-name">{{ property.name }}</div>
+              <div class="property-meta">
+                #{{ property.id }}
+                @if (property.propertyType) { · {{ property.propertyType }} }
+                @if (property.houseHuntEnabled) { · House Hunt }
+              </div>
+            </div>
+          </div>
+
+          <div class="location-cell">
+            <div>{{ property.address || property.city || 'No address' }}</div>
+            @if (property.county) {
+              <div class="sub-meta">{{ property.county }}</div>
+            }
+          </div>
+
+          <div class="units-cell">
+            <strong>{{ property.occupiedUnits || 0 }}/{{ property.totalUnits || 0 }}</strong>
+            <span class="sub-meta">{{ property.vacantUnits || 0 }} vacant</span>
+            @if (property.monthlyRentRoll) {
+              <span class="sub-meta">KES {{ property.monthlyRentRoll | number }}/mo roll</span>
+            }
+          </div>
+
+          <div>
+            <span class="status-badge" [class]="statusClass(property.propertyStatus)">
+              {{ statusLabel(property.propertyStatus) }}
+            </span>
+          </div>
+
+          <div class="actions-cell" (click)="$event.stopPropagation()">
+            <a class="action-btn primary" [routerLink]="['/admin/properties', property.id]">Manage</a>
+            @if (property.propertyStatus === 'PENDING_VERIFICATION') {
+              <button
+                class="action-btn outline success"
+                type="button"
+                [disabled]="verifyingPropertyId === property.id"
+                (click)="verifyProperty(property.id)">
+                {{ verifyingPropertyId === property.id ? '…' : 'Verify' }}
+              </button>
+            }
+            @if (property.propertyStatus !== 'REJECTED') {
+              <button
+                class="action-btn outline warn"
+                type="button"
+                [disabled]="rejectingPropertyId === property.id"
+                (click)="rejectProperty(property.id)">
+                {{ rejectingPropertyId === property.id ? '…' : 'Reject' }}
+              </button>
+            }
+            <button
+              class="action-btn outline danger"
+              type="button"
+              [disabled]="deletingPropertyId === property.id"
+              (click)="deleteProperty(property.id)">
+              {{ deletingPropertyId === property.id ? '…' : 'Delete' }}
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

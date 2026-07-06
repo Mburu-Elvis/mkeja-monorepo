@@ -1,0 +1,248 @@
+<div class="global-status-strip"></div>
+<app-header></app-header>
+
+<div class="tenant-dashboard" [class.sidebar-collapsed]="sidebarCollapsed">
+  <aside class="desktop-sidebar">
+    <div class="sidebar-header">
+      <div class="logo-area" [class.collapsed]="sidebarCollapsed">
+        <img src="/logo-mkeja.png" alt="Mkeja" class="mkeja-logo">
+      </div>
+      <button class="collapse-btn" type="button" (click)="toggleSidebar()">
+        <mat-icon [svgIcon]="sidebarCollapsed ? 'chevronRight' : 'chevronLeft'"></mat-icon>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-item" routerLink="/tenant/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon svgIcon="home"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Dashboard</span>
+      </a>
+
+
+      <a class="sidebar-item" routerLink="/tenant/tenancies" routerLinkActive="active">
+        <mat-icon svgIcon="key"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Tenancy</span>
+      </a>
+      <a class="sidebar-item" routerLink="/tenant/house-hunt" routerLinkActive="active">
+        <mat-icon svgIcon="building"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">House Hunt</span>
+      </a>
+      <a class="sidebar-item" routerLink="/tenant/support" routerLinkActive="active">
+        <mat-icon svgIcon="help"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Support</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer" *ngIf="!sidebarCollapsed && (tenantData || currentUser)">
+      <div class="user-mini">
+        <div class="avatar-mini">{{ tenantData?.name?.charAt(0) || userInitials }}</div>
+        <div class="user-info">
+          <span class="user-name">{{ tenantData?.name || currentUser?.fullName || 'User' }}</span>
+          <span class="user-unit">{{ propertyData?.unitName || 'Tenant' }}</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="dashboard-main">
+    <div class="mobile-status">
+      <span class="status-time">{{ currentTime }}</span>
+      <div class="status-icons">
+        <mat-icon svgIcon="signal"></mat-icon>
+        <mat-icon svgIcon="wifi"></mat-icon>
+        <mat-icon svgIcon="battery"></mat-icon>
+      </div>
+    </div>
+
+    <div class="refresh-indicator" *ngIf="isRefreshing">
+      <div class="spinner-small"></div>
+      <span>Updating your financial data...</span>
+    </div>
+
+    <div class="house-hunt-promo card">
+      <div class="promo-text">
+        <strong>House Hunt</strong>
+        <p>Browse verified vacant units and save homes you like.</p>
+      </div>
+      <a class="btn-primary" routerLink="/tenant/house-hunt">Browse listings</a>
+    </div>
+
+    @if (kycPending || kycRejected) {
+      <div class="kyc-banner" [class.rejected]="kycRejected">
+        @if (kycRejected) {
+          <strong>Profile not verified.</strong> Your KYC was rejected. Contact support to resubmit your documents.
+        } @else {
+          <strong>Profile not verified.</strong> Complete identity verification to unlock your financial dashboard.
+        }
+      </div>
+    }
+
+    <div *ngIf="fulizaData?.activeLoan?.status === 'DEFAULT' && kycApproved" class="alert-banner alert-danger">
+      <mat-icon svgIcon="alert"></mat-icon>
+      <div class="alert-content">
+        <strong>Default Notice - Immediate Action Required</strong>
+        <p>Multiple missed payments detected. Contact your landlord immediately.</p>
+      </div>
+      <button class="alert-btn" (click)="onContactLandlord()">Contact Landlord</button>
+    </div>
+
+    @if (isLoading) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading your financial hub...</p>
+      </div>
+    } @else if (!kycApproved) {
+      <div class="empty-state-panel card">
+        <div class="empty-icon-wrap">
+          <mat-icon svgIcon="shield"></mat-icon>
+        </div>
+        <h2>Profile not verified</h2>
+        @if (kycRejected) {
+          <p>Your identity verification was rejected. Re-upload your documents or contact support to access rent payments, Fuliza, and auto-deductions.</p>
+        } @else {
+          <p>Your profile is pending verification. Once approved, you will have full access to your financial dashboard.</p>
+        }
+        <div class="empty-actions">
+          @if (!kycRejected) {
+            <button class="btn-primary" type="button" routerLink="/tenant/onboarding/upload-documents">
+              <mat-icon svgIcon="plus"></mat-icon>
+              Upload Documents
+            </button>
+          } @else {
+            <button class="btn-primary" type="button" routerLink="/tenant/onboarding/upload-documents">
+              <mat-icon svgIcon="plus"></mat-icon>
+              Re-upload Documents
+            </button>
+          }
+          <button class="btn-secondary" type="button" routerLink="/tenant/profile">View Profile</button>
+          <button class="btn-secondary" type="button" routerLink="/tenant/house-hunt">Browse House Hunt</button>
+          @if (kycRejected) {
+            <button class="btn-secondary" type="button" routerLink="/tenant/support">Contact Support</button>
+          }
+        </div>
+      </div>
+    } @else if (tenantData) {
+      <div class="hero-section">
+        <div class="hero-flex">
+          <div class="hero-text">
+            <p class="greeting-label">{{ greeting }},</p>
+            <h1 class="tenant-name">{{ tenantData.firstName }}</h1>
+            <p class="property-address">{{ propertyData.address }} · {{ propertyData.unitName }}</p>
+            <div class="hero-meta">
+              <span class="unit-pill">
+                <mat-icon svgIcon="building"></mat-icon>
+                Landlord: {{ propertyData.landlordName }}
+              </span>
+              <button class="contact-link" type="button" (click)="onContactLandlord()">
+                <mat-icon svgIcon="phone"></mat-icon>
+                Contact
+              </button>
+              <span class="lease-badge" [class]="'badge-' + propertyData.status.toLowerCase()">
+                {{ propertyData.status }}
+              </span>
+            </div>
+          </div>
+          <div class="hero-actions">
+            <button class="refresh-btn" type="button" (click)="refreshData()" [disabled]="isRefreshing">
+              <mat-icon svgIcon="refresh"></mat-icon>
+            </button>
+            <div class="avatar-large" routerLink="/tenant/profile">
+              {{ tenantData.name.charAt(0) }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-navigation underline">
+        <button class="tab-btn" [class.active]="activeTab === 'overview'" (click)="setActiveTab('overview')">
+          <mat-icon svgIcon="pieChart"></mat-icon>
+          <span>Overview</span>
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 'ratiba'" (click)="setActiveTab('ratiba')">
+          <mat-icon svgIcon="calendar"></mat-icon>
+          <span>Auto-Deductions</span>
+          <span class="tab-badge" *ngIf="ratibaData?.active">Active</span>
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 'fuliza'" (click)="setActiveTab('fuliza')">
+          <mat-icon svgIcon="zap"></mat-icon>
+          <span>Rent Fuliza</span>
+          <span class="tab-badge warning" *ngIf="fulizaData?.activeLoan">Loan Active</span>
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 'transactions'" (click)="setActiveTab('transactions')">
+          <mat-icon svgIcon="fileText"></mat-icon>
+          <span>Transactions</span>
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 'bank'" (click)="setActiveTab('bank')">
+          <mat-icon svgIcon="building"></mat-icon>
+          <span>Bank Details</span>
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 'analytics'" (click)="setActiveTab('analytics')">
+          <mat-icon svgIcon="barChart"></mat-icon>
+          <span>Analytics</span>
+        </button>
+      </div>
+
+      <div [ngSwitch]="activeTab">
+        <app-overview *ngSwitchCase="'overview'" [tenantData]="tenantData" [propertyData]="propertyData"
+          [financialData]="financialData" [ratibaData]="ratibaData" [fulizaData]="fulizaData"
+          (refreshData)="refreshData()" (contactLandlord)="onContactLandlord()">
+        </app-overview>
+
+        <app-ratiba *ngSwitchCase="'ratiba'" [ratibaData]="ratibaData" [financialData]="financialData"
+          [tenantData]="tenantData" (dataChanged)="refreshData()">
+        </app-ratiba>
+
+        <app-fuliza *ngSwitchCase="'fuliza'" [fulizaData]="fulizaData" [financialData]="financialData"
+          (dataChanged)="refreshData()">
+        </app-fuliza>
+
+        <app-transactions *ngSwitchCase="'transactions'"
+          [transactions]="(transactionService.transactions$ | async) || []" (exportRequested)="onExportTransactions()">
+        </app-transactions>
+
+        <app-bank *ngSwitchCase="'bank'" [bankData]="bankData || {}" (dataChanged)="refreshData()">
+        </app-bank>
+
+        <app-analytics *ngSwitchCase="'analytics'" [financialData]="financialData" [fulizaData]="fulizaData"
+          [transactions]="(transactionService.transactions$ | async) || []">
+        </app-analytics>
+      </div>
+
+      <div class="support-hub">
+        <div class="support-content">
+          <div class="support-text">
+            <mat-icon svgIcon="help"></mat-icon>
+            <span>Need help with your finances?</span>
+          </div>
+          <div class="support-actions">
+            <button class="btn-outline" type="button" routerLink="/tenant/support">Raise a Ticket</button>
+            <a class="help-link" routerLink="/tenant/support">FAQs &amp; Support</a>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <a class="nav-item" routerLink="/tenant/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+    <mat-icon svgIcon="home"></mat-icon>
+    <span>Home</span>
+  </a>
+  <a class="nav-item" routerLink="/tenant/house-hunt" routerLinkActive="active">
+    <mat-icon svgIcon="building"></mat-icon>
+    <span>Hunt</span>
+  </a>
+  <a class="nav-item" routerLink="/tenant/wallet" routerLinkActive="active">
+    <mat-icon svgIcon="wallet"></mat-icon>
+    <span>Wallet</span>
+  </a>
+  <a class="nav-item" routerLink="/tenant/payments" routerLinkActive="active">
+    <mat-icon svgIcon="creditCard"></mat-icon>
+    <span>Pay</span>
+  </a>
+  <a class="nav-item" routerLink="/tenant/profile" routerLinkActive="active">
+    <mat-icon svgIcon="user"></mat-icon>
+    <span>Me</span>
+  </a>
+</nav>

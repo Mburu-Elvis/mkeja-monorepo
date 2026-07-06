@@ -1,0 +1,81 @@
+<div class="auth-page">
+  <header class="auth-brand">
+    <div class="auth-brand-badge">
+      <img src="/logo-mkeja.png" alt="Mkeja" class="auth-brand-logo">
+    </div>
+    <h1>Welcome back</h1>
+    <p>Sign in to continue to your dashboard</p>
+  </header>
+
+  <div class="auth-card">
+    @if (successMessage) {
+      <div class="auth-success">{{ successMessage }}</div>
+    }
+
+    <div class="auth-form-group">
+      <label>M-Pesa Number</label>
+      <div class="auth-input-row" [class.error]="error && !displayPhone">
+        <span class="auth-input-prefix">+254</span>
+        <input
+          type="tel"
+          [(ngModel)]="displayPhone"
+          (input)="onPhoneInput()"
+          (blur)="validatePhone()"
+          placeholder="712 345 678"
+          maxlength="9"
+          autocomplete="tel">
+      </div>
+      @if (displayPhone && !error) {
+        <small class="auth-hint">Full number: {{ fullPhoneNumber }}</small>
+      }
+    </div>
+
+    <div class="auth-form-group">
+      <label>PIN</label>
+      <div class="auth-input-row pin-row" [class.error]="error && !pin">
+        <input
+          [type]="showPin ? 'text' : 'password'"
+          [(ngModel)]="pin"
+          (blur)="validatePin()"
+          placeholder="Enter your PIN"
+          maxlength="6"
+          autocomplete="current-password">
+        <button type="button" class="auth-toggle-pin" (click)="showPin = !showPin">
+          {{ showPin ? 'Hide' : 'Show' }}
+        </button>
+      </div>
+    </div>
+
+    @if (error) {
+      <div class="auth-error">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        {{ error }}
+      </div>
+    }
+
+    <button class="auth-btn-primary" [disabled]="loading" (click)="onSubmit()">
+      @if (loading) {
+        <span class="auth-spinner"></span>
+        Signing in...
+      } @else {
+        Sign In
+      }
+    </button>
+
+    <div class="auth-links">
+      <a routerLink="/auth/forgot-password">Forgot PIN?</a>
+      <a routerLink="/auth/register">Create an account</a>
+    </div>
+
+    <div class="auth-security-note">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+      <span>Secure connection · 256-bit encrypted</span>
+    </div>
+  </div>
+</div>

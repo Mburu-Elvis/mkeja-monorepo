@@ -1,0 +1,288 @@
+<div class="support-container platform-page">
+    <div class="support-header">
+        <h1>{{ portalConfig.title }}</h1>
+        <p>{{ portalConfig.subtitle }}</p>
+    </div>
+
+    <div class="support-stats">
+        <div class="stat-card">
+            <mat-icon svgIcon="clock"></mat-icon>
+            <div>
+                <span>Average Response Time</span>
+                <strong>&lt; 2 hours</strong>
+            </div>
+        </div>
+        <div class="stat-card">
+            <mat-icon svgIcon="check-circle"></mat-icon>
+            <div>
+                <span>Resolution Rate</span>
+                <strong>98%</strong>
+            </div>
+        </div>
+        <div class="stat-card">
+            <mat-icon svgIcon="users"></mat-icon>
+            <div>
+                <span>Active Tickets</span>
+                <strong>{{ activeTicketCount }}</strong>
+            </div>
+        </div>
+        <div class="stat-card">
+            <mat-icon svgIcon="thumbs-up"></mat-icon>
+            <div>
+                <span>Satisfaction Rate</span>
+                <strong>94%</strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-navigation underline">
+        <button class="tab-btn" [class.active]="activeTab === 'new'" (click)="activeTab = 'new'">
+            <mat-icon svgIcon="plus"></mat-icon>
+            <span>New Ticket</span>
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 'my-tickets'" (click)="activeTab = 'my-tickets'">
+            <mat-icon svgIcon="file-text"></mat-icon>
+            <span>My Tickets</span>
+            <span class="tab-badge" *ngIf="activeTicketCount > 0">{{ activeTicketCount }}</span>
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 'faq'" (click)="activeTab = 'faq'">
+            <mat-icon svgIcon="help"></mat-icon>
+            <span>FAQ</span>
+        </button>
+    </div>
+
+    <div class="tab-content" *ngIf="activeTab === 'new'">
+        <div class="card">
+            <div class="card-header">
+                <span>Raise a New Ticket</span>
+                <span class="header-note">We typically respond within 2 hours</span>
+            </div>
+
+            <form [formGroup]="ticketForm" (ngSubmit)="submitTicket()" class="ticket-form">
+                <div class="form-group">
+                    <label>Subject *</label>
+                    <input
+                        type="text"
+                        formControlName="subject"
+                        placeholder="Brief summary of your issue"
+                        class="form-input">
+                    <div class="error-message" *ngIf="ticketForm.get('subject')?.invalid && ticketForm.get('subject')?.touched">
+                        Subject must be between 5 and 100 characters
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select formControlName="category" class="form-select">
+                            <option value="">Select category</option>
+                            <option *ngFor="let category of portalConfig.categories" [value]="category.value">
+                                {{ category.label }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Priority *</label>
+                        <select formControlName="priority" class="form-select">
+                            <option value="low">Low - General inquiry</option>
+                            <option value="medium">Medium - Minor issue</option>
+                            <option value="high">High - Urgent matter</option>
+                            <option value="urgent">Urgent - Critical issue</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Description *</label>
+                    <textarea
+                        formControlName="description"
+                        rows="6"
+                        placeholder="Please provide detailed information about your issue..."
+                        class="form-textarea"></textarea>
+                    <div class="error-message" *ngIf="ticketForm.get('description')?.invalid && ticketForm.get('description')?.touched">
+                        Description must be at least 20 characters
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" (click)="ticketForm.reset({ priority: 'medium' })">Clear</button>
+                    <button type="submit" class="btn-primary" [disabled]="ticketForm.invalid || isLoading">
+                        {{ isLoading ? 'Submitting...' : 'Submit Ticket' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="tips-card">
+            <mat-icon svgIcon="lightbulb"></mat-icon>
+            <div>
+                <strong>Quick Tips</strong>
+                <ul>
+                    <li>Include screenshots if possible</li>
+                    <li>Check FAQ before submitting</li>
+                    <li>Provide transaction IDs for payment issues</li>
+                    <li>Emergency? Call our support line: {{ portalConfig.phone }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-content" *ngIf="activeTab === 'my-tickets'">
+        <div class="card">
+            <div class="card-header">
+                <span>My Support Tickets</span>
+                <span class="ticket-count">{{ tickets.length }} total</span>
+            </div>
+
+            <div class="loading-inline" *ngIf="loadingTickets">
+                <div class="spinner"></div>
+                <span>Loading tickets...</span>
+            </div>
+
+            <div class="tickets-list" *ngIf="!loadingTickets && tickets.length > 0; else noTickets">
+                <div class="ticket-item" *ngFor="let ticket of tickets" (click)="viewTicket(ticket)">
+                    <div class="ticket-header">
+                        <div class="ticket-title">
+                            <span class="ticket-id">{{ ticket.referenceCode }}</span>
+                            <span class="ticket-subject">{{ ticket.subject }}</span>
+                        </div>
+                        <div class="ticket-badges">
+                            <span class="category-badge">
+                                <mat-icon [svgIcon]="getCategoryIcon(ticket.category)"></mat-icon>
+                                {{ getCategoryName(ticket.category) }}
+                            </span>
+                            <span class="priority-badge" [class]="getPriorityColor(ticket.priority)">
+                                {{ getPriorityName(ticket.priority) }}
+                            </span>
+                            <span class="status-badge" [class]="getStatusColor(ticket.status)">
+                                {{ getStatusName(ticket.status) }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="ticket-preview">
+                        <p>{{ ticket.description | slice:0:100 }}{{ ticket.description.length > 100 ? '...' : '' }}</p>
+                    </div>
+                    <div class="ticket-footer">
+                        <span class="ticket-date">
+                            <mat-icon svgIcon="clock"></mat-icon>
+                            {{ formatRelativeTime(ticket.updatedAt) }}
+                        </span>
+                        <span class="ticket-messages" *ngIf="ticket.messages.length > 1">
+                            <mat-icon svgIcon="message"></mat-icon>
+                            {{ ticket.messages.length }} messages
+                        </span>
+                        <button class="view-btn btn-link btn-link--icon" type="button">
+                          View Details
+                          <span class="material-icons" aria-hidden="true">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <ng-template #noTickets>
+                <div class="empty-state app-empty-state" *ngIf="!loadingTickets">
+                    <div class="app-empty-icon"><span class="material-icons">support_agent</span></div>
+                    <h3 class="app-empty-title">No support tickets yet</h3>
+                    <p class="app-empty-text">Have an issue? Raise your first ticket above.</p>
+                    <button class="btn-primary" type="button" (click)="activeTab = 'new'">Raise a Ticket</button>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+
+    <div class="tab-content" *ngIf="activeTab === 'faq'">
+        <div class="faq-container">
+            <div class="faq-categories">
+                <div class="category-item" *ngFor="let category of portalConfig.faqCategories"
+                     [class.active]="selectedCategory === category.id"
+                     (click)="selectedCategory = category.id">
+                    <mat-icon [svgIcon]="category.icon"></mat-icon>
+                    <div>
+                        <strong>{{ category.name }}</strong>
+                        <span>{{ category.count }} articles</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-questions">
+                <div class="faq-card" *ngFor="let faq of getFaqsByCategory(selectedCategory)">
+                    <div class="faq-question" (click)="toggleFaq(faq)">
+                        <mat-icon [svgIcon]="isFaqExpanded(faq) ? 'chevron-down' : 'chevron-right'"></mat-icon>
+                        <span>{{ faq.question }}</span>
+                    </div>
+                    <div class="faq-answer" *ngIf="isFaqExpanded(faq)">
+                        <p>{{ faq.answer }}</p>
+                        <button class="btn-link btn-link--icon" type="button" (click)="activeTab = 'new'">
+                          Still need help? Raise a ticket
+                          <span class="material-icons" aria-hidden="true">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" *ngIf="selectedTicket" (click)="closeTicketView()">
+    <div class="modal-content ticket-detail-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <div>
+                <h2>{{ selectedTicket.referenceCode }}</h2>
+                <div class="ticket-meta">
+                    <span class="status-badge" [class]="getStatusColor(selectedTicket.status)">
+                        {{ getStatusName(selectedTicket.status) }}
+                    </span>
+                    <span class="priority-badge" [class]="getPriorityColor(selectedTicket.priority)">
+                        {{ getPriorityName(selectedTicket.priority) }}
+                    </span>
+                </div>
+            </div>
+            <button class="close-modal" type="button" (click)="closeTicketView()">
+                <mat-icon svgIcon="x-circle"></mat-icon>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <div class="ticket-subject">
+                <strong>Subject:</strong>
+                <span>{{ selectedTicket.subject }}</span>
+            </div>
+
+            <div class="ticket-conversation">
+                <div class="message" *ngFor="let message of selectedTicket.messages"
+                     [class.user-message]="message.fromUser"
+                     [class.support-message]="!message.fromUser">
+                    <div class="message-bubble">
+                        <div class="message-author" *ngIf="message.authorName">{{ message.authorName }}</div>
+                        <div class="message-text">{{ message.message }}</div>
+                        <div class="message-time">{{ formatDate(message.createdAt) }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reply-section" *ngIf="selectedTicket.status !== 'closed'">
+                <form [formGroup]="replyForm" (ngSubmit)="sendReply()">
+                    <div class="form-group">
+                        <label>Add a reply</label>
+                        <textarea
+                            formControlName="message"
+                            rows="3"
+                            placeholder="Type your message here..."
+                            class="form-textarea"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary" [disabled]="replyForm.invalid || isLoading">
+                            {{ isLoading ? 'Sending...' : 'Send Reply' }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="ticket-closed-message" *ngIf="selectedTicket.status === 'closed'">
+                <mat-icon svgIcon="check-circle"></mat-icon>
+                <span>This ticket has been closed. For further assistance, please create a new ticket.</span>
+            </div>
+        </div>
+    </div>
+</div>

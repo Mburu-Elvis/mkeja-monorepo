@@ -1,0 +1,333 @@
+.kyc-gallery-empty {
+  margin: 0;
+  padding: 28px 16px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--sf-text-4);
+  background: var(--sf-bg-2);
+  border: 1px dashed var(--sf-border);
+  border-radius: 12px;
+}
+
+.kyc-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.kyc-gallery-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0;
+  border: 1px solid var(--sf-border);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  overflow: hidden;
+}
+
+.kyc-gallery-card:is(:hover, :focus-visible).is-ready {
+  border-color: rgba(0, 168, 89, 0.35);
+  box-shadow: 0 10px 24px rgba(16, 24, 40, 0.08);
+  transform: translateY(-1px);
+}
+
+.kyc-gallery-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.85;
+}
+
+.kyc-card-preview {
+  position: relative;
+  height: 156px;
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  overflow: hidden;
+}
+
+.kyc-thumb-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.kyc-card-placeholder {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--sf-text-3);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.kyc-card-placeholder.pdf {
+  color: #b42318;
+}
+
+.kyc-card-placeholder .material-icons,
+.kyc-card-state .material-icons {
+  font-size: 34px;
+}
+
+.kyc-card-state {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--sf-text-3);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.kyc-card-state.muted {
+  color: var(--sf-text-4);
+}
+
+.kyc-card-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: rgba(15, 23, 42, 0.55);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.kyc-gallery-card.is-ready:hover .kyc-card-overlay,
+.kyc-gallery-card.is-ready:focus-visible .kyc-card-overlay {
+  opacity: 1;
+}
+
+.kyc-card-meta {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px 14px;
+}
+
+.kyc-card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sf-text-1);
+  line-height: 1.35;
+}
+
+.kyc-status-pill {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #f2f4f7;
+  color: #475467;
+}
+
+.kyc-status-pill.approved,
+.kyc-status-pill.verified {
+  background: #ecfdf3;
+  color: #027a48;
+}
+
+.kyc-status-pill.pending,
+.kyc-status-pill.manual-review {
+  background: #fffaeb;
+  color: #b54708;
+}
+
+.kyc-status-pill.rejected {
+  background: #fef3f2;
+  color: #b42318;
+}
+
+.kyc-viewer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(4px);
+}
+
+.kyc-viewer-panel {
+  width: min(1120px, 100%);
+  max-height: calc(100vh - 48px);
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.28);
+  overflow: hidden;
+}
+
+.kyc-viewer-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--sf-border);
+}
+
+.kyc-viewer-heading h3 {
+  margin: 4px 0 8px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--sf-text-1);
+}
+
+.kyc-viewer-eyebrow {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sf-text-4);
+}
+
+.kyc-viewer-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  background: #f2f4f7;
+  color: var(--sf-text-2);
+  cursor: pointer;
+}
+
+.kyc-viewer-close:hover {
+  background: #e4e7ec;
+}
+
+.kyc-viewer-body {
+  flex: 1;
+  min-height: 420px;
+  max-height: calc(100vh - 220px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 24px;
+  background: #f8fafc;
+  overflow: auto;
+}
+
+.kyc-viewer-image {
+  max-width: 100%;
+  max-height: calc(100vh - 240px);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+  background: #fff;
+}
+
+.kyc-viewer-pdf {
+  width: 100%;
+  min-height: 70vh;
+  border: 0;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+}
+
+.kyc-viewer-fallback {
+  text-align: center;
+  color: var(--sf-text-3);
+}
+
+.kyc-viewer-fallback .material-icons {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.kyc-viewer-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  background-color: var(--btn-primary-bg);
+  color: #fff;
+}
+
+.kyc-viewer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 24px 20px;
+  border-top: 1px solid var(--sf-border);
+  background: #fff;
+}
+
+.kyc-viewer-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.kyc-viewer-counter {
+  min-width: 72px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sf-text-3);
+}
+
+.spin {
+  animation: kyc-spin 0.9s linear infinite;
+}
+
+@keyframes kyc-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  .kyc-viewer-overlay {
+    padding: 0;
+  }
+
+  .kyc-viewer-panel {
+    width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .kyc-viewer-body {
+    min-height: 50vh;
+    max-height: calc(100vh - 180px);
+  }
+
+  .kyc-viewer-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .kyc-viewer-nav {
+    justify-content: space-between;
+  }
+}

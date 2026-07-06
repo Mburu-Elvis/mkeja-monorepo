@@ -1,0 +1,284 @@
+/* Shared dashboard page content — tenant / landlord / admin */
+
+.platform-page,
+.admin-page {
+  width: 150%;
+}
+
+.platform-page .kyc-banner,
+.admin-page .kyc-banner {
+  background: var(--sf-warning-bg, #FFF3E0);
+  color: var(--sf-warning, #E65100);
+  padding: 12px 18px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.platform-page .kyc-banner.rejected,
+.admin-page .kyc-banner.rejected {
+  background: var(--sf-danger-bg, #FFEBEE);
+  color: var(--sf-danger, #B71C1C);
+}
+
+.platform-page .hero-section,
+.admin-page .hero-section {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  margin-bottom: 28px;
+  padding: 24px 28px;
+  border-radius: var(--radius-3xl);
+}
+
+.platform-page .hero-flex,
+.admin-page .hero-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.platform-page .greeting-label,
+.admin-page .greeting-label {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 4px;
+}
+
+.platform-page .page-title,
+.platform-page .landlord-name,
+.admin-page .page-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+
+.platform-page .hero-subtitle,
+.platform-page .property-count,
+.admin-page .hero-subtitle {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 14px;
+}
+
+.platform-page .hero-meta,
+.admin-page .hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.platform-page .unit-pill,
+.admin-page .unit-pill {
+  background: rgba(255, 255, 255, 0.12);
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.platform-page .unit-pill mat-icon,
+.admin-page .unit-pill mat-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.platform-page .status-dot,
+.admin-page .status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #81C784;
+  display: inline-block;
+}
+
+.platform-page .hero-actions,
+.admin-page .hero-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.platform-page .refresh-btn,
+.admin-page .refresh-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.platform-page .refresh-btn mat-icon,
+.admin-page .refresh-btn mat-icon {
+  width: 22px;
+  height: 22px;
+  color: white;
+}
+
+.platform-page .avatar-large,
+.admin-page .avatar-large {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #81C784, var(--sf-green, #4CAF50));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.platform-page .dashboard-grid,
+.admin-page .dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.platform-page .card,
+.admin-page .card {
+  background: var(--sf-surface, #fff);
+  border-radius: 20px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  transition: box-shadow 0.2s;
+}
+
+.platform-page .card:hover,
+.admin-page .card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.platform-page .stat-card,
+.admin-page .stat-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+}
+
+.platform-page .stat-card.highlight,
+.admin-page .stat-card.highlight {
+  border-color: #A5D6A7;
+  background: linear-gradient(135deg, #fff, var(--sf-green-xpale, #F1F8F2));
+}
+
+.platform-page .card-icon,
+.admin-page .card-icon {
+  width: 52px;
+  height: 52px;
+  background: var(--sf-green-pale, #E8F5E9);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.platform-page .card-icon mat-icon,
+.admin-page .card-icon mat-icon {
+  width: 28px;
+  height: 28px;
+  color: var(--sf-green, #4CAF50);
+}
+
+.platform-page .stat-label,
+.admin-page .stat-label {
+  font-size: 12px;
+  color: var(--sf-text-4, #9CA3AF);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.platform-page .stat-value,
+.admin-page .stat-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--sf-text-1, #111827);
+  font-family: var(--font-mono, monospace);
+}
+
+.platform-page .two-columns,
+.admin-page .two-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.platform-page .card-header,
+.admin-page .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--sf-text-2, #374151);
+}
+
+.platform-page .loading-state,
+.admin-page .loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  gap: 16px;
+  color: var(--sf-text-3, #6B7280);
+}
+
+.platform-page .spinner,
+.admin-page .spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--sf-green-pale, #E8F5E9);
+  border-top-color: var(--sf-green, #4CAF50);
+  border-radius: 50%;
+  animation: platform-spin 0.8s linear infinite;
+}
+
+@keyframes platform-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* @media () {
+  .platform-page .dashboard-grid,
+  .admin-page .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .platform-page .two-columns,
+  .admin-page .two-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .platform-page .dashboard-grid,
+  .admin-page .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .platform-page .page-title,
+  .platform-page .landlord-name,
+  .admin-page .page-title {
+    font-size: 24px;
+  }
+
+  .platform-page .hero-section,
+  .admin-page .hero-section {
+    padding: 20px;
+    border-radius: 16px;
+  }
+} */

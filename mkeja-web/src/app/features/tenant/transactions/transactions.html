@@ -1,0 +1,120 @@
+<!-- components/transactions/transactions.component.html -->
+<div class="transactions-container">
+    <!-- Transaction Summary -->
+    <div class="transaction-summary">
+        <div class="summary-card inflow">
+            <mat-icon svgIcon="arrowUp"></mat-icon>
+            <div>
+                <span>Total Inflow</span>
+                <strong>{{ formatCurrency(totalInflow) }}</strong>
+            </div>
+        </div>
+        <div class="summary-card outflow">
+            <mat-icon svgIcon="arrowDown"></mat-icon>
+            <div>
+                <span>Total Outflow</span>
+                <strong>{{ formatCurrency(totalOutflow) }}</strong>
+            </div>
+        </div>
+        <div class="summary-card net">
+            <mat-icon svgIcon="trendingUp"></mat-icon>
+            <div>
+                <span>Net Flow</span>
+                <strong [class.positive]="netFlow >= 0" [class.negative]="netFlow < 0">
+                    {{ formatCurrency(netFlow) }}
+                </strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="transaction-filters">
+        <div class="filter-group">
+            <label>Type</label>
+            <div class="filter-buttons">
+                <button class="filter-btn" [class.active]="transactionFilter === 'all'" (click)="transactionFilter = 'all'">All</button>
+                <button class="filter-btn" [class.active]="transactionFilter === 'credit'" (click)="transactionFilter = 'credit'">Income</button>
+                <button class="filter-btn" [class.active]="transactionFilter === 'debit'" (click)="transactionFilter = 'debit'">Payments</button>
+            </div>
+        </div>
+        
+        <div class="filter-group">
+            <label>Date Range</label>
+            <div class="filter-buttons">
+                <button class="filter-btn" [class.active]="transactionDateRange === 'week'" (click)="transactionDateRange = 'week'">Week</button>
+                <button class="filter-btn" [class.active]="transactionDateRange === 'month'" (click)="transactionDateRange = 'month'">Month</button>
+                <button class="filter-btn" [class.active]="transactionDateRange === 'year'" (click)="transactionDateRange = 'year'">Year</button>
+                <button class="filter-btn" [class.active]="transactionDateRange === 'all'" (click)="transactionDateRange = 'all'">All</button>
+            </div>
+        </div>
+        
+        <div class="filter-group search-group">
+            <mat-icon svgIcon="search"></mat-icon>
+            <input 
+                type="text" 
+                placeholder="Search by description, reference..." 
+                [(ngModel)]="searchTerm"
+                class="search-input">
+        </div>
+        
+        <div class="filter-actions">
+            <button class="clear-btn" (click)="clearFilters()" *ngIf="transactionFilter !== 'all' || transactionDateRange !== 'month' || searchTerm">
+                Clear Filters
+            </button>
+            <button class="export-btn" (click)="exportTransactions()">
+                <mat-icon svgIcon="download"></mat-icon>
+                Export
+            </button>
+        </div>
+    </div>
+
+    <!-- Transactions List -->
+    <div class="card transactions-full-list">
+        <div class="tx-header">
+            <span>Date & Time</span>
+            <span>Description</span>
+            <span>Reference</span>
+            <span>Amount</span>
+            <span>Status</span>
+            <span></span>
+        </div>
+        
+        <div class="tx-list-full">
+            <div class="tx-row" *ngFor="let tx of filteredTransactions">
+                <div class="tx-date">{{ formatDateTime(tx.date) }}</div>
+                <div class="tx-description">
+                    <div class="tx-desc">{{ tx.description }}</div>
+                    <div class="tx-category">{{ tx.category }}</div>
+                </div>
+                <div class="tx-reference">{{ tx.reference }}</div>
+                <div class="tx-amount" [class.credit]="tx.type === 'credit'" [class.debit]="tx.type === 'debit'">
+                    {{ tx.type === 'credit' ? '+' : '−' }}{{ formatCurrency(tx.amount) }}
+                </div>
+                <div class="tx-status">
+                    <span class="status-badge" [class]="getStatusClass(tx.status)">
+                        {{ tx.status }}
+                    </span>
+                </div>
+                <div class="tx-actions">
+                    <button class="share-btn" (click)="shareTransaction(tx)" matTooltip="Share receipt">
+                        <mat-icon svgIcon="share"></mat-icon>
+                    </button>
+                </div>
+            </div>
+            
+            <div *ngIf="filteredTransactions.length === 0" class="tx-empty-state">
+                <mat-icon svgIcon="fileText"></mat-icon>
+                <p>No transactions found</p>
+                <p class="subtext">Try adjusting your filters or search term</p>
+                <button class="btn-link" (click)="clearFilters()">Clear all filters</button>
+            </div>
+        </div>
+        
+        <!-- Pagination (simplified) -->
+        <div class="tx-pagination" *ngIf="filteredTransactions.length > 20">
+            <button class="page-btn" disabled>Previous</button>
+            <span class="page-info">Page 1 of {{ Math.ceil(filteredTransactions.length / 20) }}</span>
+            <button class="page-btn">Next</button>
+        </div>
+    </div>
+</div>

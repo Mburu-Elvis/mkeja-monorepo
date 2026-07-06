@@ -1,0 +1,11 @@
+@import '../../shared/styles/platform-shell.css';
+
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}

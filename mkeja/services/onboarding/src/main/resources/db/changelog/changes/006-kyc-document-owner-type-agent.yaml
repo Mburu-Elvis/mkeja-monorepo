@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: kyc-document-owner-type-agent
+      author: mkeja
+      dbms: postgresql
+      changes:
+        - sql:
+            sql: |
+              ALTER TABLE tbl_kyc_documents DROP CONSTRAINT IF EXISTS tbl_kyc_documents_owner_type_check;
+              ALTER TABLE tbl_kyc_documents ADD CONSTRAINT tbl_kyc_documents_owner_type_check
+                CHECK (owner_type IN ('TENANT', 'PROPERTY_OWNER', 'AGENT'));

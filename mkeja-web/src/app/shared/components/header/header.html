@@ -1,0 +1,120 @@
+<!-- components/header/header.component.html -->
+<header class="modern-header">
+  <div class="header-container">
+    <!-- Left Section: Logo -->
+    <div class="header-left">
+      <div class="logo">
+        <div class="logo-icon">
+          <img src="/logo-mkeja.png" alt="mkeja logo">
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Section: Date & Time -->
+    <div class="header-center">
+      <div class="datetime-widget">
+        <div class="time">{{ currentTime }}</div>
+        <div class="date">{{ currentDate }}</div>
+      </div>
+    </div>
+
+    <!-- Right Section: Actions -->
+    <div class="header-right">
+      <!-- Search -->
+      <button mat-icon-button class="icon-btn search-btn" matTooltip="Search">
+        <mat-icon>search</mat-icon>
+      </button>
+
+      <!-- Notifications -->
+      <div class="notification-dropdown" (mouseenter)="showNotifications = true"
+        (mouseleave)="showNotifications = false">
+        <button class="icon-btn notification-btn" matTooltip="Notifications">
+          <mat-icon svgIcon="bell"></mat-icon>
+          <span class="notification-badge" *ngIf="unreadCount > 0">{{ unreadCount > 9 ? '9+' : unreadCount }}</span>
+        </button>
+
+        <div class="dropdown-menu notifications-menu" *ngIf="showNotifications">
+          <div class="dropdown-header">
+            <h3>Notifications</h3>
+            <div class="dropdown-actions">
+              <button class="action-link" (click)="markAllAsRead()">Mark all read</button>
+              <button class="action-link" (click)="clearAllNotifications()">Clear all</button>
+            </div>
+          </div>
+
+          <div class="notifications-list" *ngIf="notifications.length > 0; else noNotifications">
+            <div class="notification-item" *ngFor="let notification of notifications"
+              [class.unread]="!notification.read" (click)="markAsRead(notification)">
+              <div class="notification-icon" [class]="notification.type">
+                <mat-icon [svgIcon]="getNotificationIcon(notification.type)"></mat-icon>
+              </div>
+              <div class="notification-content">
+                <div class="notification-title">{{ notification.title }}</div>
+                <div class="notification-message">{{ notification.message }}</div>
+                <div class="notification-time">{{ getTimeAgo(notification.createdAt) }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dropdown-footer">
+            <button class="view-all-btn btn-link btn-link--icon" type="button" [routerLink]="notificationsLink" (click)="closeNotifications()">
+              View all notifications
+              <span class="material-icons" aria-hidden="true">arrow_forward</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Help -->
+      <button class="icon-btn help-btn" matTooltip="Help & Support" [routerLink]="supportLink">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+        </svg>
+      </button>
+
+      <!-- User Menu -->
+      <div class="user-menu">
+        <button class="user-menu-trigger" [matMenuTriggerFor]="userMenu">
+          <div class="user-avatar" *ngIf="userAvatar; else avatarInitials">
+            <img [src]="userAvatar" [alt]="userName">
+          </div>
+          <ng-template #avatarInitials>
+            <div class="avatar-initials">
+              {{ getInitials(userName) }} 
+            </div>
+          </ng-template>
+          <div class="user-info">
+            <span class="user-name">{{ userName }}</span>
+            <span class="user-role">{{ userRoleLabel }}</span>
+          </div>
+          <mat-icon svgIcon="chevron-down" class="dropdown-icon"></mat-icon>
+        </button>
+
+        <mat-menu #userMenu="matMenu" class="user-menu-panel">
+          <div class="menu-header">
+            <div class="menu-user-name">{{ userName }}</div>
+            <div class="menu-user-email">{{ userEmail }}</div>
+          </div>
+          <mat-divider></mat-divider>
+          <button mat-menu-item *ngFor="let option of userMenuOptions" (click)="handleMenuAction(option.action)"
+            [disabled]="option.divider">
+            <mat-icon [svgIcon]="option.icon"></mat-icon>
+            <span>{{ option.label }}</span>
+          </button>
+          
+        </mat-menu>
+      </div>
+    </div>
+  </div>
+
+  <!-- Animated Gradient Border -->
+  <div class="header-border"></div>
+</header>
+
+<ng-template #noNotifications>
+  <div class="no-notifications">
+    <mat-icon svgIcon="bell-off"></mat-icon>
+    <p>No notifications</p>
+    <span>You're all caught up!</span>
+  </div>
+</ng-template>

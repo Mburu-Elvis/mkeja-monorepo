@@ -1,0 +1,76 @@
+<div class="bottom-nav">
+  @if (role === 'tenant') {
+    <div class="nav-item" [class.active]="isActive('/tenant/dashboard')" routerLink="/tenant/dashboard">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 9L12 3L21 9V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M9 21V12H15V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Home</span>
+    </div>
+    <div class="nav-item" [class.active]="isActive('/tenant/house-hunt')" routerLink="/tenant/house-hunt">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M21 10.5L12 3.5L3 10.5V20C3 20.5523 3.44772 21 4 21H9V14H15V21H20C20.5523 21 21 20.5523 21 20V10.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M9 21H15" stroke="currentColor" stroke-width="2"/>
+      </svg>
+      <span>Hunt</span>
+    </div>
+    <div class="nav-item" [class.active]="isActive('/tenant/payments')" routerLink="/tenant/payments">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 10H21M7 15H11M7 18H11M6 4H18C19.1 4 20 4.9 20 6V18C20 19.1 19.1 20 18 20H6C4.9 20 4 19.1 4 18V6C4 4.9 4.9 4 6 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span>Payments</span>
+    </div>
+    <div class="nav-item" [class.active]="isActive('/tenant/wallet')" routerLink="/tenant/wallet">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 12V8H4V12M20 12V16H4V12M20 12H22M2 12H4M12 12H12.01M16 12H16.01M17 16H7M20 8C20 6.9 19.1 6 18 6H6C4.9 6 4 6.9 4 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span>Wallet</span>
+    </div>
+    <div class="nav-item" [class.active]="isActive('/tenant/loan')" routerLink="/tenant/loan">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2V4M12 20V22M4 12H2M6 12H4M20 12H22M18 12H20M19.07 4.93L17.66 6.34M6.34 17.66L4.93 19.07M17.66 17.66L19.07 19.07M6.34 6.34L4.93 4.93M12 8C9.79 8 8 9.79 8 12C8 14.21 9.79 16 12 16C14.21 16 16 14.21 16 12C16 9.79 14.21 8 12 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span>Fuliza</span>
+    </div>
+    <div class="nav-item" [class.active]="isActive('/tenant/profile')" routerLink="/tenant/profile">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 21V19C20 16.8 18.2 15 16 15H8C5.8 15 4 16.8 4 19V21M16 7C16 9.21 14.21 11 12 11C9.79 11 8 9.21 8 7C8 4.79 9.79 3 12 3C14.21 3 16 4.79 16 7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span>Me</span>
+    </div>
+  }
+  
+  @if (role === 'landlord') {
+    <div class="nav-item" [class.active]="isActive('/landlord/dashboard')" routerLink="/landlord/dashboard">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 9L12 3L21 9V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M9 21V12H15V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Home</span>
+    </div>
+    <div class="nav-item" [class.active]="isActive('/landlord/properties')" routerLink="/landlord/properties">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 9L12 3L21 9V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Properties</span>
+    </div>
+    <div class="nav-item" [class.active]="isActive('/landlord/tenants')" routerLink="/landlord/tenants">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17 21V19C17 16.8 15.2 15 13 15H5C2.8 15 1 16.8 1 19V21M23 21V19C22.9 17 21.3 15.2 19 15M15 5C17.2 5 19 6.8 19 9C19 11.2 17.2 13 15 13M9 9C9 11.2 7.2 13 5 13C2.8 13 1 11.2 1 9C1 6.8 2.8 5 5 5C7.2 5 9 6.8 9 9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span>Tenants</span>
+    </div>
+    <div class="nav-item" [class.active]="isActive('/landlord/remittances')" routerLink="/landlord/remittances">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 10H21M7 15H11M7 18H11M6 4H18C19.1 4 20 4.9 20 6V18C20 19.1 19.1 20 18 20H6C4.9 20 4 19.1 4 18V6C4 4.9 4.9 4 6 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span>Payments</span>
+    </div>
+    <div class="nav-item" [class.active]="isActive('/landlord/profile')" routerLink="/landlord/profile">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 21V19C20 16.8 18.2 15 16 15H8C5.8 15 4 16.8 4 19V21M16 7C16 9.21 14.21 11 12 11C9.79 11 8 9.21 8 7C8 4.79 9.79 3 12 3C14.21 3 16 4.79 16 7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span>Profile</span>
+    </div>
+  }
+</div>

@@ -1,0 +1,94 @@
+.upload-card {
+  border: 1px dashed var(--sf-border);
+  border-radius: var(--btn-radius, 12px);
+  overflow: hidden;
+  background: var(--sf-surface);
+  transition: all 0.2s ease;
+}
+
+.upload-card-uploaded {
+  border-color: var(--primary-color);
+  background: var(--sf-green-xpale);
+}
+
+.upload-card-header {
+  background: var(--sf-bg);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--sf-border);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--sf-text-2);
+}
+
+.upload-card-header-uploaded {
+  background: var(--primary-light);
+}
+
+.upload-card-badge {
+  margin-left: auto;
+  background: var(--primary-dark);
+  color: #fff;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+}
+
+.upload-card-preview {
+  position: relative;
+  height: 120px;
+}
+
+.upload-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.upload-card-clear {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.upload-card-clear .material-icons {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.upload-card-zone {
+  padding: 24px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.upload-card-zone-hover {
+  background: var(--sf-green-xpale);
+}
+
+.upload-card-zone-title {
+  font-size: 13px;
+  color: var(--sf-text-3);
+  font-weight: 600;
+}
+
+.upload-card-zone-hint {
+  font-size: 11px;
+  color: var(--sf-text-4);
+  margin-top: 4px;
+}

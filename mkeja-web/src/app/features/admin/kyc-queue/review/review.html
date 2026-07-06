@@ -1,0 +1,68 @@
+<div class="admin-page">
+  <button class="back-btn" type="button" (click)="onBack()">Back to queue</button>
+
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading application...</p>
+    </div>
+  } @else if (application) {
+    <div class="page-header">
+      <div>
+        <p class="greeting-label">KYC Review</p>
+        <h1 class="page-title">{{ application.applicantType === 'LANDLORD' ? 'Landlord' : application.applicantType === 'AGENT' ? 'Agent' : 'Tenant' }} application</h1>
+        <p class="page-subtitle">{{ application.fullName }} · {{ application.idNumber }}</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-primary" type="button" [disabled]="submitting" (click)="approve()">
+          {{ submitting ? 'Processing…' : 'Approve' }}
+        </button>
+        <button class="btn-danger" type="button" [disabled]="submitting" (click)="reject()">Reject</button>
+        <button class="btn-secondary" type="button" [disabled]="submitting" (click)="flagForReview()">Flag for review</button>
+      </div>
+    </div>
+
+    <div class="card applicant-info">
+      <div class="card-header"><span>Applicant Information</span></div>
+      <div class="info-grid">
+        <div class="info-item"><span class="label">Full Name</span><span class="value">{{ application.fullName }}</span></div>
+        <div class="info-item"><span class="label">ID Number</span><span class="value">{{ application.idNumber }}</span></div>
+        <div class="info-item"><span class="label">ID Type</span><span class="value">{{ application.idType }}</span></div>
+        <div class="info-item"><span class="label">Phone</span><span class="value">{{ application.phone || '—' }}</span></div>
+        @if (application.email) {
+          <div class="info-item"><span class="label">Email</span><span class="value">{{ application.email }}</span></div>
+        }
+        @if (application.applicantType === 'LANDLORD' || application.applicantType === 'AGENT') {
+          <div class="info-item"><span class="label">KRA PIN</span><span class="value">{{ application.kraPin || '—' }}</span></div>
+          @if (application.companyName) {
+            <div class="info-item"><span class="label">Company</span><span class="value">{{ application.companyName }}</span></div>
+          }
+          @if (application.applicantType === 'AGENT' && application.licenseNumber) {
+            <div class="info-item"><span class="label">Agency license</span><span class="value">{{ application.licenseNumber }}</span></div>
+          }
+        } @else {
+          <div class="info-item"><span class="label">Landlord</span><span class="value">{{ application.landlordName || '—' }}</span></div>
+          <div class="info-item"><span class="label">Unit</span><span class="value">{{ application.unitRef || '—' }}</span></div>
+        }
+        <div class="info-item"><span class="label">Submitted</span><span class="value">{{ application.submittedAt | date:'MMM d, yyyy h:mm a' }}</span></div>
+      </div>
+    </div>
+
+    <div class="card documents-section">
+      <div class="card-header">
+        <span>KYC Documents</span>
+        <p class="section-helper">Select a document to inspect it in full screen.</p>
+      </div>
+      <div class="documents-gallery-wrap">
+        <app-kyc-document-gallery
+          [documents]="documentItems"
+          documentSource="admin">
+        </app-kyc-document-gallery>
+      </div>
+    </div>
+  }
+
+  @if (showToast) {
+    <app-toast [type]="toastType" [message]="toastMessage" (close)="closeToast()"></app-toast>
+  }
+</div>

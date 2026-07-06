@@ -1,0 +1,145 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div>
+      <p class="greeting-label">Directory</p>
+      <h1 class="page-title">Users</h1>
+      <p class="page-subtitle">
+        {{ users.length }} registered · {{ landlordCount }} landlords · {{ tenantCount }} tenants
+      </p>
+    </div>
+    @if (isSuperAdmin) {
+      <button class="btn-primary" type="button" (click)="openCreateAdmin()">Create Admin</button>
+    }
+  </div>
+
+  @if (showCreateAdmin) {
+    <div class="card create-admin-panel">
+      <h3>Create Admin Account</h3>
+      <p class="panel-subtitle">Admins must have an email. They will verify their first login with OTP.</p>
+      <div class="create-admin-form">
+        <label>
+          Full name
+          <input type="text" [(ngModel)]="newAdmin.fullName" placeholder="Jane Doe">
+        </label>
+        <label>
+          Email
+          <input type="email" [(ngModel)]="newAdmin.email" placeholder="admin@mkeja.co.ke">
+        </label>
+        <label>
+          Phone
+          <input type="tel" [(ngModel)]="newAdmin.phone" placeholder="2547XXXXXXXX">
+        </label>
+        <label>
+          Temporary PIN
+          <input type="password" [(ngModel)]="newAdmin.pin" placeholder="Min 4 digits">
+        </label>
+      </div>
+      @if (createError) {
+        <div class="alert-banner alert-danger">{{ createError }}</div>
+      }
+      <div class="panel-actions">
+        <button class="btn-secondary" type="button" (click)="closeCreateAdmin()">Cancel</button>
+        <button class="btn-primary" type="button" [disabled]="creatingAdmin" (click)="submitCreateAdmin()">
+          {{ creatingAdmin ? 'Creating...' : 'Create Admin' }}
+        </button>
+      </div>
+    </div>
+  }
+
+  <div class="filters card">
+    <div class="search-box">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChange()"
+        placeholder="Search by name, phone or email">
+    </div>
+    <div class="filter-selects">
+      <select [(ngModel)]="filterRole" (change)="loadUsers()">
+        <option value="all">All roles</option>
+        <option value="TENANT">Tenants</option>
+        <option value="LANDLORD">Landlords</option>
+        <option value="ADMIN">Admins</option>
+        <option value="SUPER_ADMIN">Super Admins</option>
+      </select>
+      <select [(ngModel)]="filterStatus" (change)="loadUsers()">
+        <option value="all">All status</option>
+        <option value="active">Active</option>
+        <option value="suspended">Suspended</option>
+      </select>
+      <select [(ngModel)]="filterKycStatus" (change)="loadUsers()">
+        <option value="all">All KYC</option>
+        <option value="PENDING">KYC Pending</option>
+        <option value="MANUAL_REVIEW">Manual Review</option>
+        <option value="APPROVED">KYC Approved</option>
+        <option value="REJECTED">KYC Rejected</option>
+      </select>
+    </div>
+  </div>
+
+  @if (error) {
+    <div class="alert-banner alert-danger">{{ error }}</div>
+  }
+
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading users...</p>
+    </div>
+  } @else if (filteredUsers.length === 0) {
+    <div class="list-empty-state card">
+      <div class="list-empty-icon" aria-hidden="true"><span class="material-icons">groups</span></div>
+      <h3 class="list-empty-title">{{ hasActiveFilters ? 'No matching users' : 'No users found' }}</h3>
+      <p class="list-empty-text">
+        @if (hasActiveFilters) {
+          Broaden your search or reset role, status, and KYC filters.
+        } @else {
+          Registered tenants, landlords, and admins will be listed here.
+        }
+      </p>
+      @if (hasActiveFilters) {
+        <button class="btn-secondary" type="button" (click)="resetFilters()">Clear filters</button>
+      }
+    </div>
+  } @else {
+    <div class="card users-table">
+      <div class="table-header">
+        <span>User</span>
+        <span>Contact</span>
+        <span>Role</span>
+        <span>Status</span>
+        <span>Summary</span>
+        <span></span>
+      </div>
+      @for (user of filteredUsers; track user.id) {
+        <div class="table-row" (click)="viewUser(user.id)">
+          <div class="user-info">
+            <div class="user-avatar">{{ user.fullName.charAt(0) }}</div>
+            <div>
+              <div class="user-name">{{ user.fullName }}</div>
+              <div class="user-meta">Joined {{ user.joinedDate | date:'MMM d, yyyy' }}</div>
+            </div>
+          </div>
+          <div class="user-contact">
+            <div>+{{ user.phone }}</div>
+            <div class="user-email">{{ user.email || '—' }}</div>
+          </div>
+          <div>
+            <span class="role-badge" [class]="getRoleBadgeClass(user.role)">{{ user.role }}</span>
+          </div>
+          <div>
+            <span class="status-badge" [class]="getStatusBadgeClass(user.status)">{{ user.status }}</span>
+          </div>
+          <div class="summary-cell">{{ getSummaryLabel(user) }}</div>
+          <div>
+            <button class="action-btn" type="button" (click)="viewUser(user.id); $event.stopPropagation()">View</button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+@if (showToast) {
+  <app-toast [type]="toastType" [message]="toastMessage" (close)="closeToast()"></app-toast>
+}

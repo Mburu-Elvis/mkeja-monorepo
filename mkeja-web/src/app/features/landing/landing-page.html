@@ -1,0 +1,275 @@
+<div class="landing">
+  <header class="lp-nav">
+    <div class="lp-nav-inner">
+      <a class="lp-brand" (click)="goToTab('home')">
+        <img src="/logo-mkeja.png" alt="Mkeja" class="lp-logo">
+      </a>
+
+      <nav class="lp-tabs" [class.open]="mobileNavOpen">
+        @for (tab of tabs; track tab.id) {
+          <button
+            type="button"
+            class="lp-tab"
+            [class.active]="isTabActive(tab.id)"
+            (click)="goToTab(tab.id)">
+            {{ tab.label }}
+          </button>
+        }
+        <div class="lp-mobile-actions">
+          <a routerLink="/auth/login" class="lp-signin" (click)="closeMobileNav()">Sign in</a>
+          <a routerLink="/auth/register" class="lp-btn lp-btn-primary" (click)="closeMobileNav()">Get started</a>
+        </div>
+      </nav>
+
+      <div class="lp-actions">
+        <a routerLink="/auth/login" class="lp-signin">Sign in</a>
+        <a routerLink="/auth/register" class="lp-btn lp-btn-primary">Get started</a>
+      </div>
+
+      <button type="button" class="lp-menu" (click)="toggleMobileNav()" [attr.aria-expanded]="mobileNavOpen">
+        <span class="material-icons">{{ mobileNavOpen ? 'close' : 'menu' }}</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="lp-main">
+    @if (showPropertyDetail) {
+      <router-outlet />
+    } @else {
+      @switch (activeTab) {
+        @case ('home') {
+          <section class="lp-hero">
+            <div class="lp-container lp-hero-grid">
+              <div>
+                <p class="lp-eyebrow">Rental management for Kenya</p>
+                <h1>Find a home. Collect rent. <span>Get paid.</span></h1>
+                <p class="lp-lead">
+                  Mkeja connects verified listings, M-PESA rent, KYC, and landlord payouts.
+                  Browse homes without an account — sign in when you're ready to move in.
+                </p>
+                <div class="lp-hero-actions">
+                  <button type="button" class="lp-btn lp-btn-primary" (click)="goToTab('houses')">Browse homes</button>
+                  <a routerLink="/auth/register" class="lp-btn lp-btn-secondary">List your property</a>
+                </div>
+              </div>
+              <div class="lp-hero-card">
+                <div class="lp-preview-row">
+                  <span class="material-icons">apartment</span>
+                  <div>
+                    <strong>Riverview · Unit 4B</strong>
+                    <small>Verified · KES 28,500/mo</small>
+                  </div>
+                </div>
+                <div class="lp-preview-bar"><span></span></div>
+                <p class="lp-preview-note">Rent via M-PESA · Ratiba active</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="lp-section lp-section-muted">
+            <div class="lp-container lp-cards-3">
+              <article class="lp-card" (click)="goToTab('houses')">
+                <span class="material-icons">search</span>
+                <h3>House Hunt</h3>
+                <p>Public search for verified rentals across Kenya.</p>
+              </article>
+              <article class="lp-card" (click)="goToTab('about')">
+                <span class="material-icons">info</span>
+                <h3>How it works</h3>
+                <p>From invite to remittance — one platform.</p>
+              </article>
+              <article class="lp-card" (click)="goToTab('platform')">
+                <span class="material-icons">dashboard</span>
+                <h3>Portals</h3>
+                <p>Landlord, tenant, and admin experiences.</p>
+              </article>
+            </div>
+          </section>
+        }
+
+        @case ('houses') {
+          <section class="lp-section">
+            <div class="lp-container">
+              <div class="lp-page-head">
+                <h1>House Hunt</h1>
+                <p>Search verified listings. Open a property to view units and rent.</p>
+              </div>
+
+              <div class="lp-filters">
+                <div class="lp-filters-row">
+                  <input class="lp-filter-search" type="text" [(ngModel)]="q" placeholder="Search area or property…" (keyup.enter)="searchListings()">
+                  <input class="lp-filter-county" type="text" [(ngModel)]="county" placeholder="County">
+                  <input class="lp-filter-city" type="text" [(ngModel)]="city" placeholder="City">
+                  <input class="lp-filter-beds" type="number" [(ngModel)]="minBedrooms" placeholder="Min beds" min="0">
+                  <div class="lp-filter-actions">
+                    <button type="button" class="lp-btn lp-btn-primary" (click)="searchListings()">Search</button>
+                    <button type="button" class="lp-btn lp-btn-secondary" (click)="clearListingFilters()">Clear</button>
+                  </div>
+                </div>
+              </div>
+
+              @if (listingsLoading) {
+                <div class="lp-state">Finding properties…</div>
+              } @else if (listingsError) {
+                <div class="lp-state lp-state-error">{{ listingsError }}</div>
+              } @else if (!listings.length) {
+                <div class="lp-state">No listings match. Try broader filters.</div>
+              } @else {
+                <div class="lp-listings">
+                  @for (item of listings; track item.propertyId) {
+                    <a class="lp-listing" [routerLink]="['/houses', item.propertyId]">
+                      <div class="lp-listing-media">
+                        @if (item.coverImageUrl) {
+                          <img [src]="item.coverImageUrl" [alt]="item.propertyName">
+                        } @else {
+                          <div class="lp-listing-placeholder">No photo</div>
+                        }
+                        @if (item.verifiedProperty) {
+                          <span class="lp-badge">Verified</span>
+                        }
+                      </div>
+                      <div class="lp-listing-body">
+                        <strong>{{ item.propertyName }}</strong>
+                        <span>{{ locationLabel(item) }}</span>
+                        @if (item.minRent != null) {
+                          <em>From KES {{ item.minRent | number }}/mo</em>
+                        }
+                        <small>{{ item.availableUnits }} units available</small>
+                      </div>
+                    </a>
+                  }
+                </div>
+              }
+            </div>
+          </section>
+        }
+
+        @case ('about') {
+          <section class="lp-section">
+            <div class="lp-container lp-split">
+              <div>
+                <p class="lp-eyebrow">About</p>
+                <h1>Rent management on mobile rails</h1>
+                <p class="lp-lead">
+                  Mkeja is phone-first: M-PESA login, verified listings, digital leases,
+                  and reconciled remittances. Anyone can browse House Hunt; sign in to apply or manage rent.
+                </p>
+              </div>
+              <div class="lp-stats">
+                <div><strong>3</strong><span>Portals</span></div>
+                <div><strong>1</strong><span>Ledger</span></div>
+                <div><strong>100%</strong><span>M-PESA ready</span></div>
+              </div>
+            </div>
+          </section>
+          <section class="lp-section lp-section-muted">
+            <div class="lp-container lp-cards-3">
+              @for (b of benefits; track b.title) {
+                <article class="lp-card lp-card-flat">
+                  <span class="material-icons">{{ b.icon }}</span>
+                  <h3>{{ b.title }}</h3>
+                  <p>{{ b.description }}</p>
+                </article>
+              }
+            </div>
+          </section>
+        }
+
+        @case ('platform') {
+          <section class="lp-section">
+            <div class="lp-container">
+              <div class="lp-page-head">
+                <h1>Platform</h1>
+                <p>Modules, portals, and how a tenancy runs on Mkeja.</p>
+              </div>
+              <div class="lp-cards-4">
+                @for (mod of modules; track mod.tag) {
+                  <article class="lp-card lp-card-flat">
+                    <span class="lp-tag">{{ mod.tag }}</span>
+                    <span class="material-icons">{{ mod.icon }}</span>
+                    <h3>{{ mod.title }}</h3>
+                    <p>{{ mod.description }}</p>
+                  </article>
+                }
+              </div>
+            </div>
+          </section>
+
+          <section class="lp-section lp-section-muted">
+            <div class="lp-container lp-steps">
+              @for (step of steps; track step.number) {
+                <article>
+                  <span class="lp-step-num">{{ step.number }}</span>
+                  <h3>{{ step.title }}</h3>
+                  <p>{{ step.description }}</p>
+                </article>
+              }
+            </div>
+          </section>
+
+          <section class="lp-section">
+            <div class="lp-container lp-cards-3">
+              @for (portal of portals; track portal.role) {
+                <article class="lp-card lp-card-flat">
+                  <span class="lp-tag">{{ portal.role }}</span>
+                  <h3>{{ portal.title }}</h3>
+                  <p>{{ portal.description }}</p>
+                  <ul>
+                    @for (point of portal.points; track point) {
+                      <li>{{ point }}</li>
+                    }
+                  </ul>
+                  <a [routerLink]="portal.link" class="lp-link">{{ portal.cta }} →</a>
+                </article>
+              }
+            </div>
+          </section>
+
+          <section class="lp-section lp-section-muted">
+            <div class="lp-container lp-cards-3">
+              @for (t of testimonials; track t.name) {
+                <blockquote class="lp-quote">
+                  <p>"{{ t.quote }}"</p>
+                  <footer><strong>{{ t.name }}</strong> · {{ t.role }}</footer>
+                </blockquote>
+              }
+            </div>
+          </section>
+
+          <section class="lp-section">
+            <div class="lp-container lp-cta">
+              <div>
+                <h2>Ready to start?</h2>
+                <p>Browse homes free, or register to list your property.</p>
+              </div>
+              <div class="lp-hero-actions">
+                <button type="button" class="lp-btn lp-btn-secondary" (click)="goToTab('houses')">Browse homes</button>
+                <a routerLink="/auth/register" class="lp-btn lp-btn-primary">Register</a>
+              </div>
+            </div>
+          </section>
+        }
+      }
+    }
+  </main>
+
+  <footer class="lp-footer">
+    <div class="lp-container lp-footer-grid">
+      <div>
+        <img src="/logo-mkeja.png" alt="Mkeja" class="lp-footer-logo">
+        <p>Modern rental infrastructure for Kenya.</p>
+      </div>
+      <div class="lp-footer-links">
+        @for (tab of tabs; track tab.id) {
+          <button type="button" (click)="goToTab(tab.id)">{{ tab.label }}</button>
+        }
+        <a routerLink="/auth/login">Sign in</a>
+        <a routerLink="/auth/register">Register</a>
+      </div>
+    </div>
+    <div class="lp-container lp-footer-copy">
+      <span>&copy; {{ currentYear }} Mkeja</span>
+      <span>M-PESA ready</span>
+    </div>
+  </footer>
+</div>

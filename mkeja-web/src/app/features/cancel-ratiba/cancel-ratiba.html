@@ -1,0 +1,61 @@
+<!-- components/cancel-ratiba/cancel-ratiba.component.html -->
+
+<div class="cancel-modal">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h2>Cancel Auto-Deductions?</h2>
+      <button class="icon-close-btn close-btn" type="button" (click)="onCancel()" aria-label="Close">
+        <span class="material-icons" aria-hidden="true">close</span>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="warning-text">
+        <span class="warning-icon"><span class="material-icons">warning</span></span>
+        <span>Are you sure you want to cancel your automatic rent deductions?</span>
+      </div>
+      
+      <div class="info-box" *ngIf="data">
+        <div class="info-row">
+          <span>Current Plan:</span>
+          <strong>{{ data.planName }}</strong>
+        </div>
+        <div class="info-row">
+          <span>Amount:</span>
+          <strong>KES {{ data.amount | number }}</strong>
+        </div>
+      </div>
+      
+      <div class="warning-box">
+        <strong>What happens after cancellation:</strong>
+        <ul>
+          <li>No more automatic daily/weekly deductions</li>
+          <li>You'll need to pay rent manually via M-Pesa Paybill</li>
+          <li>Your wallet and credit score remain intact</li>
+          <li>You can re-enable anytime with no penalty</li>
+        </ul>
+      </div>
+      
+      <div class="form-group">
+        <label>Reason for cancellation (optional):</label>
+        <select class="reason-select" [formControl]="reasonControl">
+          <option value="">Select a reason...</option>
+          <option value="manual">I prefer to pay manually</option>
+          <option value="moving">I'm moving out soon</option>
+          <option value="financial">Financial constraints</option>
+          <option value="fuliza">I prefer using Fuliza only</option>
+          <option value="other">Other reason</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="onCancel()" [disabled]="isLoading">
+        Keep Active
+      </button>
+      <button class="btn-danger" (click)="onConfirm()" [disabled]="isLoading">
+        {{ isLoading ? 'Cancelling...' : 'Yes, Cancel' }}
+      </button>
+    </div>
+  </div>
+</div>

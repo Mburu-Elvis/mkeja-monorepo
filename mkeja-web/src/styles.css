@@ -1,0 +1,46 @@
+@import './app/shared/styles/tokens.css';
+@import './app/shared/styles/empty-state.css';
+@import './app/shared/styles/ui-patterns.css';
+@import './app/shared/styles/profile-page.css';
+@import './app/shared/styles/buttons.css';
+@import './app/shared/styles/tabs.css';
+@import './app/shared/styles/tenant-shell-overrides.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   GLOBAL RESETS FOR FULL-SCREEN ANGULAR LAYOUTS
+   ============================================================ */
+
+*, ::before, ::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  color: var(--sf-text-1);
+}
+
+app-root {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+}
+
+router-outlet + * {
+  display: block;
+  width: 100%;
+}

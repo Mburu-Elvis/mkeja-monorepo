@@ -1,0 +1,46 @@
+<div class="progress-card">
+  <div class="card-header">
+    <div>
+      <h3 class="unit-name">{{ unitName }}</h3>
+      <p class="landlord-name">{{ landlordName }}</p>
+    </div>
+    <div class="status-badge" [class]="statusClass">
+      {{ statusText }}
+    </div>
+  </div>
+  
+  <div class="amounts">
+    <div class="paid">
+      <span class="label">Paid</span>
+      <span class="amount">KES {{ paid | number }}</span>
+    </div>
+    <div class="divider">/</div>
+    <div class="total">
+      <span class="label">Total</span>
+      <span class="amount">KES {{ total | number }}</span>
+    </div>
+  </div>
+  
+  <div class="progress-wrapper">
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="percentComplete"></div>
+    </div>
+    <span class="percent-text">{{ percentComplete | number:'1.0-0' }}%</span>
+  </div>
+  
+  <div class="card-footer">
+    <span class="due-date">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+        <path d="M12 8V12L15 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      Due: {{ dueDate | date:'MMM d, yyyy' }}
+    </span>
+    <span class="plan">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+        <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M22 6L12 13L2 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      {{ paymentPlan }}
+    </span>
+  </div>
+</div>

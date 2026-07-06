@@ -1,0 +1,65 @@
+<div class="wallet-screen platform-page">
+  @if (loading) {
+    <app-loading-spinner [fullScreen]="true" message="Loading wallet..."></app-loading-spinner>
+  } @else {
+    <app-balance-card
+      [label]="'Available Balance'"
+      [balance]="wallet.availableBalance"
+      [showAction]="true"
+      [actionText]="'Top Up'"
+      (actionClick)="onTopUp()">
+    </app-balance-card>
+    
+    <div class="wallet-details">
+      <div class="detail-card">
+        <div class="detail-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2V4M12 20V22M4 12H2M6 12H4M20 12H22M18 12H20M19.07 4.93L17.66 6.34M6.34 17.66L4.93 19.07M17.66 17.66L19.07 19.07M6.34 6.34L4.93 4.93" stroke="#00A859" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="detail-info">
+          <span class="label">Security Deposit</span>
+          <span class="value">KES {{ wallet.securityHold | number }}</span>
+          <span class="sub">Locked until lease end</span>
+        </div>
+      </div>
+      
+      <div class="detail-card">
+        <div class="detail-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M3 6H21M6 3H18M4 6V18C4 19.1 4.9 20 6 20H18C19.1 20 20 19.1 20 18V6M12 10V16M9 13H15" stroke="#00A859" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="detail-info">
+          <span class="label">Credit Limit</span>
+          <span class="value">KES {{ wallet.creditLimit | number }}</span>
+          <span class="sub">Rent Fuliza available</span>
+        </div>
+      </div>
+      
+      @if (wallet.loanBalance > 0) {
+        <div class="detail-card warning">
+          <div class="detail-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M12 8V12M12 16H12.01M3 12C3 13.1819 3.23279 14.3522 3.68508 15.4442C4.13738 16.5361 4.80031 17.5282 5.63604 18.364C6.47177 19.1997 7.46392 19.8626 8.55585 20.3149C9.64778 20.7672 10.8181 21 12 21C13.1819 21 14.3522 20.7672 15.4442 20.3149C16.5361 19.8626 17.5282 19.1997 18.364 18.364C19.1997 17.5282 19.8626 16.5361 20.3149 15.4442C20.7672 14.3522 21 13.1819 21 12C21 9.61305 20.0518 7.32387 18.364 5.63604C16.6761 3.94821 14.3869 3 12 3C9.61305 3 7.32387 3.94821 5.63604 5.63604C3.94821 7.32387 3 9.61305 3 12Z" stroke="#E65100" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="detail-info">
+            <span class="label">Outstanding Loan</span>
+            <span class="value">KES {{ wallet.loanBalance | number }}</span>
+            <span class="sub">Auto-repaying from contributions</span>
+          </div>
+        </div>
+      }
+    </div>
+    
+    <div class="quick-links">
+      <button class="link-btn" routerLink="/tenant/wallet/ledger">
+        <span>View Transaction History</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M9 18L15 12L9 6" stroke="#00A859" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  }
+</div>

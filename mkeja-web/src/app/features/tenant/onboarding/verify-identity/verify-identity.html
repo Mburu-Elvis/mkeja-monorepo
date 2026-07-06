@@ -1,0 +1,98 @@
+<div class="verify-identity-page">
+
+  <header class="auth-brand">
+    <div class="auth-brand-badge">
+      <img src="/logo-mkeja.png" alt="Mkeja" class="auth-brand-logo">
+    </div>
+    <h1>Welcome to Mkeja</h1>
+    <p>Complete your identity verification to continue</p>
+  </header>
+
+  <div class="verify-identity-card">
+
+    <div class="verify-header">
+      <div class="verify-icon">
+        <span class="material-icons">verified_user</span>
+      </div>
+
+      <h2>Verify Your Identity</h2>
+      <p>Please provide your details to continue</p>
+    </div>
+
+    <div class="form-group">
+      <label>Full Name *</label>
+      <input
+        class="form-input"
+        type="text"
+        [(ngModel)]="formData.fullName"
+        placeholder="e.g., Jane Akinyi Otieno">
+    </div>
+
+    <div class="form-group">
+      <label>M-Pesa Number *</label>
+
+      <div class="phone-input">
+        <span class="prefix">+254</span>
+
+        <input
+          type="tel"
+          [(ngModel)]="formData.phone"
+          (ngModelChange)="formatPhone()"
+          placeholder="712345678"
+          maxlength="9">
+      </div>
+
+      <span class="hint">
+        We'll send a verification code to this number
+      </span>
+    </div>
+
+    <div class="form-group">
+      <label>ID Type *</label>
+
+      <select
+        class="form-input"
+        [(ngModel)]="formData.idType">
+
+        <option value="NATIONAL_ID">National ID</option>
+        <option value="PASSPORT">Passport</option>
+        <option value="ALIEN_ID">Alien ID</option>
+
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>ID Number *</label>
+
+      <input
+        class="form-input"
+        type="text"
+        [(ngModel)]="formData.idNumber"
+        placeholder="Enter your ID number">
+    </div>
+
+    <button
+      class="continue-btn"
+      [disabled]="loading"
+      (click)="onSubmit()">
+
+      @if (loading) {
+        <span class="spinner"></span>
+        Verifying...
+      } @else {
+        Continue
+      }
+
+    </button>
+
+  </div>
+
+  @if (showToast) {
+    <app-toast
+      [type]="toastType"
+      [message]="toastMessage"
+      (close)="closeToast()">
+    </app-toast>
+  }
+
+</div>

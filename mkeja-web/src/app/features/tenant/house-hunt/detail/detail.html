@@ -1,0 +1,73 @@
+<div class="house-hunt-shell platform-page detail-page">
+  <a routerLink="/tenant/house-hunt" class="back-link">← Back to listings</a>
+
+  @if (loading) {
+    <div class="loading-state"><div class="spinner"></div></div>
+  } @else if (error && !listing) {
+    <div class="error-card">{{ error }}</div>
+  } @else if (listing) {
+    @if (galleryImages.length) {
+      <div class="detail-gallery" [class.single]="galleryImages.length === 1">
+        <div class="gallery-main">
+          <img [src]="galleryImages[activeImageIndex]" [alt]="listing.propertyName" />
+        </div>
+        @if (galleryImages.length > 1) {
+          <div class="gallery-thumbs">
+            @for (image of galleryImages; track image; let i = $index) {
+              <button type="button" class="gallery-thumb" (click)="activeImageIndex = i">
+                <img [src]="image" [alt]="'Photo ' + (i + 1)" />
+              </button>
+            }
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="detail-gallery single">
+        <div class="gallery-main">
+          <div class="media-placeholder">Photo tour coming soon</div>
+        </div>
+      </div>
+    }
+
+    <div class="detail-card">
+      <div class="title-row">
+        <h1>{{ listing.propertyName }}</h1>
+        @if (listing.promoted) { <span class="badge promoted">Featured</span> }
+        @if (listing.verifiedProperty) { <span class="badge verified">Verified property</span> }
+      </div>
+      <p class="unit-line">Unit {{ listing.unitNumber }} · {{ listing.address || listing.city || listing.county }}</p>
+      <p class="rent-line">KES {{ listing.rent | number }}/month</p>
+
+      @if (listing.deposit) {
+        <p class="meta-line">Deposit: KES {{ listing.deposit | number }}</p>
+      }
+      @if (listing.bedrooms) {
+        <p class="meta-line">{{ listing.bedrooms }} bedrooms · {{ listing.bathrooms || '—' }} baths</p>
+      }
+      @if (listing.landlordName) {
+        <p class="meta-line">Landlord: {{ listing.landlordName }}</p>
+      }
+      @if (listing.listingDescription) {
+        <p class="description">{{ listing.listingDescription }}</p>
+      }
+      @if (listing.matchReasons?.length) {
+        <ul class="reasons">
+          @for (reason of listing.matchReasons; track reason) {
+            <li>{{ reason }}</li>
+          }
+        </ul>
+      }
+
+      <div class="detail-actions">
+        <button type="button" class="btn-secondary" [disabled]="acting" (click)="toggleSave()">
+          {{ listing.saved ? 'Unsave' : 'Save' }}
+        </button>
+        <button type="button" class="btn-primary" [disabled]="acting" (click)="expressInterest()">
+          I'm interested
+        </button>
+      </div>
+      @if (toast) { <p class="toast success">{{ toast }}</p> }
+      @if (error) { <p class="toast error">{{ error }}</p> }
+    </div>
+  }
+</div>

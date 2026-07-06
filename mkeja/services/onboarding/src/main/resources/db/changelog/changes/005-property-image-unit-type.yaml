@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-property-image-unit-type
+      author: mkeja
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            columnExists:
+              tableName: tbl_property_image
+              columnName: unit_type
+      changes:
+        - addColumn:
+            tableName: tbl_property_image
+            columns:
+              - column:
+                  name: unit_type
+                  type: VARCHAR(50)

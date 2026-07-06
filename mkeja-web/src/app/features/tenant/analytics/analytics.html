@@ -1,0 +1,208 @@
+<!-- components/analytics/analytics.component.html -->
+<div class="analytics-container">
+    <!-- Period Selector -->
+    <div class="period-selector">
+        <button class="period-btn" [class.active]="analyticsPeriod === 'week'" (click)="analyticsPeriod = 'week'">Week</button>
+        <button class="period-btn" [class.active]="analyticsPeriod === 'month'" (click)="analyticsPeriod = 'month'">Month</button>
+        <button class="period-btn" [class.active]="analyticsPeriod === 'quarter'" (click)="analyticsPeriod = 'quarter'">Quarter</button>
+        <button class="period-btn" [class.active]="analyticsPeriod === 'year'" (click)="analyticsPeriod = 'year'">Year</button>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="charts-grid">
+        <!-- Payment Trend Chart -->
+        <div class="card chart-card">
+            <div class="card-header">
+                <span>Payment Trend</span>
+                <button class="info-btn" matTooltip="Daily payment amounts over time">
+                    <mat-icon svgIcon="help"></mat-icon>
+                </button>
+            </div>
+            <div class="chart-placeholder">
+                <div class="trend-bars">
+                    <div class="bar" *ngFor="let contribution of dailyContributions; let i = index">
+                        <div class="bar-fill" [style.height.%]="getBarHeight(contribution)"></div>
+                        <div class="bar-value" *ngIf="contribution > 0">{{ contribution }}</div>
+                    </div>
+                </div>
+                <div class="trend-labels">
+                    <span>Day 1</span>
+                    <span>Day 10</span>
+                    <span>Day 20</span>
+                    <span>Day 30</span>
+                </div>
+                <p class="chart-note">Daily contribution trend for {{ currentMonth }}</p>
+            </div>
+            <div class="chart-stats">
+                <div class="stat">
+                    <span>Average Daily</span>
+                    <strong>KES {{ (dailyContributions.reduce((a,b) => a + b, 0) / dailyContributions.length) | number:'1.0-0' }}</strong>
+                </div>
+                <div class="stat">
+                    <span>Highest Day</span>
+                    <strong>KES {{ Math.max(...dailyContributions) | number }}</strong>
+                </div>
+                <div class="stat">
+                    <span>Total Month</span>
+                    <strong>KES {{ dailyContributions.reduce((a,b) => a + b, 0) | number }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Credit Score Progression -->
+        <div class="card chart-card">
+            <div class="card-header">
+                <span>Credit Score Progression</span>
+                <button class="info-btn" matTooltip="Your credit score over the last 5 months">
+                    <mat-icon svgIcon="help"></mat-icon>
+                </button>
+            </div>
+            <div class="chart-placeholder">
+                <div class="line-chart">
+                    <div class="line-points">
+                        <div class="point" *ngFor="let item of creditScoreHistory" 
+                             [style.bottom.%]="((item.score - 300) / 550) * 100"
+                             [attr.data-value]="item.score">
+                            <span class="point-label">{{ item.score }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="line-labels">
+                    <span *ngFor="let item of creditScoreHistory">{{ item.month }}</span>
+                </div>
+            </div>
+            <div class="chart-stats">
+                <div class="stat">
+                    <span>Starting Score</span>
+                    <strong>{{ creditScoreHistory[0]?.score || 450 }}</strong>
+                </div>
+                <div class="stat">
+                    <span>Current Score</span>
+                    <strong>{{ creditScoreHistory[creditScoreHistory.length - 1]?.score || 672 }}</strong>
+                </div>
+                <div class="stat">
+                    <span>Increase</span>
+                    <strong class="positive">+{{ (creditScoreHistory[creditScoreHistory.length - 1]?.score || 672) - (creditScoreHistory[0]?.score || 450) }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spending Breakdown -->
+        <div class="card chart-card">
+            <div class="card-header">
+                <span>Spending Breakdown</span>
+                <button class="info-btn" matTooltip="Where your money goes">
+                    <mat-icon svgIcon="help"></mat-icon>
+                </button>
+            </div>
+            <div class="pie-chart-placeholder">
+                <div class="pie-segments" [style.background]="'conic-gradient(var(--sf-green) 0% ' + spendingBreakdown.rent + '%, var(--sf-warning) ' + spendingBreakdown.rent + '% ' + (spendingBreakdown.rent + spendingBreakdown.fuliza) + '%, var(--sf-info) ' + (spendingBreakdown.rent + spendingBreakdown.fuliza) + '% 100%)'">
+                </div>
+                <div class="pie-legend">
+                    <div class="legend-item">
+                        <span class="legend-color rent"></span>
+                        <span>Rent</span>
+                        <strong>{{ spendingBreakdown.rent | number:'1.0-0' }}%</strong>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color fuliza"></span>
+                        <span>Fuliza Fees</span>
+                        <strong>{{ spendingBreakdown.fuliza | number:'1.0-0' }}%</strong>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color other"></span>
+                        <span>Other</span>
+                        <strong>{{ spendingBreakdown.other | number:'1.0-0' }}%</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Consistency -->
+        <div class="card chart-card">
+            <div class="card-header">
+                <span>Payment Consistency</span>
+                <button class="info-btn" matTooltip="How consistent you are with payments">
+                    <mat-icon svgIcon="help"></mat-icon>
+                </button>
+            </div>
+            <div class="consistency-gauge">
+                <div class="gauge-value">{{ financialData?.paymentStats?.consistencyScore || 88 }}%</div>
+                <div class="gauge-track">
+                    <div class="gauge-fill" [style.width.%]="financialData?.paymentStats?.consistencyScore || 88"></div>
+                </div>
+                <p class="gauge-label" [class.excellent]="(financialData?.paymentStats?.consistencyScore || 88) >= 85" 
+                   [class.good]="(financialData?.paymentStats?.consistencyScore || 88) >= 70 && (financialData?.paymentStats?.consistencyScore || 88) < 85"
+                   [class.needs-improvement]="(financialData?.paymentStats?.consistencyScore || 88) < 70">
+                    {{ (financialData?.paymentStats?.consistencyScore || 88) >= 85 ? 'Excellent - Keep it up!' : 
+                       (financialData?.paymentStats?.consistencyScore || 88) >= 70 ? 'Good - Room for improvement' : 
+                       'Needs Improvement - Consider auto-deductions' }}
+                </p>
+            </div>
+            <div class="consistency-details">
+                <div class="detail">
+                    <span>On-time payments</span>
+                    <strong>{{ (financialData?.paymentStats?.onTimeRate || 94) }}%</strong>
+                </div>
+                <div class="detail">
+                    <span>Auto-deduction usage</span>
+                    <strong>{{ financialData?.paymentPlan !== 'MONTHLY' ? 'Yes' : 'No' }}</strong>
+                </div>
+                <div class="detail">
+                    <span>Active streak</span>
+                    <strong>{{ financialData?.paymentStats?.activeStreak || 45 }} days</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Insights -->
+    <div class="insights-card">
+        <mat-icon svgIcon="trendingUp"></mat-icon>
+        <div class="insights-content">
+            <strong>Key Insights</strong>
+            <ul>
+                <li *ngFor="let insight of getInsights()">{{ insight }}</li>
+            </ul>
+            <div class="next-milestone">
+                <mat-icon svgIcon="flag"></mat-icon>
+                <div>
+                    <span>Next Milestone</span>
+                    <strong>{{ getProjectedTier() }} Tier</strong>
+                    <small>Estimated: {{ getProjectedTimeline() }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="recommendations-card">
+        <h4>Recommendations</h4>
+        <div class="recommendations-list">
+            <div class="recommendation" *ngIf="financialData?.paymentPlan === 'MONTHLY'">
+                <mat-icon svgIcon="calendar"></mat-icon>
+                <div>
+                    <strong>Switch to Auto-Deductions</strong>
+                    <p>Set up daily or weekly auto-deductions to improve your credit score by up to 50 points</p>
+                    <button class="btn-link">Set up now →</button>
+                </div>
+            </div>
+            <div class="recommendation" *ngIf="fulizaData?.creditTier === 'BRONZE' || fulizaData?.creditTier === 'SILVER'">
+                <mat-icon svgIcon="zap"></mat-icon>
+                <div>
+                    <strong>Increase Payment Frequency</strong>
+                    <p>Switch from weekly to daily deductions to reach {{ getProjectedTier() }} tier faster</p>
+                    <button class="btn-link">Adjust schedule →</button>
+                </div>
+            </div>
+            <div class="recommendation" *ngIf="(financialData?.paymentStats?.consistencyScore || 0) < 70">
+                <mat-icon svgIcon="shield"></mat-icon>
+                <div>
+                    <strong>Enable Auto-Fuliza</strong>
+                    <p>Never miss a payment again. Auto-Fuliza covers shortfalls automatically</p>
+                    <button class="btn-link">Enable now →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

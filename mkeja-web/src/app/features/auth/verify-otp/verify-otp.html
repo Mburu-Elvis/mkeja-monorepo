@@ -1,0 +1,82 @@
+<div class="auth-page verify-otp-page">
+  <header class="auth-brand">
+    <div class="auth-brand-badge">
+      <img src="/logo-mkeja.png" alt="Mkeja" class="auth-brand-logo">
+    </div>
+    <h1>Verify your identity</h1>
+    <p>Enter the 6-digit code sent to <strong>{{ maskedPhone }}</strong></p>
+  </header>
+
+  <div class="auth-card">
+    <p class="verify-context">
+      @if (purpose === 'first-login') {
+        One-time verification is required before your first sign-in.
+      } @else {
+        Confirm this action with the code we sent to your phone.
+      }
+    </p>
+
+    <div
+      class="otp-container"
+      role="group"
+      aria-label="6-digit verification code"
+      (paste)="onPaste($event)">
+      @for (digit of otp; track $index) {
+        <input
+          #otpInput
+          type="text"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          maxlength="1"
+          [attr.data-index]="$index"
+          [attr.autocomplete]="$index === 0 ? 'one-time-code' : 'off'"
+          [attr.aria-label]="'Digit ' + ($index + 1)"
+          [(ngModel)]="otp[$index]"
+          (input)="onOtpInput($index, $event)"
+          (keydown)="onOtpKeydown($index, $event)"
+          class="otp-input">
+      }
+    </div>
+
+    @if (error) {
+      <div class="auth-error">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        {{ error }}
+      </div>
+    }
+
+    <button class="auth-btn-primary" [disabled]="loading || !hasCompleteOtp" (click)="onSubmit()">
+      @if (loading) {
+        <span class="auth-spinner"></span>
+        Verifying...
+      } @else {
+        Verify &amp; continue
+      }
+    </button>
+
+    <div class="verify-resend">
+      @if (!canResend) {
+        <span>Resend code in {{ timer }}s</span>
+      } @else {
+        <button type="button" class="verify-resend-btn" [disabled]="loading" (click)="resendCode()">
+          Resend code
+        </button>
+      }
+    </div>
+
+    <div class="auth-links verify-links">
+      <button type="button" class="verify-back-btn" (click)="onBack()">Back to sign in</button>
+    </div>
+
+    <div class="auth-security-note">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+      <span>Never share this code. Mkeja staff will never ask for it.</span>
+    </div>
+  </div>
+</div>

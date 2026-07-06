@@ -1,0 +1,226 @@
+@import '../auth-shared.css';
+
+.register-page .auth-brand {
+  margin-bottom: 24px;
+}
+
+.register-card {
+  padding: 28px;
+}
+
+.register-body {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.register-intro {
+  margin-bottom: 0;
+}
+
+.register-eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sf-green-dark);
+  background: var(--sf-green-pale);
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  margin-bottom: 10px;
+}
+
+.register-intro h2 {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--sf-text-1);
+  margin-bottom: 6px;
+  letter-spacing: -0.3px;
+}
+
+.register-intro p {
+  font-size: 14px;
+  color: var(--sf-text-3);
+  line-height: 1.45;
+}
+
+.register-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.register-option {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--sf-border);
+  border-radius: var(--radius-lg);
+  background: var(--sf-surface);
+  text-align: left;
+  cursor: pointer;
+  transition: var(--transition);
+  font: inherit;
+}
+
+.register-option:hover {
+  border-color: var(--primary-color);
+  background: var(--sf-green-xpale);
+  box-shadow: 0 8px 24px rgba(15, 76, 58, 0.08);
+  transform: translateY(-1px);
+}
+
+.register-option--tenant {
+  border-style: dashed;
+}
+
+.register-option-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--sf-green-pale), var(--sf-green-xpale));
+  color: var(--sf-green-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.register-option-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.register-option-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.register-option-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.register-option-head strong {
+  font-size: 15px;
+  color: var(--sf-text-1);
+}
+
+.register-option-arrow {
+  display: inline-flex;
+  align-items: center;
+  color: var(--primary-color);
+}
+
+.register-option-arrow svg {
+  width: 18px;
+  height: 18px;
+}
+
+.register-option-body > p {
+  font-size: 13px;
+  color: var(--sf-text-3);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.register-option-points {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0;
+  margin: 0;
+}
+
+.register-option-points li {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--sf-green-dark);
+  background: var(--sf-green-pale);
+  padding: 4px 8px;
+  border-radius: var(--radius-pill);
+}
+
+.register-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0 18px;
+  color: var(--sf-text-4);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.register-divider::before,
+.register-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--sf-border);
+}
+
+.tenant-invite-panel {
+  background: var(--sf-bg);
+  border: 1px solid var(--sf-border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-bottom: 18px;
+}
+
+.tenant-invite-panel label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 8px;
+  color: var(--sf-text-2);
+}
+
+.tenant-invite-panel .auth-btn-primary {
+  margin-top: 12px;
+}
+
+@media (min-width: 768px) {
+  .register-card {
+    padding: 36px 40px;
+  }
+
+  .register-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 0;
+  }
+
+  .register-option--tenant {
+    grid-column: 1 / -1;
+  }
+
+  .register-bottom {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 20px;
+    align-items: start;
+  }
+}
+
+@media (max-width: 480px) {
+  .register-card {
+    padding: 22px 18px;
+  }
+
+  .register-intro h2 {
+    font-size: 20px;
+  }
+}

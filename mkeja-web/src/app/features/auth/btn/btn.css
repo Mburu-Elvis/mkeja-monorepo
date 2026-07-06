@@ -1,0 +1,18 @@
+@import '../../../shared/styles/buttons.css';
+
+.btn {
+  letter-spacing: 0.01em;
+}
+
+.btn-full {
+  width: 100%;
+}
+
+.btn-disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.btn:not(.btn-disabled) {
+  cursor: pointer;
+}

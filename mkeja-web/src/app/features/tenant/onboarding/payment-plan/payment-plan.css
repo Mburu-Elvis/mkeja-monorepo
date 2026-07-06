@@ -1,0 +1,213 @@
+@import '../../../auth/auth-shared.css';
+
+.payment-plan-page {
+  min-height: 100vh;
+  background: var(--sf-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 20px;
+}
+
+.auth-brand {
+  width: 100%;
+  max-width: 520px;
+  margin-bottom: 24px;
+}
+
+.payment-plan-card {
+  width: 100%;
+  max-width: 520px;
+  background: var(--sf-surface);
+  border: 1px solid var(--sf-border);
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  box-shadow: var(--shadow-modal);
+}
+
+.plan-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.plan-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--sf-green-xpale);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.plan-icon .material-icons {
+  font-size: 40px;
+  color: var(--sf-green);
+}
+
+.plan-header h2 {
+  margin: 0 0 8px;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--sf-text-1);
+}
+
+.plan-header p {
+  margin: 0;
+  color: var(--sf-text-3);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.wallet-preview {
+  background: var(--sf-bg);
+  border: 1px solid var(--sf-border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  margin-bottom: 24px;
+}
+
+.wallet-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.wallet-item:not(:last-child) {
+  border-bottom: 1px solid var(--sf-border);
+}
+
+.wallet-item span {
+  font-size: 14px;
+  color: var(--sf-text-3);
+}
+
+.wallet-item strong {
+  font-size: 15px;
+  color: var(--sf-text-1);
+  font-weight: 700;
+}
+
+.plan-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.plan-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--sf-border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: var(--transition);
+  background: var(--sf-surface);
+}
+
+.plan-card:hover {
+  border-color: var(--sf-green);
+  background: var(--sf-green-xpale);
+}
+
+.plan-card.selected {
+  border-color: var(--sf-green);
+  background: var(--sf-green-xpale);
+  box-shadow: 0 0 0 1px rgba(76, 175, 80, 0.12);
+}
+
+.plan-radio {
+  padding-top: 2px;
+}
+
+.radio {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--sf-text-4);
+  border-radius: 50%;
+  transition: var(--transition);
+}
+
+.radio.checked {
+  border-color: var(--sf-green);
+  background: var(--sf-green);
+  box-shadow: inset 0 0 0 4px white;
+}
+
+.plan-info {
+  flex: 1;
+}
+
+.plan-info strong {
+  display: block;
+  font-size: 15px;
+  color: var(--sf-text-1);
+  margin-bottom: 4px;
+}
+
+.plan-info .amount {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--sf-green-dark);
+  margin-bottom: 4px;
+}
+
+.plan-info .description {
+  display: block;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--sf-text-3);
+}
+
+.continue-btn {
+  width: 100%;
+  min-height: 52px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    135deg,
+    var(--sf-green),
+    var(--sf-green-dark)
+  );
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.continue-btn:hover {
+  transform: translateY(-1px);
+}
+
+.continue-btn:active {
+  transform: scale(0.98);
+}
+
+@media (max-width: 480px) {
+
+  .payment-plan-page {
+    padding: 24px 16px;
+  }
+
+  .payment-plan-card {
+    padding: 24px 20px;
+  }
+
+  .plan-header h2 {
+    font-size: 22px;
+  }
+
+  .wallet-item {
+    font-size: 13px;
+  }
+
+  .plan-card {
+    padding: 14px;
+  }
+}

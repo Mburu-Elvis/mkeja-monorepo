@@ -1,0 +1,502 @@
+<div class="add-property-layout">
+    <div class="add-property-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Add New Property</h1>
+            <p>Complete all property details to onboard your asset to Mkeja</p>
+        </div>
+
+        <!-- Success Message -->
+        <div class="success-message" *ngIf="submitSuccess && creationComplete">
+            <div class="success-content">
+                <span class="success-icon">✓</span>
+                <div>
+                    <h3>{{ createdPropertyName }} registered</h3>
+                    <p>Your property is pending verification. Overview photos you uploaded here also appear under Settings → Media.</p>
+                    <div class="success-actions">
+                        <button type="button" class="btn-primary" (click)="goToCreatedProperty()">Open property</button>
+                        <button type="button" class="btn-outline" (click)="addAnotherProperty()">Add another property</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div class="error-message" *ngIf="submitError">
+            <span class="error-icon" aria-hidden="true"></span>
+            <span>{{ submitError }}</span>
+            <button class="close-error" (click)="submitError = null">×</button>
+        </div>
+
+        <!-- Step Indicator -->
+        <div class="step-indicator" *ngIf="!creationComplete">
+            <div class="step" *ngFor="let step of [1,2,3,4,5,6,7,8]" [class.active]="step === currentStep"
+                [class.completed]="step < currentStep">
+                <div class="step-number">{{ step }}</div>
+                <div class="step-label">
+                    {{ step === 1 ? 'Property' :
+                    step === 2 ? 'Location' :
+                    step === 3 ? 'Structure' :
+                    step === 4 ? 'Utilities' :
+                    step === 5 ? 'Security' :
+                    step === 6 ? 'Legal' :
+                    step === 7 ? 'Financials' : 'Units' }}
+                </div>
+            </div>
+        </div>
+
+        <form [formGroup]="propertyForm" (ngSubmit)="onSubmit()" *ngIf="!creationComplete">
+            <!-- STEP 1: PROPERTY -->
+            <div class="form-section" *ngIf="currentStep === 1" formGroupName="property">
+                <h2>Property Details</h2>
+
+                <div class="form-grid">
+                    <div class="form-field full-width">
+                        <label>Property Name *</label>
+                        <input type="text" formControlName="name" placeholder="e.g., Sunrise Apartments">
+                        <small class="error" *ngIf="isFieldInvalid('property.name')">{{ getFieldError('property.name')
+                            }}</small>
+                    </div>
+
+                    <div class="form-field">
+                        <label>Property Type *</label>
+                        <select formControlName="type">
+                            <option *ngFor="let type of propertyTypes" [value]="type.value">{{ type.label }}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label>Ownership Type *</label>
+                        <select formControlName="ownershipType">
+                            <option *ngFor="let type of ownershipTypes" [value]="type.value">{{ type.label }}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label>Management Type *</label>
+                        <select formControlName="managementType">
+                            <option *ngFor="let type of managementTypes" [value]="type.value">{{ type.label }}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label>Year Built</label>
+                        <input type="number" formControlName="yearBuilt" placeholder="YYYY">
+                        <small class="error" *ngIf="isFieldInvalid('property.yearBuilt')">{{
+                            getFieldError('property.yearBuilt') }}</small>
+                    </div>
+
+                    <div class="form-field full-width">
+                        <label>Description</label>
+                        <textarea formControlName="description" rows="3"
+                            placeholder="Describe the property..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: LOCATION -->
+            <div class="form-section" *ngIf="currentStep === 2" formGroupName="location">
+                <h2>Location & Geo Metadata</h2>
+
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label>Country *</label>
+                        <input type="text" formControlName="country" placeholder="Kenya">
+                    </div>
+
+                    <div class="form-field">
+                        <label>County *</label>
+                        <select formControlName="county">
+                            <option value="">Select County</option>
+                            <option *ngFor="let county of counties" [value]="county">{{ county }}</option>
+                        </select>
+                        <small class="error" *ngIf="isFieldInvalid('location.county')">{{
+                            getFieldError('location.county')
+                            }}</small>
+                    </div>
+
+                    <div class="form-field">
+                        <label>Sub County</label>
+                        <input type="text" formControlName="subCounty" placeholder="e.g., Westlands">
+                    </div>
+
+                    <div class="form-field">
+                        <label>Area</label>
+                        <input type="text" formControlName="area" placeholder="e.g., Kilimani">
+                    </div>
+
+                    <div class="form-field full-width">
+                        <label>Address Line 1 *</label>
+                        <input type="text" formControlName="addressLine1" placeholder="Street/Road name">
+                        <small class="error" *ngIf="isFieldInvalid('location.addressLine1')">{{
+                            getFieldError('location.addressLine1') }}</small>
+                    </div>
+
+                    <div class="form-field">
+                        <label>Postal Code</label>
+                        <input type="text" formControlName="postalCode" placeholder="00100">
+                    </div>
+
+                    <div class="form-field">
+                        <label>Latitude</label>
+                        <input type="number" step="any" formControlName="latitude" placeholder="-1.2921">
+                    </div>
+
+                    <div class="form-field">
+                        <label>Longitude</label>
+                        <input type="number" step="any" formControlName="longitude" placeholder="36.8219">
+                    </div>
+
+                    <div class="form-field full-width">
+                        <label>Landmark</label>
+                        <input type="text" formControlName="landmark" placeholder="Near Yaya Centre">
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: STRUCTURE -->
+            <div class="form-section" *ngIf="currentStep === 3" formGroupName="structure">
+                <h2>Structure Metadata</h2>
+                <p class="section-hint">Blocks and floors here drive auto-generated unit numbers in the final step.</p>
+
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label>Number of Blocks</label>
+                        <input type="number" formControlName="blocks" placeholder="0">
+                    </div>
+
+                    <div class="form-field">
+                        <label>Floors</label>
+                        <input type="number" formControlName="floors" placeholder="0">
+                    </div>
+
+                    <div class="form-field">
+                        <label>Units Per Floor</label>
+                        <input type="number" formControlName="unitsPerFloor" placeholder="0">
+                    </div>
+
+                    <div class="form-field">
+                        <label>Parking Slots</label>
+                        <input type="number" formControlName="parkingSlots" placeholder="0">
+                    </div>
+
+                    <div class="form-field">
+                        <label>Lifts/Elevators</label>
+                        <input type="number" formControlName="lifts" placeholder="0">
+                    </div>
+
+                    <div class="form-field">
+                        <label>Construction Type</label>
+                        <select formControlName="constructionType">
+                            <option value="">Select Type</option>
+                            <option *ngFor="let type of constructionTypes" [value]="type.value">{{ type.label }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 4: UTILITIES -->
+            <div class="form-section" *ngIf="currentStep === 4" formGroupName="utilities">
+                <h2>⚡ Utilities & Infrastructure</h2>
+
+                <div class="form-group">
+                    <label>Water Source *</label>
+                    <div class="checkbox-group">
+                        <label *ngFor="let source of waterSourceOptions">
+                            <input type="checkbox" [checked]="isWaterSourceSelected(source)"
+                                (change)="toggleWaterSource(source, $event)">
+                            {{ source | titlecase }}
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label>Electricity Provider</label>
+                        <select formControlName="electricityProvider">
+                            <option *ngFor="let provider of electricityProviders" [value]="provider.value">{{
+                                provider.label
+                                }}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label>
+                            <input type="checkbox" formControlName="backupPower">
+                            Backup Power Available
+                        </label>
+                    </div>
+
+                    <div class="form-field full-width">
+                        <label>Internet Providers</label>
+                        <div class="checkbox-group">
+                            <label *ngFor="let provider of internetOptions">
+                                <input type="checkbox" [checked]="isInternetProviderSelected(provider)"
+                                    (change)="toggleInternetProvider(provider, $event)">
+                                {{ provider }}
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label>Waste Management</label>
+                        <select formControlName="wasteManagement">
+                            <option *ngFor="let option of wasteManagementOptions" [value]="option.value">{{ option.label
+                                }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 5: SECURITY -->
+            <div class="form-section" *ngIf="currentStep === 5" formGroupName="security">
+                <h2>Security Metadata</h2>
+
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label>
+                            <input type="checkbox" formControlName="cctv">
+                            CCTV Installed
+                        </label>
+                    </div>
+
+                    <div class="form-field">
+                        <label>
+                            <input type="checkbox" formControlName="guards">
+                            Security Guards
+                        </label>
+                    </div>
+
+                    <div class="form-field">
+                        <label>Access Control System</label>
+                        <select formControlName="accessControl">
+                            <option *ngFor="let option of accessControlOptions" [value]="option.value">{{ option.label
+                                }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label>
+                            <input type="checkbox" formControlName="perimeterWall">
+                            Perimeter Wall
+                        </label>
+                    </div>
+
+                    <div class="form-field">
+                        <label>
+                            <input type="checkbox" formControlName="electricFence">
+                            Electric Fence
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 6: LEGAL -->
+            <div class="form-section" *ngIf="currentStep === 6" formGroupName="legal">
+                <h2>Legal & Compliance</h2>
+
+                <div class="form-grid">
+                    <div class="form-field full-width">
+                        <label>Title Deed Number *</label>
+                        <input type="text" formControlName="titleDeedNumber" placeholder="e.g., NBI/12345/67">
+                        <small class="error" *ngIf="isFieldInvalid('legal.titleDeedNumber')">{{
+                            getFieldError('legal.titleDeedNumber') }}</small>
+                    </div>
+
+                    <div class="form-field">
+                        <label>
+                            <input type="checkbox" formControlName="ownershipVerified">
+                            Ownership Verified
+                        </label>
+                    </div>
+
+                    <div class="form-field full-width">
+                        <label>Compliance Certificates</label>
+                        <div class="checkbox-group">
+                            <label *ngFor="let cert of certificateOptions">
+                                <input type="checkbox" [checked]="isCertificateSelected(cert)"
+                                    (change)="toggleCertificate(cert, $event)">
+                                {{ cert | titlecase | replace: '_':' ' }}
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label>Insurance Provider</label>
+                        <input type="text" formControlName="insurancePolicy.provider"
+                            placeholder="e.g., Jubilee Insurance">
+                    </div>
+
+                    <div class="form-field">
+                        <label>Insurance Expiry Date</label>
+                        <input type="date" formControlName="insurancePolicy.expiryDate">
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 7: FINANCIALS -->
+            <div class="form-section" *ngIf="currentStep === 7" formGroupName="financials">
+                <h2>Financial Metadata</h2>
+
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label>Expected Monthly Revenue (KES)</label>
+                        <input type="number" formControlName="expectedMonthlyRevenue" placeholder="0">
+                    </div>
+
+                    <div class="form-field">
+                        <label>Occupancy Rate (0-1)</label>
+                        <input type="number" step="0.01" formControlName="occupancyRate" placeholder="0.85">
+                    </div>
+
+                    <div class="form-field">
+                        <label>Service Charge per Unit (KES)</label>
+                        <input type="number" formControlName="serviceChargePerUnit" placeholder="0">
+                    </div>
+
+                    <div class="sub-section full-width" formGroupName="operatingCosts">
+                        <h3>Monthly Operating Costs (KES)</h3>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label>Security</label>
+                                <input type="number" formControlName="security" placeholder="0">
+                            </div>
+                            <div class="form-field">
+                                <label>Cleaning</label>
+                                <input type="number" formControlName="cleaning" placeholder="0">
+                            </div>
+                            <div class="form-field">
+                                <label>Maintenance</label>
+                                <input type="number" formControlName="maintenance" placeholder="0">
+                            </div>
+                            <div class="form-field">
+                                <label>Utilities</label>
+                                <input type="number" formControlName="utilities" placeholder="0">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 8: UNITS -->
+            <div class="form-section" *ngIf="currentStep === 8">
+                <h2>Units setup</h2>
+                <p class="section-hint">Uses your structure layout from step 3. Auto-generated units are spread evenly across blocks and floors.</p>
+                <p class="section-hint"><strong>Layout:</strong> {{ structureSummary }}</p>
+
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label>How do you want to add units?</label>
+                        <select formControlName="unitGenerationMode">
+                            <option value="auto">Auto-generate from configurations below</option>
+                            <option value="manual">I'll add units myself later</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div *ngIf="propertyForm.get('unitGenerationMode')?.value === 'auto'">
+                    <h3>Unit type configurations</h3>
+                    <p class="section-hint">Planned total: {{ plannedUnitTotal }} units</p>
+
+                <div formArrayName="unitTypes">
+                    <div *ngFor="let unit of unitTypesArray.controls; let i = index" class="unit-type-card"
+                        [formGroupName]="i">
+                        <div class="card-header">
+                            <h3>Unit Type {{ i + 1 }}</h3>
+                            <button type="button" class="remove-btn" *ngIf="unitTypesArray.length > 1"
+                                (click)="removeUnitType(i)">Remove</button>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label>Unit Type *</label>
+                                <select formControlName="type">
+                                    <option value="">Select Type</option>
+                                    <option value="studio">Studio / Bedsitter</option>
+                                    <option value="1_bedroom">1 Bedroom</option>
+                                    <option value="2_bedroom">2 Bedroom</option>
+                                    <option value="3_bedroom">3 Bedroom</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label>Block / Wing</label>
+                                <input type="text" formControlName="block" placeholder="e.g. A (optional)">
+                            </div>
+                            <div class="form-field">
+                                <label>Total Units *</label>
+                                <input type="number" formControlName="totalUnits" placeholder="e.g. 30">
+                            </div>
+                            <div class="form-field">
+                                <label>Rent (KES) *</label>
+                                <input type="number" formControlName="rent" placeholder="0">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="add-unit-btn" (click)="addUnitType()">
+                    + Add Another Unit Type
+                </button>
+                </div>
+            </div>
+
+            <!-- Property media on final step -->
+            <div class="form-section" *ngIf="currentStep === 8">
+                <h2>Property overview photos</h2>
+                <p class="section-hint">Same photos appear in Settings → Media and tenant House Hunt listings.</p>
+
+                <div class="media-section">
+                    <h3>Property Images</h3>
+                    <div class="upload-area">
+                        <input type="file" multiple accept="image/*" #imageInput (change)="onImagesSelected($event)"
+                            style="display: none">
+                        <button type="button" class="upload-btn" (click)="imageInput.click()">
+                            Select Images
+                        </button>
+                        <div class="image-preview" *ngIf="imagePreviewUrls.length">
+                            <div *ngFor="let img of imagePreviewUrls; let idx = index" class="preview-item">
+                                <img [src]="img" alt="Preview">
+                                <button type="button" class="remove-media" (click)="removeImage(idx)">×</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="media-section">
+                    <h3>Legal Documents</h3>
+                    <div class="upload-area">
+                        <input type="file" multiple accept=".pdf,.doc,.docx" #docInput
+                            (change)="onDocumentsSelected($event)" style="display: none">
+                        <button type="button" class="upload-btn" (click)="docInput.click()">
+                            Upload Documents
+                        </button>
+                        <ul class="document-list">
+                            <li *ngFor="let doc of selectedDocuments; let idx = index">
+                                <span>{{ doc.name }}</span>
+                                <button type="button" class="remove-doc" (click)="removeDocument(idx)">Remove</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FORM ACTIONS -->
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" (click)="onCancel()">Cancel</button>
+                <button type="button" class="btn-outline" *ngIf="currentStep > 1" (click)="previousStep()">
+                    Previous
+                </button>
+                <button type="button" class="btn-primary" *ngIf="currentStep < totalSteps" (click)="nextStep()">
+                    Next
+                </button>
+                <button type="submit" class="btn-success" *ngIf="currentStep === totalSteps"
+                    [disabled]="isSubmitting || propertyForm.invalid">
+                    {{ isSubmitting ? 'Submitting...' : 'Add Property' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

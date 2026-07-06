@@ -1,0 +1,38 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-unit-listing-discovery
+      author: mkeja
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            columnExists:
+              tableName: tbl_property_unit
+              columnName: discoverable
+      changes:
+        - addColumn:
+            tableName: tbl_property_unit
+            columns:
+              - column:
+                  name: discoverable
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: auto_recommend
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: listing_description
+                  type: TEXT
+              - column:
+                  name: available_from
+                  type: DATE
+              - column:
+                  name: promoted
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false

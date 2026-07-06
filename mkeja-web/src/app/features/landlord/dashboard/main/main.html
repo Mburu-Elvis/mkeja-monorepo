@@ -1,0 +1,587 @@
+<div class="platform-page">
+  @if (kycPending || kycRejected) {
+    <div class="kyc-banner" [class.rejected]="kycRejected">
+      @if (kycRejected) {
+        <strong>KYC rejected.</strong> <a routerLink="/landlord/support">Contact support</a> to resubmit your documents.
+      } @else {
+        <strong>KYC under review.</strong> You can browse the dashboard, but adding properties and inviting tenants unlocks after approval.
+      }
+    </div>
+  }
+
+  @if (isRefreshing) {
+    <div class="refresh-indicator">
+      <div class="spinner-small"></div>
+      <span>Updating your dashboard...</span>
+    </div>
+  }
+
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading your portfolio...</p>
+    </div>
+  } @else if (!hasProperties) {
+    <div class="empty-state-panel card">
+      <div class="empty-icon-wrap">
+        <mat-icon svgIcon="building"></mat-icon>
+      </div>
+      <h2>No properties yet</h2>
+      <p>Add your first property to start creating units and inviting tenants.</p>
+      @if (!kycApproved) {
+        <p class="empty-hint">KYC approval is required before you can add properties.</p>
+      }
+      <div class="empty-actions">
+        @if (kycApproved) {
+          <button class="btn-primary" type="button" (click)="onAddProperty()">
+            <mat-icon svgIcon="plus"></mat-icon>
+            Add Property
+          </button>
+        }
+        <button class="btn-secondary" type="button" routerLink="/landlord/properties">View properties</button>
+      </div>
+    </div>
+  } @else {
+    <div class="landlord-overview">
+      <!-- Portfolio header (matches property details) -->
+      <div class="portfolio-header">
+        <div class="header-left">
+          <div class="portfolio-info">
+            <div class="portfolio-badge">
+              <span class="badge">
+                <span class="badge-dot"></span>
+                {{ propertyCount }} {{ propertyCount === 1 ? 'Property' : 'Properties' }}
+              </span>
+            </div>
+            <h1>{{ greeting }}, {{ currentUser?.fullName || 'Landlord' }}</h1>
+            <div class="portfolio-meta">
+              <mat-icon svgIcon="building"></mat-icon>
+              <span>{{ portfolioLabel }}</span>
+              @if (selectedProperty !== 'all') {
+                <span class="separator">·</span>
+                <span>{{ getSelectedPropertyName() }}</span>
+              }
+            </div>
+            <div class="portfolio-meta" style="margin-top: 8px;">
+              <button class="contact-link" type="button" (click)="togglePropertySelector()">
+                <mat-icon svgIcon="chevronDown"></mat-icon>
+                Switch property
+              </button>
+              <button class="contact-link" type="button" (click)="refreshData()" [disabled]="isRefreshing">
+                <mat-icon svgIcon="refresh"></mat-icon>
+                Refresh
+              </button>
+            </div>
+          </div>
+          <div class="portfolio-stats">
+            <div class="header-stat-card">
+              <mat-icon svgIcon="building"></mat-icon>
+              <div>
+                <span class="stat-label">Total Units</span>
+                <span class="stat-value">{{ stats?.totalUnits || 0 }}</span>
+              </div>
+            </div>
+            <div class="header-stat-card">
+              <mat-icon svgIcon="pieChart"></mat-icon>
+              <div>
+                <span class="stat-label">Occupancy Rate</span>
+                <span class="stat-value">{{ occupancyRate | number:'1.0-0' }}%</span>
+              </div>
+            </div>
+            <div class="header-stat-card">
+              <mat-icon svgIcon="banknote"></mat-icon>
+              <div>
+                <span class="stat-label">Collected ({{ currentMonthName }})</span>
+                <span class="stat-value">{{ formatCurrency(stats?.collectedThisMonth || 0) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="header-actions">
+            @if (kycApproved) {
+              <button class="btn-primary" type="button" (click)="onAddProperty()">
+                <mat-icon svgIcon="plus"></mat-icon>
+                Add Property
+              </button>
+              <button class="btn-secondary" type="button" (click)="onAddTenant()">
+                <mat-icon svgIcon="user"></mat-icon>
+                Invite Tenant
+              </button>
+            }
+            <button class="btn-secondary" type="button" routerLink="/landlord/properties">
+              <mat-icon svgIcon="building"></mat-icon>
+              Properties
+            </button>
+            <button class="btn-secondary" type="button" routerLink="/landlord/leads">
+              <mat-icon svgIcon="search"></mat-icon>
+              House Hunt leads
+            </button>
+          </div>
+          <div class="last-updated">
+            <mat-icon svgIcon="clock"></mat-icon>
+            Last updated: {{ formatDate(lastUpdated) }}
+          </div>
+        </div>
+      </div>
+
+      @if (showPropertySelector) {
+        <div class="property-selector-dropdown">
+          <div class="selector-header">
+            <span>Select Property</span>
+            <button type="button" (click)="togglePropertySelector()">Close</button>
+          </div>
+          @for (prop of properties; track prop.id) {
+            <div class="selector-item" [class.active]="selectedProperty === prop.id" (click)="selectProperty(prop.id)">
+              <mat-icon svgIcon="building"></mat-icon>
+              <span>{{ prop.name }}</span>
+              @if (selectedProperty === prop.id) {
+                <mat-icon svgIcon="check" class="check-icon"></mat-icon>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      @if (!hasUnits) {
+        <div class="empty-state-inline card">
+          <mat-icon svgIcon="home"></mat-icon>
+          <div>
+            <strong>No units yet</strong>
+            <p>Add units to your {{ propertyCount === 1 ? 'property' : 'properties' }} to start inviting tenants.</p>
+          </div>
+          <button class="btn-primary" type="button" (click)="onAddUnit()">Add units</button>
+        </div>
+      }
+
+      <!-- Tab navigation -->
+      <div class="tab-navigation">
+        <button class="tab-btn" [class.active]="activeTab === 'overview'" type="button" (click)="setActiveTab('overview')">
+          <mat-icon svgIcon="pieChart"></mat-icon>
+          Overview
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 'alerts'" type="button" (click)="setActiveTab('alerts')">
+          <mat-icon svgIcon="alert"></mat-icon>
+          Alerts &amp; Actions
+          @if (alertCount > 0) {
+            <span class="tab-count warning">{{ alertCount }}</span>
+          }
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 'tenants'" type="button" (click)="setActiveTab('tenants')">
+          <mat-icon svgIcon="users"></mat-icon>
+          Tenants
+          <span class="tab-count">{{ tenantRows.length }}</span>
+        </button>
+      </div>
+
+      @if (activeTab === 'overview') {
+      <div class="tab-content">
+      <!-- KPI cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card" (click)="setActiveTab('overview')">
+          <div class="kpi-icon"><mat-icon svgIcon="pieChart"></mat-icon></div>
+          <div class="kpi-info">
+            <span class="kpi-label">Occupancy Rate</span>
+            <span class="kpi-value">{{ occupancyRate | number:'1.0-0' }}%</span>
+            <span class="kpi-trend trend-{{ getTrendClass(occupancyRate, previousOccupancyRate) }}">
+              <mat-icon [svgIcon]="getTrendIcon(occupancyRate, previousOccupancyRate)" class="trend-icon"></mat-icon>
+              {{ getTrendPercentage(occupancyRate, previousOccupancyRate) }}
+            </span>
+          </div>
+        </div>
+        <div class="kpi-card" (click)="onViewRemittanceHistory()">
+          <div class="kpi-icon"><mat-icon svgIcon="banknote"></mat-icon></div>
+          <div class="kpi-info">
+            <span class="kpi-label">Collected This Month</span>
+            <span class="kpi-value">{{ formatCurrency(stats?.collectedThisMonth || 0) }}</span>
+            <span class="kpi-trend trend-{{ getTrendClass(stats?.collectedThisMonth || 0, previousCollected) }}">
+              <mat-icon [svgIcon]="getTrendIcon(stats?.collectedThisMonth || 0, previousCollected)" class="trend-icon"></mat-icon>
+              {{ getTrendPercentage(stats?.collectedThisMonth || 0, previousCollected) }} vs last month
+            </span>
+          </div>
+        </div>
+        <div class="kpi-card" (click)="setActiveTab('alerts')">
+          <div class="kpi-icon"><mat-icon svgIcon="alert"></mat-icon></div>
+          <div class="kpi-info">
+            <span class="kpi-label">Outstanding Rent</span>
+            <span class="kpi-value">{{ formatCurrency(outstandingRent) }}</span>
+            <span class="kpi-sub">{{ alertCount }} item(s) need attention</span>
+          </div>
+        </div>
+        <div class="kpi-card" (click)="onViewProperties()">
+          <div class="kpi-icon"><mat-icon svgIcon="fileText"></mat-icon></div>
+          <div class="kpi-info">
+            <span class="kpi-label">Monthly Rent Roll</span>
+            <span class="kpi-value">{{ formatCurrency(stats?.monthlyRentExpected || 0) }}</span>
+            <span class="kpi-sub">{{ formatCurrency(potentialRentRoll) }} if fully occupied</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Rent collection chart -->
+      <div class="chart-card">
+        <div class="card-header">
+          <div>
+            <h3>Rent Collection — Last 6 Months</h3>
+            <p class="chart-subtitle">Collected vs expected rent roll ({{ formatCurrency(stats?.monthlyRentExpected || 0) }}/mo)</p>
+          </div>
+
+          <div class="chart-legend">
+            <span><span class="legend-collected"></span> Collected</span>
+            <span><span class="legend-expected"></span> Expected</span>
+          </div>
+        </div>
+        <div class="chart-bars">
+          <div class="chart-grid" aria-hidden="true"></div>
+          @for (point of monthlyChartData; track point.label) {
+            <div class="chart-bar-group">
+              <div class="bar-values">
+                <span class="bar-value collected">{{ formatCurrency(point.collected) }}</span>
+                <span class="bar-value expected">{{ formatCurrency(point.expected) }}</span>
+              </div>
+              <div class="bars">
+                <div class="bar collected" [style.height.%]="barHeightPercent(point.collected)"></div>
+                <div class="bar expected" [style.height.%]="barHeightPercent(point.expected)"></div>
+              </div>
+              <div class="bar-label">{{ point.shortLabel }}</div>
+              <div class="bar-rate">{{ point.collectionRate | number:'1.0-0' }}%</div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="overview-two-columns">
+        <div class="chart-card">
+          <div class="card-header">
+            <div>
+              <h3>Collection Rate Trend</h3>
+              <p class="chart-subtitle">Share of expected rent collected each month</p>
+            </div>
+          </div>
+          <div class="trend-line">
+            <div class="chart-grid" aria-hidden="true"></div>
+            @for (point of monthlyChartData; track point.label) {
+              <div class="trend-point">
+                <div class="trend-value">{{ point.collectionRate | number:'1.0-0' }}%</div>
+                <div class="trend-plot">
+                  <div class="trend-bar" [style.height.%]="point.collectionRate"
+                    [class.warning]="point.collectionRate < 80"
+                    [class.danger]="point.collectionRate < 50"></div>
+                </div>
+                <div class="trend-label">{{ point.shortLabel }}</div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="card-header">
+            <div>
+              <h3>Unit Status Breakdown</h3>
+              <p class="chart-subtitle">{{ stats?.totalUnits || 0 }} units · {{ vacantUnits }} vacant · {{ formatCurrency(potentialRentRoll) }} max rent roll</p>
+            </div>
+          </div>
+          <div class="donut-container">
+            <div class="status-donut-wrap">
+              <div class="status-donut" [style.background]="statusDonutGradient">
+                <div class="status-donut-hole">
+                  <span class="donut-center-value">{{ occupancyRate | number:'1.0-0' }}%</span>
+                  <span class="donut-center-label">Occupied</span>
+                </div>
+              </div>
+            </div>
+            <div class="donut-legend">
+              @for (seg of unitStatusSegments; track seg.key) {
+                <div>
+                  <span class="legend-dot" [style.background]="seg.color"></span>
+                  {{ seg.label }}: {{ seg.count }} ({{ seg.percent | number:'1.0-0' }}%)
+                </div>
+              }
+              @if (unitStatusSegments.length === 0) {
+                <div class="alert-empty">No units yet</div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="secondary-metrics">
+        <div class="metric-item">
+          <span class="metric-label">Collection Rate</span>
+          <span class="metric-value">{{ paymentCollectionRate | number:'1.0-0' }}%</span>
+          <span class="metric-trend" [class.up]="paymentCollectionRate > 90"></span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-label">Vacancy Rate</span>
+          <span class="metric-value">{{ vacancyRate | number:'1.0-0' }}%</span>
+          <span class="metric-trend" [class.down]="vacancyRate > 10"></span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-label">Monthly Rent Roll</span>
+          <span class="metric-value">{{ formatCurrency(stats?.monthlyRentExpected || 0) }}</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-label">Properties</span>
+          <span class="metric-value">{{ filteredProperties.length }}</span>
+        </div>
+      </div>
+      </div>
+      }
+
+      @if (activeTab === 'alerts') {
+      <div class="tab-content">
+      <!-- Alerts -->
+      <div class="alerts-panel">
+        <h3><mat-icon svgIcon="alert"></mat-icon> Alerts & Actions</h3>
+        <div class="alerts-grid">
+          <div class="alert-card arrears">
+            <div class="alert-card-header">
+              <mat-icon svgIcon="alert"></mat-icon>
+              At-Risk Tenants
+            </div>
+            @for (alert of riskAlerts; track alert.id) {
+              <div class="alert-list-item" (click)="setActiveTab('tenants')">
+                <div>
+                  <span class="alert-name">{{ alert.tenantName }}</span>
+                  <span class="alert-unit">{{ alert.unitRef }} · {{ alert.reason }}</span>
+                </div>
+              </div>
+            }
+            @if (riskAlerts.length === 0) {
+              <div class="alert-empty">
+                <mat-icon svgIcon="check"></mat-icon>
+                All tenants on track
+              </div>
+            }
+          </div>
+
+          <div class="alert-card vacancies">
+            <div class="alert-card-header">
+              <mat-icon svgIcon="unlock"></mat-icon>
+              Vacant Units
+            </div>
+            @for (prop of propertiesWithVacancies; track prop.id) {
+              <div class="alert-list-item" (click)="onViewProperty(prop.id)">
+                <div>
+                  <span class="alert-name">{{ prop.name }}</span>
+                  <span class="alert-unit">{{ prop.vacantUnits }} vacant unit(s)</span>
+                </div>
+                <span class="alert-amount">{{ formatCurrency(prop.monthlyRentRoll || 0) }}/mo roll</span>
+              </div>
+            }
+            @if (propertiesWithVacancies.length === 0) {
+              <div class="alert-empty">
+                <mat-icon svgIcon="check"></mat-icon>
+                No vacant units
+              </div>
+            }
+          </div>
+
+          <div class="alert-card invites">
+            <div class="alert-card-header">
+              <mat-icon svgIcon="mail"></mat-icon>
+              Pending Invites
+            </div>
+            @for (invite of filteredInvitations; track invite.code) {
+              <div class="alert-list-item" (click)="setActiveTab('tenants')">
+                <div>
+                  <span class="alert-name">{{ invite.tenantName }}</span>
+                  <span class="alert-unit">{{ invite.propertyName }} · Unit {{ invite.unitNumber }}</span>
+                </div>
+              </div>
+            }
+            @if (filteredInvitations.length === 0) {
+              <div class="alert-empty">
+                <mat-icon svgIcon="check"></mat-icon>
+                No pending invites
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="secondary-metrics">
+        <div class="metric-item">
+          <span class="metric-label">Collection Rate</span>
+          <span class="metric-value">{{ paymentCollectionRate | number:'1.0-0' }}%</span>
+          <span class="metric-trend" [class.up]="paymentCollectionRate > 90"></span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-label">Vacancy Rate</span>
+          <span class="metric-value">{{ vacancyRate | number:'1.0-0' }}%</span>
+          <span class="metric-trend" [class.down]="vacancyRate > 10"></span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-label">Next Remittance</span>
+          <span class="metric-value">{{ formatDate(nextSweepDate) }}</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-label">Last Remittance</span>
+          <span class="metric-value">{{ formatCurrency(lastRemittanceAmount) }}</span>
+        </div>
+      </div>
+
+      <div class="quick-actions-card card">
+        <h3>Quick Actions</h3>
+        <div class="quick-actions-grid">
+          @if (kycApproved) {
+            <button class="btn-primary" type="button" (click)="onAddTenant()">
+              <mat-icon svgIcon="plus"></mat-icon>
+              Invite Tenant
+            </button>
+            <button class="btn-secondary" type="button" (click)="onAddUnit()">
+              <mat-icon svgIcon="plus"></mat-icon>
+              Add Units
+            </button>
+          }
+          <button class="btn-secondary" type="button" (click)="onViewRemittanceHistory()">
+            <mat-icon svgIcon="fileText"></mat-icon>
+            Remittance History
+          </button>
+          <button class="btn-secondary" type="button" routerLink="/landlord/properties">
+            <mat-icon svgIcon="building"></mat-icon>
+            Manage Properties
+          </button>
+        </div>
+      </div>
+
+      <div class="activity-feed">
+        <h3>Recent Activity</h3>
+        @if (recentActivity.length > 0) {
+          @for (item of recentActivity; track item.id) {
+            <div class="activity-item">
+              <div class="activity-icon">
+                <mat-icon [svgIcon]="item.icon"></mat-icon>
+              </div>
+              <div>
+                <div class="activity-description">{{ item.description }}</div>
+                <div class="activity-time">{{ item.timeLabel }}</div>
+              </div>
+            </div>
+          }
+        } @else {
+          <div class="alert-empty">
+            <mat-icon svgIcon="fileText"></mat-icon>
+            Activity will appear once tenants start paying rent
+          </div>
+        }
+      </div>
+      </div>
+      }
+
+      @if (activeTab === 'tenants') {
+      <div class="tab-content">
+        <div class="tab-header-row">
+          <div>
+            <h2>Tenant Registry</h2>
+            <p class="section-desc">Active tenancies and pending invites across your portfolio</p>
+          </div>
+          @if (kycApproved) {
+            <button class="btn-primary" type="button" (click)="onAddTenant()">
+              <mat-icon svgIcon="plus"></mat-icon>
+              Invite Tenant
+            </button>
+          }
+        </div>
+
+        <div class="filters-bar card">
+          <div class="search-box">
+            <mat-icon svgIcon="user"></mat-icon>
+            <input type="text" [(ngModel)]="tenantSearchTerm" placeholder="Search name, phone, unit or property">
+          </div>
+          <select [(ngModel)]="tenantStatusFilter" class="filter-select">
+            <option value="all">All</option>
+            <option value="active">Active tenancies</option>
+            <option value="pending">Pending invites</option>
+            <option value="kyc_pending">KYC pending</option>
+          </select>
+        </div>
+
+        @if (!hasTenantRows) {
+          <div class="empty-state-panel card">
+            <div class="empty-icon-wrap">
+              <mat-icon svgIcon="users"></mat-icon>
+            </div>
+            <h2>No tenants linked yet</h2>
+            <p>Add units to your properties, then invite tenants by phone.</p>
+            @if (kycApproved && hasUnits) {
+              <div class="empty-actions">
+                <button class="btn-primary" type="button" (click)="onAddTenant()">
+                  <mat-icon svgIcon="plus"></mat-icon>
+                  Invite Tenant
+                </button>
+              </div>
+            }
+          </div>
+        } @else if (filteredTenantRows.length === 0) {
+          <div class="empty-state-inline card">
+            <mat-icon svgIcon="users"></mat-icon>
+            <div>
+              <strong>No matches</strong>
+              <p>Try adjusting your search or filter.</p>
+            </div>
+          </div>
+        } @else {
+          <div class="tenants-table card">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tenant</th>
+                  <th>Property / Unit</th>
+                  <th>Phone</th>
+                  <th>Rent</th>
+                  <th>Due Day</th>
+                  <th>Status</th>
+                  <th>KYC</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (row of filteredTenantRows; track row.id) {
+                  <tr>
+                    <td class="cell-tenant">
+                      <div class="tenant-avatar">{{ row.name.charAt(0) }}</div>
+                      <span>{{ row.name }}</span>
+                    </td>
+                    <td>{{ row.propertyName }} · {{ row.unitRef }}</td>
+                    <td>+{{ row.phone }}</td>
+                    <td class="cell-amount">{{ formatCurrency(row.monthlyRent) }}</td>
+                    <td>{{ formatRentDue(row.rentDueDay) }}</td>
+                    <td>
+                      <span class="status-chip" [class.pending]="row.kind === 'pending'">
+                        {{ row.kind === 'pending' ? 'Invite sent' : 'Active' }}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="kyc-chip" [class]="getKycBadgeClass(row.kycStatus)">
+                        {{ getKycLabel(row.kycStatus) }}
+                      </span>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <div class="tab-footer-link">
+            <button class="btn-link" type="button" (click)="onViewAllTenants()">View full tenant management</button>
+          </div>
+        }
+      </div>
+      }
+    </div>
+
+    <div class="support-hub">
+      <div class="support-content">
+        <div class="support-text">
+          <mat-icon svgIcon="help"></mat-icon>
+          <span>Need help managing your property?</span>
+        </div>
+        <div class="support-actions">
+          <button class="btn-outline" type="button" routerLink="/landlord/support">Raise a Ticket</button>
+          <a class="help-link" routerLink="/landlord/support">FAQs &amp; Support</a>
+          <a class="help-link" routerLink="/landlord/remittances">Remittances</a>
+        </div>
+      </div>
+    </div>
+  }
+</div>

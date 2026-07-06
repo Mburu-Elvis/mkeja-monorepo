@@ -1,0 +1,308 @@
+<div class="platform-page invite-wizard" [class.has-floating-bar]="step === 1 && !loadingUnits">
+  @if (kycNotApproved) {
+    <div class="kyc-banner">
+      <strong>KYC verification required.</strong> Complete landlord KYC approval before inviting tenants.
+    </div>
+  }
+
+  <div class="hero-section compact-hero">
+    <div class="hero-flex">
+      <div class="hero-text">
+        <p class="greeting-label">Tenants</p>
+        <h1 class="page-title">Link a tenant to a unit</h1>
+        <p class="hero-subtitle">Tenants register once on Mkeja. Existing members get a tenancy instantly — new tenants receive a one-time onboarding link.</p>
+      </div>
+      <button class="btn-secondary back-link" type="button" routerLink="/landlord/tenants">Back</button>
+    </div>
+  </div>
+
+  <div class="wizard-steps card">
+    <div class="step" [class.active]="step >= 1" [class.done]="step > 1"><span>1</span> Unit</div>
+    <div class="step-line" [class.done]="step > 1"></div>
+    <div class="step" [class.active]="step >= 2" [class.done]="step > 2"><span>2</span> Tenant</div>
+    <div class="step-line" [class.done]="step > 2"></div>
+    <div class="step" [class.active]="step >= 3"><span>3</span> Lease terms</div>
+  </div>
+
+  @if (step === 1) {
+    <div class="card step-panel step-panel-unit-select">
+      <h2>Select a vacant unit</h2>
+      <p class="panel-hint">Pick a property, then narrow by floor or wing — or search by property name, unit number, floor, or wing to jump straight to a unit.</p>
+
+      @if (loadingUnits) {
+        <div class="loading-state"><div class="spinner"></div><p>Loading vacant units...</p></div>
+      } @else if (units.length === 0) {
+        <div class="empty-panel">
+          <p>No vacant units available.</p>
+          <button class="btn-primary" type="button" routerLink="/landlord/properties">Manage properties</button>
+        </div>
+      } @else {
+        <div class="unit-picker">
+          <div class="search-bypass card-inline">
+            <label for="unit-search">Quick find</label>
+            <div class="search-row">
+              <input
+                id="unit-search"
+                type="search"
+                [(ngModel)]="unitSearchTerm"
+                (ngModelChange)="onSearchChange()"
+                placeholder="Property name, unit no., floor, or wing…">
+              @if (isSearchMode) {
+                <button class="btn-secondary btn-sm" type="button" (click)="clearSearch()">Browse instead</button>
+              }
+            </div>
+            @if (isSearchMode) {
+              <p class="search-hint">{{ filteredUnits.length }} matching vacant unit(s)</p>
+            }
+          </div>
+
+          @if (!isSearchMode) {
+            <div class="picker-step">
+              <span class="picker-step-label">1. Property</span>
+              <div class="option-chips">
+                @for (property of properties; track property.id) {
+                  <button
+                    type="button"
+                    class="option-chip"
+                    [class.selected]="selectedPropertyId === (property.id + '')"
+                    (click)="onPropertySelect(property.id + '')">
+                    {{ property.name }}
+                    <span class="chip-count">{{ property.vacantCount }} vacant</span>
+                  </button>
+                }
+              </div>
+            </div>
+
+            @if (showFloorStep) {
+              <div class="picker-step">
+                <span class="picker-step-label">2. Floor</span>
+                <div class="option-chips">
+                  <button type="button" class="option-chip" [class.selected]="selectedFloor === 'all'" (click)="onFloorSelect('all')">All floors</button>
+                  @for (floor of availableFloors; track floor) {
+                    <button
+                      type="button"
+                      class="option-chip"
+                      [class.selected]="selectedFloor === (floor + '')"
+                      (click)="onFloorSelect(floor + '')">
+                      {{ floorLabel(floor) }}
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+
+            @if (showWingStep) {
+              <div class="picker-step">
+                <span class="picker-step-label">{{ showFloorStep ? '3' : '2' }}. Wing / block</span>
+                <div class="option-chips">
+                  <button type="button" class="option-chip" [class.selected]="selectedWing === 'all'" (click)="onWingSelect('all')">All wings</button>
+                  @for (wing of availableWings; track wing) {
+                    <button
+                      type="button"
+                      class="option-chip"
+                      [class.selected]="selectedWing === wing"
+                      (click)="onWingSelect(wing)">
+                      {{ wingLabel(wing) }}
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+          }
+
+          @if (showUnitList) {
+            <div class="picker-step">
+              <span class="picker-step-label">
+                @if (isSearchMode) {
+                  Select unit
+                } @else {
+                  {{ showWingStep ? '4' : (showFloorStep ? '3' : '2') }}. Unit
+                }
+              </span>
+
+              @if (filteredUnits.length === 0) {
+                <div class="empty-panel compact">
+                  @if (isSearchMode) {
+                    <p>No vacant units match your search.</p>
+                  } @else {
+                    <p>No vacant units in this selection. Try another floor or wing.</p>
+                  }
+                </div>
+              } @else {
+                <div class="unit-list">
+                  <div class="unit-list-header">
+                    <span>Unit</span>
+                    <span>Location</span>
+                    <span>Rent</span>
+                    <span></span>
+                  </div>
+                  @for (unit of filteredUnits; track unit.id) {
+                    <button
+                      type="button"
+                      class="unit-row"
+                      [class.selected]="formData.unitId === (unit.id + '')"
+                      (click)="onUnitSelect(unit.id + '')">
+                      <span class="unit-primary">
+                        <strong>{{ unit.unitNumber }}</strong>
+                        @if (isSearchMode) {
+                          <small>{{ unit.propertyName }}</small>
+                        }
+                      </span>
+                      <span class="unit-location">
+                        @if (unit.wing) { <span>{{ unit.wing }}</span> }
+                        @if (unit.floorNumber != null) { <span>{{ floorLabel(unit.floorNumber) }}</span> }
+                        @if (!unit.wing && unit.floorNumber == null) { <span>—</span> }
+                      </span>
+                      <span class="unit-rent-inline">KES {{ unit.rent | number }}<small>/mo</small></span>
+                      <span class="unit-select-mark">
+                        @if (formData.unitId === (unit.id + '')) { ✓ } @else { Select }
+                      </span>
+                      @if (unit.pendingInvite) {
+                        <span class="pending-chip row-chip">Invite pending</span>
+                      }
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+          } @else if (!isSearchMode) {
+            <div class="empty-panel compact">
+              <p>Select a property to see available units.</p>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    @if (!loadingUnits) {
+      <div class="floating-step-bar" role="region" aria-label="Unit selection actions">
+        <div class="floating-step-meta">
+          @if (selectedUnit) {
+            <span class="floating-selection-label">Selected</span>
+            <span class="floating-selection">{{ selectedUnitLabel }}</span>
+          } @else {
+            <span class="floating-selection hint">Select a unit to continue</span>
+          }
+        </div>
+        <button class="btn-primary btn-continue-float" type="button" [disabled]="!canProceedStep1" (click)="nextStep()">
+          Continue
+        </button>
+      </div>
+    }
+  }
+
+  @if (step === 2) {
+    <div class="card step-panel">
+      <h2>Who are you inviting?</h2>
+      <p class="panel-hint">Enter their M-Pesa number. We'll detect if they're already on Mkeja.</p>
+
+      <div class="selected-unit-pill">{{ selectedUnitLabel }}</div>
+
+      <div class="form-group">
+        <label>M-Pesa phone number *</label>
+        <div class="phone-input">
+          <span class="prefix">+254</span>
+          <input type="tel" [(ngModel)]="formData.phone" (ngModelChange)="onPhoneChange()" placeholder="712345678" maxlength="9">
+        </div>
+      </div>
+
+      @if (lookupLoading) {
+        <div class="lookup-card loading">Checking Mkeja registry...</div>
+      } @else if (tenantLookup) {
+        <div class="lookup-card" [class.existing]="tenantLookup.registered" [class.new]="!tenantLookup.registered">
+          @if (tenantLookup.registered) {
+            <div class="lookup-icon">✓</div>
+            <div>
+              <strong>Existing Mkeja tenant</strong>
+              <p>{{ tenantLookup.message }}</p>
+              @if (tenantLookup.kycStatus) {
+                <span class="kyc-chip" [class.approved]="tenantLookup.canLinkImmediately">{{ tenantLookup.kycStatus }}</span>
+              }
+            </div>
+          } @else {
+            <div class="lookup-icon">+</div>
+            <div>
+              <strong>New tenant</strong>
+              <p>They'll register once via SMS link, complete KYC, then move in. How they save for rent (daily micropayments, etc.) is their choice in the app.</p>
+            </div>
+          }
+        </div>
+      }
+
+      <div class="form-group">
+        <label>Full name *</label>
+        <input type="text" [(ngModel)]="formData.fullName" placeholder="As on ID document">
+      </div>
+
+      <div class="form-group">
+        <label>Email (optional)</label>
+        <input type="email" [(ngModel)]="formData.email" placeholder="tenant@example.com">
+      </div>
+
+      <div class="step-actions">
+        <button class="btn-secondary" type="button" (click)="prevStep()">Back</button>
+        <button class="btn-primary" type="button" [disabled]="!canProceedStep2" (click)="nextStep()">Continue</button>
+      </div>
+    </div>
+  }
+
+  @if (step === 3) {
+    <div class="card step-panel">
+      <h2>Lease terms</h2>
+      <p class="panel-hint">You set the rent amount and due date. Tenants choose their own saving rhythm in Mkeja to pool toward rent.</p>
+
+      <div class="terms-grid">
+        <div class="term-box">
+          <span class="term-label">Monthly rent</span>
+          <strong>KES {{ formData.monthlyRent | number }}</strong>
+        </div>
+        <div class="term-box">
+          <span class="term-label">Security deposit</span>
+          <input type="number" [(ngModel)]="formData.depositAmount" min="0">
+        </div>
+        <div class="term-box wide">
+          <span class="term-label">Rent due day *</span>
+          <select [(ngModel)]="formData.rentDueDay">
+            @for (day of rentDueOptions; track day) {
+              <option [value]="day">{{ formatRentDue(day) }}</option>
+            }
+          </select>
+          <small>Tenant must have full rent pooled by this date. Micropayments are configured by the tenant, not you.</small>
+        </div>
+        <div class="term-box">
+          <span class="term-label">Lease start</span>
+          <input type="date" [(ngModel)]="formData.leaseStartDate">
+        </div>
+        <div class="term-box">
+          <span class="term-label">Lease end (optional)</span>
+          <input type="date" [(ngModel)]="formData.leaseEndDate">
+        </div>
+      </div>
+
+      <div class="review-card">
+        <h3>Summary</h3>
+        <ul>
+          <li><strong>Unit:</strong> {{ selectedUnitLabel }}</li>
+          <li><strong>Tenant:</strong> {{ formData.fullName }} · +{{ formData.phone }}</li>
+          <li><strong>Rent due:</strong> {{ formatRentDue(formData.rentDueDay) }}</li>
+          @if (tenantLookup?.registered) {
+            <li><strong>Flow:</strong> Instant tenancy link (tenant already registered)</li>
+          } @else {
+            <li><strong>Flow:</strong> SMS invite → one-time registration → KYC → move-in</li>
+          }
+        </ul>
+      </div>
+
+      <div class="step-actions">
+        <button class="btn-secondary" type="button" (click)="prevStep()">Back</button>
+        <button class="btn-primary" type="button" [disabled]="submitting || !canSubmit || kycNotApproved" (click)="onSubmit()">
+          @if (submitting) { Sending... } @else { Send invite & link tenancy }
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (showToast) {
+    <app-toast [type]="toastType" [message]="toastMessage" (close)="closeToast()"></app-toast>
+  }
+</div>

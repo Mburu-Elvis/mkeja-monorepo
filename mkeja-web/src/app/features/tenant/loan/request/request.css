@@ -1,0 +1,242 @@
+.loan-request {
+  background-color: var(--mpesa-gray-light);
+  min-height: 100vh;
+  padding-bottom: 32px;
+}
+
+.credit-score-card {
+  background: linear-gradient(135deg, #1A1A1A 0%, #2D2D2D 100%);
+  color: white;
+  margin: 16px;
+  padding: 20px;
+  border-radius: 16px;
+}
+
+.credit-score-card .score-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.credit-score-card .score-header .tier {
+  font-size: 14px;
+  font-weight: 600;
+  color: #FFD700;
+}
+
+.credit-score-card .score-header .score {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.credit-score-card .progress-bar {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.credit-score-card .progress-bar .progress-fill {
+  height: 100%;
+  background: #FFD700;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.credit-score-card .score-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.card {
+  background: white;
+  border-radius: 16px;
+  margin: 16px;
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.limit-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.limit-info .label {
+  font-size: 12px;
+  color: var(--mpesa-gray);
+  display: block;
+}
+
+.limit-info .limit-amount {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--mpesa-black);
+  display: block;
+}
+
+.limit-info .sub {
+  font-size: 11px;
+  color: var(--mpesa-gray);
+}
+
+.limit-info .fee-badge {
+  background: #E8F5E9;
+  color: var(--mpesa-primary);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.request-form .shortfall-info {
+  background: #F5F5F5;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.request-form .shortfall-info .shortfall {
+  color: var(--mpesa-error);
+  font-weight: 600;
+}
+
+.request-form .form-group {
+  margin-bottom: 20px;
+}
+
+.request-form .form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.request-form .form-group .amount-input {
+  display: flex;
+  align-items: center;
+  border: 1px solid #E0E0E0;
+  border-radius: 12px;
+  background: white;
+}
+
+.request-form .form-group .amount-input .currency {
+  padding: 12px 0 12px 16px;
+  font-weight: 600;
+  color: var(--mpesa-gray-dark);
+}
+
+.request-form .form-group .amount-input input {
+  flex: 1;
+  padding: 12px 16px;
+  border: none;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.request-form .form-group .amount-input input:focus {
+  outline: none;
+}
+
+.request-form .form-group .input-hint {
+  font-size: 12px;
+  color: var(--mpesa-gray);
+  margin-top: 6px;
+}
+
+.request-form .slider-container {
+  margin-bottom: 24px;
+}
+
+.request-form .slider-container input[type="range"] {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  background: #E0E0E0;
+  border-radius: 2px;
+}
+
+.request-form .slider-container input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--mpesa-primary);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.request-form .slider-container .slider-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--mpesa-gray);
+}
+
+.request-form .fee-calculation {
+  background: #F9F9F9;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.request-form .fee-calculation .fee-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 14px;
+}
+
+.request-form .fee-calculation .fee-row.total {
+  border-top: 1px solid #E0E0E0;
+  margin-top: 8px;
+  padding-top: 12px;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--mpesa-primary);
+}
+
+.request-form .btn-primary {
+  width: 100%;
+}
+
+.request-form .btn-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.request-form .btn-primary:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.request-form .btn-primary .spinner-small {
+  width: 16px;
+  height: 16px;
+  border: 2px solid white;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+.request-form .info-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--mpesa-gray);
+  text-align: center;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

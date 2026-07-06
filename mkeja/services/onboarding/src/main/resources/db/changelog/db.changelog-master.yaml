@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: onboarding-initial-placeholder
+      author: mkeja
+      changes:
+        - sql:
+            sql: SELECT 1
+            comment: Schema managed by Hibernate ddl-auto=update until full Liquibase migration is added
+  - include:
+      file: db/changelog/changes/002-kyc-doc-type-bank-ownership.yaml
+  - include:
+      file: db/changelog/changes/003-unit-listing-discovery.yaml
+  - include:
+      file: db/changelog/changes/004-house-hunt-property-images.yaml
+  - include:
+      file: db/changelog/changes/005-property-image-unit-type.yaml
+  - include:
+      file: db/changelog/changes/006-kyc-document-owner-type-agent.yaml
+  - include:
+      file: db/changelog/changes/007-kyc-doc-type-agent-license.yaml
+  - include:
+      file: db/changelog/changes/008-invitation-status-add.yaml

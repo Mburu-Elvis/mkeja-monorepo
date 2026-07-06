@@ -1,0 +1,465 @@
+<div class="auth-page onboarding-page">
+  <app-toast *ngIf="toast" [message]="toast.text" [type]="toast.type"></app-toast>
+
+  <header class="auth-brand onboarding-brand">
+    <div class="auth-brand-badge">
+      <img src="/logo-mkeja.png" alt="Mkeja" class="auth-brand-logo">
+    </div>
+    <h1 *ngIf="!showSuccess">
+      {{ userType === 'TENANT' ? 'Complete Your Profile' : registrationTitle }}
+    </h1>
+    <p *ngIf="!showSuccess">
+      {{
+        userType === 'TENANT'
+          ? 'Guaranteed rent payments · Bank-grade security · M-Pesa integrated'
+          : registrationSubtitle
+      }}
+    </p>
+    <div class="onboarding-trust" *ngIf="!showSuccess">
+      <span class="onboarding-trust-pill">M-Pesa integrated</span>
+      <span class="onboarding-trust-pill">KYC verified</span>
+      <span class="onboarding-trust-pill">256-bit encrypted</span>
+    </div>
+  </header>
+
+  <div class="onboarding-stepper" *ngIf="!showSuccess">
+    <app-stepper [current]="step" [total]="totalSteps" [labels]="stepLabels"></app-stepper>
+  </div>
+
+  <div class="auth-card onboarding-card">
+    <div class="onboarding-card-accent"></div>
+
+    <div class="onboarding-card-content fade-up">
+
+      <!-- STEP 1 · Account Type -->
+      <div *ngIf="step === 1 && !showSuccess">
+        <div class="step-header">
+          <h2 class="step-title">Choose Account Type</h2>
+          <p class="step-subtitle">
+            {{
+              isAgentRegistration
+                ? 'Select whether you are registering as an individual agent or a management company.'
+                : 'Select whether you are registering as an individual or company property owner.'
+            }}
+          </p>
+        </div>
+
+        <div class="field-block">
+          <label class="field-label">Account Type</label>
+          <div class="type-grid" [class.type-grid--two]="activeUserTypes.length === 2">
+            <div *ngFor="let t of activeUserTypes" class="type-card" [class.type-card--active]="userType === t.val"
+              (click)="setUserType(t.val)">
+              <div class="type-icon material-icons">{{ t.icon }}</div>
+              <div class="type-title">{{ t.title }}</div>
+              <div class="type-desc">{{ t.desc }}</div>
+              <div *ngIf="userType === t.val" class="type-check material-icons" aria-hidden="true">check_circle</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 · Registration Details -->
+      <div *ngIf="step === 2 && userType !== 'TENANT' && !showSuccess">
+        <div class="step-header">
+          <h2 class="step-title">Registration Details</h2>
+          <p class="step-subtitle">
+            {{
+              isAgentRegistration
+                ? 'Provide your identity, agency credentials, and business contact details.'
+                : 'Provide your identity, login credentials, and settlement bank account.'
+            }}
+          </p>
+        </div>
+
+        <app-section-head label="Personal Information"></app-section-head>
+
+        <app-field label="Full Legal Name" [error]="getError('fullName')">
+          <app-input [value]="fullName" (valueChange)="fullName = $event"
+            placeholder="As shown on your National ID"></app-input>
+        </app-field>
+
+        <div class="row-2">
+          <app-field label="Email Address" [error]="getError('email')">
+            <app-input [value]="email" (valueChange)="email = $event" placeholder="you@company.com"
+              type="email"></app-input>
+          </app-field>
+          <app-field label="Phone Number" [error]="getError('phone')">
+            <app-input [value]="phone" (valueChange)="phone = $event"
+              placeholder="0712 345 678 or 254712345678"></app-input>
+            <small class="hint">Your M-Pesa registered number</small>
+          </app-field>
+        </div>
+
+        <div class="row-2">
+          <app-field label="Create PIN" [error]="getError('pin')">
+            <app-input [value]="pin" (valueChange)="pin = $event" placeholder="4–6 digit PIN" type="password"></app-input>
+          </app-field>
+          <app-field label="Confirm PIN" [error]="getError('confirmPin')">
+            <app-input [value]="confirmPin" (valueChange)="confirmPin = $event" placeholder="Confirm PIN" type="password"></app-input>
+          </app-field>
+        </div>
+
+        <div class="row-2">
+          <app-field label="National ID / Passport No." [error]="getError('idNumber')">
+            <app-input [value]="idNumber" (valueChange)="idNumber = $event"
+              placeholder="6–8 digit ID number"></app-input>
+          </app-field>
+          <app-field label="KRA PIN" [error]="getError('kraPin')">
+            <app-input [value]="kraPin" (valueChange)="kraPin = $event" placeholder="A001234567Z"></app-input>
+          </app-field>
+        </div>
+
+        <div *ngIf="isAgentRegistration">
+          <app-section-head label="Agency Credentials"></app-section-head>
+          <div class="row-2">
+            <app-field label="Estate Agency License No." [error]="getError('licenseNumber')">
+              <app-input [value]="licenseNumber" (valueChange)="licenseNumber = $event"
+                placeholder="ERA / county license number"></app-input>
+            </app-field>
+            <app-field label="Website (optional)">
+              <app-input [value]="website" (valueChange)="website = $event"
+                placeholder="https://youragency.co.ke"></app-input>
+            </app-field>
+          </div>
+
+          <div *ngIf="userType === 'COMPANY_AGENT'">
+            <div class="row-2">
+              <app-field label="Company Name" [error]="getError('companyName')">
+                <app-input [value]="companyName" (valueChange)="companyName = $event"
+                  placeholder="Registered agency name"></app-input>
+              </app-field>
+              <app-field label="Registration Number" [error]="getError('regNumber')">
+                <app-input [value]="regNumber" (valueChange)="regNumber = $event"
+                  placeholder="e.g. PVT/123456"></app-input>
+              </app-field>
+            </div>
+          </div>
+
+          <app-section-head label="Business Address"></app-section-head>
+          <app-field label="Physical Address" [error]="getError('physicalAddress')">
+            <app-input [value]="physicalAddress" (valueChange)="physicalAddress = $event"
+              placeholder="Office or business premises"></app-input>
+          </app-field>
+          <div class="row-2">
+            <app-field label="City" [error]="getError('city')">
+              <app-input [value]="city" (valueChange)="city = $event" placeholder="Nairobi"></app-input>
+            </app-field>
+            <app-field label="County" [error]="getError('county')">
+              <app-input [value]="county" (valueChange)="county = $event" placeholder="Nairobi County"></app-input>
+            </app-field>
+          </div>
+        </div>
+
+        <div *ngIf="userType === 'CORPORATE_LANDLORD'">
+          <app-section-head label="Company Details"></app-section-head>
+          <div class="row-2">
+            <app-field label="Company Name" [error]="getError('companyName')">
+              <app-input [value]="companyName" (valueChange)="companyName = $event"
+                placeholder="Registered company name"></app-input>
+            </app-field>
+            <app-field label="Registration Number" [error]="getError('regNumber')">
+              <app-input [value]="regNumber" (valueChange)="regNumber = $event"
+                placeholder="e.g. PVT/123456"></app-input>
+            </app-field>
+          </div>
+
+          <div class="array-header">
+            <span class="field-label">Directors <span class="req">*</span></span>
+            <button type="button" class="btn-add" (click)="addDirector()">+ Add Director</button>
+          </div>
+          <div *ngFor="let d of directors; let i = index; trackBy: trackByIndex" class="dynamic-row">
+            <app-field [label]="i === 0 ? 'Full Name' : null">
+              <app-input [value]="d.name" (valueChange)="updateDirector(i,'name',$event)" placeholder="Full name"></app-input>
+            </app-field>
+            <app-field [label]="i === 0 ? 'ID Number' : null">
+              <app-input [value]="d.id" (valueChange)="updateDirector(i,'id',$event)" placeholder="ID number"></app-input>
+            </app-field>
+            <app-field [label]="i === 0 ? 'KRA PIN' : null">
+              <app-input [value]="d.kra" (valueChange)="updateDirector(i,'kra',$event)" placeholder="KRA PIN"></app-input>
+            </app-field>
+            <button type="button" class="btn-remove icon-close-btn" (click)="removeDirector(i)" [style.margin-top]="i === 0 ? '24px' : '0'" aria-label="Remove director">
+              <span class="material-icons" aria-hidden="true">close</span>
+            </button>
+          </div>
+
+          <div class="array-header">
+            <span class="field-label">Beneficial Owners (≥10%)</span>
+            <button type="button" class="btn-add" (click)="addOwner()">+ Add Owner</button>
+          </div>
+          <div *ngFor="let o of owners; let i = index; trackBy: trackByIndex" class="dynamic-row dynamic-row--4">
+            <app-field [label]="i === 0 ? 'Full Name' : null">
+              <app-input [value]="o.name" (valueChange)="updateOwner(i,'name',$event)" placeholder="Full name"></app-input>
+            </app-field>
+            <app-field [label]="i === 0 ? 'ID Number' : null">
+              <app-input [value]="o.id" (valueChange)="updateOwner(i,'id',$event)" placeholder="ID number"></app-input>
+            </app-field>
+            <app-field [label]="i === 0 ? '%' : null">
+              <app-input [value]="o.pct" (valueChange)="updateOwner(i,'pct',$event)" placeholder="%" type="number"></app-input>
+            </app-field>
+            <button type="button" class="btn-remove icon-close-btn" (click)="removeOwner(i)" [style.margin-top]="i === 0 ? '24px' : '0'" aria-label="Remove owner">
+              <span class="material-icons" aria-hidden="true">close</span>
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="userType === 'SACCO'">
+          <app-section-head label="SACCO Details"></app-section-head>
+          <div class="row-2">
+            <app-field label="SACCO Name" [error]="getError('saccoName')">
+              <app-input [value]="saccoName" (valueChange)="saccoName = $event" placeholder="Registered SACCO name"></app-input>
+            </app-field>
+            <app-field label="SASRA License Number" [error]="getError('saccoLic')">
+              <app-input [value]="saccoLic" (valueChange)="saccoLic = $event" placeholder="License number"></app-input>
+            </app-field>
+          </div>
+
+          <div class="array-header">
+            <span class="field-label">Trustees <span class="req">*</span></span>
+            <button type="button" class="btn-add" (click)="addTrustee()">+ Add Trustee</button>
+          </div>
+          <div *ngFor="let t of trustees; let i = index; trackBy: trackByIndex" class="dynamic-row">
+            <app-field [label]="i === 0 ? 'Full Name' : null">
+              <app-input [value]="t.name" (valueChange)="updateTrustee(i,'name',$event)" placeholder="Full name"></app-input>
+            </app-field>
+            <app-field [label]="i === 0 ? 'ID Number' : null">
+              <app-input [value]="t.id" (valueChange)="updateTrustee(i,'id',$event)" placeholder="ID number"></app-input>
+            </app-field>
+            <app-field [label]="i === 0 ? 'KRA PIN' : null">
+              <app-input [value]="t.kra" (valueChange)="updateTrustee(i,'kra',$event)" placeholder="KRA PIN"></app-input>
+            </app-field>
+            <button type="button" class="btn-remove icon-close-btn" (click)="removeTrustee(i)" [style.margin-top]="i === 0 ? '24px' : '0'" aria-label="Remove trustee">
+              <span class="material-icons" aria-hidden="true">close</span>
+            </button>
+          </div>
+        </div>
+
+        <ng-container *ngIf="!isAgentRegistration">
+          <app-section-head label="Settlement Bank Account"></app-section-head>
+
+          <div class="callout callout--info">
+            <span class="callout__icon material-icons">account_balance</span>
+            <div>
+              <strong>Landlord settlement account</strong>
+              <span>Rent remittances are paid to this account after tenant collections are reconciled.</span>
+            </div>
+          </div>
+
+          <div class="row-2">
+            <app-field label="Account Name" [error]="getError('bankName')">
+              <app-input [value]="bankName" (valueChange)="bankName = $event"
+                placeholder="As registered with your bank"></app-input>
+            </app-field>
+            <app-field label="Account Number" [error]="getError('bankAccNum')">
+              <app-input [value]="bankAccNum" (valueChange)="bankAccNum = $event"
+                placeholder="10–16 digit account number"></app-input>
+            </app-field>
+          </div>
+
+          <div class="row-2">
+            <app-field label="Bank" [error]="getError('bankCode')">
+              <app-select [value]="bankCode" (valueChange)="bankCode = $event" placeholder="Select your bank"
+                [options]="bankOptions"></app-select>
+            </app-field>
+            <app-field label="Branch" [error]="getError('bankBranch')">
+              <app-input [value]="bankBranch" (valueChange)="bankBranch = $event" placeholder="Branch name"></app-input>
+            </app-field>
+          </div>
+        </ng-container>
+
+        <label class="terms-row">
+          <input type="checkbox" [checked]="terms" (change)="terms = $any($event.target).checked">
+          <span>
+            I agree to the
+            <a href="/terms" target="_blank" class="terms-link">Terms of Service</a>
+            and
+            <a href="/privacy" target="_blank" class="terms-link">Privacy Policy</a>.
+            I confirm that all provided information is accurate and authorise Mkeja to verify my details.
+          </span>
+        </label>
+        <div *ngIf="getError('terms')" class="ob-err">You must accept the terms to continue</div>
+      </div>
+
+      <!-- Documents step -->
+      <div *ngIf="(step === 3 && userType !== 'TENANT') || (step === 2 && userType === 'TENANT')">
+        <div class="step-header">
+          <h2 class="step-title">KYC Document Verification</h2>
+          <p class="step-subtitle">
+            Upload verified identity documents. All files are encrypted and stored securely.
+          </p>
+        </div>
+
+        <div *ngIf="userType === 'INDIVIDUAL_LANDLORD'">
+          <div class="doc-grid">
+            <app-upload-card label="National ID — Front" icon="badge" [preview]="docs['idFront']"
+              (upload)="handleFile('idFront', $event)" (clear)="clearDoc('idFront')"></app-upload-card>
+            <app-upload-card label="National ID — Back" icon="badge" [preview]="docs['idBack']"
+              (upload)="handleFile('idBack', $event)" (clear)="clearDoc('idBack')"></app-upload-card>
+            <app-upload-card label="Selfie with Liveness" icon="photo_camera" [preview]="docs['selfie']"
+              hint="Clear, front-facing photo" (upload)="handleFile('selfie', $event)"
+              (clear)="clearDoc('selfie')" accept="image/jpeg,image/png"></app-upload-card>
+            <app-upload-card label="Proof of Bank Ownership" icon="account_balance" [preview]="docs['proofOfBankOwnership']"
+              hint="Bank statement or ownership letter" (upload)="handleFile('proofOfBankOwnership', $event)"
+              (clear)="clearDoc('proofOfBankOwnership')"></app-upload-card>
+          </div>
+        </div>
+
+        <div *ngIf="userType === 'CORPORATE_LANDLORD'">
+          <div class="doc-grid">
+            <app-upload-card label="Certificate of Incorporation" icon="business" [preview]="docs['incorporation']"
+              (upload)="handleFile('incorporation', $event)" (clear)="clearDoc('incorporation')"></app-upload-card>
+            <app-upload-card label="CR12 Form" icon="description" [preview]="docs['cr12']"
+              (upload)="handleFile('cr12', $event)" (clear)="clearDoc('cr12')"></app-upload-card>
+            <app-upload-card label="Proof of Business Address" icon="location_on" [preview]="docs['bizAddress']"
+              (upload)="handleFile('bizAddress', $event)" (clear)="clearDoc('bizAddress')"></app-upload-card>
+            <app-upload-card label="Board Resolution" icon="article" [preview]="docs['boardRes']"
+              (upload)="handleFile('boardRes', $event)" (clear)="clearDoc('boardRes')"></app-upload-card>
+          </div>
+        </div>
+
+        <div *ngIf="userType === 'SACCO'">
+          <div class="doc-grid">
+            <app-upload-card label="SASRA License" icon="account_balance" [preview]="docs['saccoLic']"
+              (upload)="handleFile('saccoLic', $event)" (clear)="clearDoc('saccoLic')"></app-upload-card>
+            <app-upload-card label="SACCO By-Laws" icon="list_alt" [preview]="docs['saccoBylaws']"
+              (upload)="handleFile('saccoBylaws', $event)" (clear)="clearDoc('saccoBylaws')"></app-upload-card>
+            <app-upload-card label="Proof of Business Address" icon="location_on" [preview]="docs['bizAddress']"
+              (upload)="handleFile('bizAddress', $event)" (clear)="clearDoc('bizAddress')"></app-upload-card>
+          </div>
+        </div>
+
+        <div *ngIf="userType === 'INDIVIDUAL_AGENT'">
+          <div class="doc-grid">
+            <app-upload-card label="National ID — Front" icon="badge" [preview]="docs['idFront']"
+              (upload)="handleFile('idFront', $event)" (clear)="clearDoc('idFront')"></app-upload-card>
+            <app-upload-card label="National ID — Back" icon="badge" [preview]="docs['idBack']"
+              (upload)="handleFile('idBack', $event)" (clear)="clearDoc('idBack')"></app-upload-card>
+            <app-upload-card label="Selfie with Liveness" icon="photo_camera" [preview]="docs['selfie']"
+              (upload)="handleFile('selfie', $event)" (clear)="clearDoc('selfie')" accept="image/jpeg,image/png"></app-upload-card>
+            <app-upload-card label="Estate Agency License" icon="article" [preview]="docs['agentLicense']"
+              (upload)="handleFile('agentLicense', $event)" (clear)="clearDoc('agentLicense')"></app-upload-card>
+          </div>
+        </div>
+
+        <div *ngIf="userType === 'COMPANY_AGENT'">
+          <div class="doc-grid">
+            <app-upload-card label="Certificate of Incorporation" icon="business" [preview]="docs['incorporation']"
+              (upload)="handleFile('incorporation', $event)" (clear)="clearDoc('incorporation')"></app-upload-card>
+            <app-upload-card label="CR12 Form" icon="description" [preview]="docs['cr12']"
+              (upload)="handleFile('cr12', $event)" (clear)="clearDoc('cr12')"></app-upload-card>
+            <app-upload-card label="Estate Agency License" icon="article" [preview]="docs['agentLicense']"
+              (upload)="handleFile('agentLicense', $event)" (clear)="clearDoc('agentLicense')"></app-upload-card>
+            <app-upload-card label="Proof of Business Address" icon="location_on" [preview]="docs['bizAddress']"
+              (upload)="handleFile('bizAddress', $event)" (clear)="clearDoc('bizAddress')"></app-upload-card>
+          </div>
+        </div>
+
+        <div *ngIf="userType === 'TENANT'">
+          <div class="doc-grid doc-grid--2">
+            <app-upload-card label="National ID / Passport" icon="badge" [preview]="docs['idFront']"
+              (upload)="handleFile('idFront', $event)" (clear)="clearDoc('idFront')"></app-upload-card>
+            <app-upload-card label="Selfie" icon="photo_camera" [preview]="docs['selfie']"
+              (upload)="handleFile('selfie', $event)" (clear)="clearDoc('selfie')" accept="image/jpeg,image/png"></app-upload-card>
+          </div>
+        </div>
+
+        <div class="secure-note">
+          <span class="material-icons">lock</span>
+          <span>Documents are encrypted and reviewed by our compliance team. Your data is never sold.</span>
+        </div>
+      </div>
+
+      <!-- Review step -->
+      <div *ngIf="(step === 4 && userType !== 'TENANT') || (step === 3 && userType === 'TENANT')">
+        <div class="step-header">
+          <h2 class="step-title">Review &amp; Submit</h2>
+          <p class="step-subtitle">Confirm your details are accurate before submission.</p>
+        </div>
+
+        <div *ngFor="let section of reviewSections" class="review-block">
+          <div class="review-block__title">{{ section.title }}</div>
+          <div class="review-grid">
+            <div *ngFor="let row of section.rows" class="review-row">
+              <span class="review-label">{{ row[0] }}</span>
+              <span class="review-value" [class.review-value--uploaded]="isUploaded(row[1])">
+                {{ row[1] }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout--success">
+          <span class="callout__icon material-icons" aria-hidden="true">bolt</span>
+          <div>
+            <strong>Automated verification</strong>
+            <span>Most applications are reviewed within 24–48 hours. You'll be notified by SMS once approved.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Success -->
+      <div *ngIf="showSuccess" class="success-wrapper fade-up">
+        <div class="success-mark material-icons" aria-hidden="true">check_circle</div>
+        <h2 class="success-title">Application Submitted!</h2>
+        <p class="success-subtitle">
+          {{
+            userType === 'TENANT'
+              ? 'Your profile is active. You can now make rent contributions.'
+              : (isAgentRegistration
+                ? 'Your agent application is in progress. We\'ll notify you via SMS once approved.'
+                : 'Your KYC verification is in progress. We\'ll notify you via SMS.')
+          }}
+        </p>
+
+        <div class="kyc-box">
+          <div class="kyc-badge">
+            <div class="kyc-dot"></div>
+            <span class="kyc-badge-text">KYC PENDING</span>
+          </div>
+          <p class="kyc-text">
+            Our compliance team will review your documents within 24–48 hours.
+            You'll receive an SMS and email notification once approved.
+          </p>
+        </div>
+
+        <div class="next-steps">
+          <div *ngFor="let s of (isAgentRegistration ? agentNextSteps : nextSteps); let i = index" class="next-step">
+            <div class="next-step__num">{{ i + 1 }}</div>
+            <div>
+              <div class="next-step__title">{{ s[0] }}</div>
+              <div class="next-step__desc">{{ s[1] }}</div>
+            </div>
+          </div>
+        </div>
+
+        <app-btn variant="primary" (onClick)="goToDashboard()">
+          Sign In to Mkeja
+        </app-btn>
+      </div>
+
+      <!-- Navigation -->
+      <div *ngIf="!showSuccess" class="nav">
+        <app-btn variant="ghost" [disabled]="step === 1" (onClick)="handleBack()">
+          Back
+        </app-btn>
+        <div class="nav-right">
+          <span class="step-counter">Step {{ step }} of {{ totalSteps }}</span>
+          <app-btn variant="primary" [disabled]="loading" (onClick)="handleNext()">
+            {{ loading ? 'Processing…' : (step === totalSteps ? 'Submit Application' : 'Continue') }}
+          </app-btn>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="auth-footer-link onboarding-back">
+    <a routerLink="/auth/register">Back to registration options</a>
+  </div>
+
+  <div class="auth-security-note">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+    </svg>
+    <span>Secure connection · 256-bit encrypted</span>
+  </div>
+</div>

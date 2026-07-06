@@ -1,0 +1,295 @@
+<div class="ld-page">
+  <div class="ld-container">
+    <nav class="ld-breadcrumb" aria-label="Breadcrumb">
+      <button type="button" class="ld-crumb ld-crumb-link" (click)="back()">
+        <span class="material-icons">arrow_back</span>
+        House Hunt
+      </button>
+      @if (property) {
+        <span class="ld-crumb-sep" aria-hidden="true">/</span>
+        <span class="ld-crumb muted">{{ locationShort() }}</span>
+        <span class="ld-crumb-sep" aria-hidden="true">/</span>
+        <span class="ld-crumb current">{{ property.propertyName }}</span>
+      }
+    </nav>
+
+    @if (loading) {
+      <div class="ld-skeleton">
+        <div class="ld-skeleton-gallery"></div>
+        <div class="ld-skeleton-line wide"></div>
+        <div class="ld-skeleton-line"></div>
+        <div class="ld-skeleton-grid">
+          <div></div><div></div><div></div>
+        </div>
+      </div>
+    } @else if (error && !property) {
+      <div class="ld-empty ld-empty-error">
+        <span class="material-icons">error_outline</span>
+        <h2>Property unavailable</h2>
+        <p>{{ error }}</p>
+        <button type="button" class="ld-btn ld-btn-primary" (click)="back()">Back to listings</button>
+      </div>
+    } @else if (property) {
+      @if (overviewImages.length) {
+        <section class="ld-gallery-wrap">
+          <div class="ld-gallery ld-gallery-desktop" [class.ld-gallery-single]="overviewImages.length === 1">
+            <button type="button" class="ld-gallery-main">
+              <img [src]="overviewImages[overviewIndex]" [alt]="property.propertyName">
+            </button>
+            @for (image of galleryThumbs; track image; let i = $index) {
+              <button type="button" class="ld-gallery-thumb" [class.active]="overviewIndex === i + 1" (click)="selectGalleryImage(i + 1)">
+                <img [src]="image" [alt]="property.propertyName + ' photo ' + (i + 2)">
+              </button>
+            }
+            @if (overviewImages.length > 5) {
+              <button type="button" class="ld-gallery-more" (click)="selectGalleryImage(4)">
+                +{{ overviewImages.length - 5 }} photos
+              </button>
+            }
+          </div>
+
+          <div class="ld-gallery ld-gallery-mobile">
+            <div class="ld-carousel">
+              <button type="button" class="ld-carousel-nav prev" (click)="prevOverview()" [disabled]="overviewImages.length <= 1">‹</button>
+              <div class="ld-carousel-main">
+                <img [src]="overviewImages[overviewIndex]" [alt]="property.propertyName">
+              </div>
+              <button type="button" class="ld-carousel-nav next" (click)="nextOverview()" [disabled]="overviewImages.length <= 1">›</button>
+              @if (overviewImages.length > 1) {
+                <span class="ld-carousel-count">{{ overviewIndex + 1 }} / {{ overviewImages.length }}</span>
+              }
+            </div>
+          </div>
+        </section>
+      } @else {
+        <div class="ld-media-placeholder">
+          <span class="material-icons">photo_camera</span>
+          <p>Photos coming soon</p>
+        </div>
+      }
+
+      <div class="ld-content">
+          <header class="ld-header">
+            <div class="ld-header-main">
+              <div class="ld-title-block">
+                <div class="ld-badges">
+                  @if (property.promoted) { <span class="ld-badge featured">Featured</span> }
+                  @if (property.verifiedProperty) { <span class="ld-badge verified">Verified listing</span> }
+                  @if (property.verifiedLandlord) { <span class="ld-badge verified">Verified landlord</span> }
+                </div>
+                <h1>{{ property.propertyName }}</h1>
+                <p class="ld-location">
+                  <span class="material-icons">location_on</span>
+                  {{ locationLabel() }}
+                </p>
+                @if (property.landlordName) {
+                  <p class="ld-host">Listed by <strong>{{ property.landlordName }}</strong></p>
+                }
+              </div>
+
+              <div class="ld-header-price">
+                <p class="ld-booking-label">From</p>
+                <p class="ld-booking-price">{{ rentRangeLabel() }}</p>
+                <p class="ld-booking-meta">{{ property.availableUnits }} unit{{ property.availableUnits === 1 ? '' : 's' }} available</p>
+                <button type="button" class="ld-btn ld-btn-primary" (click)="scrollToUnits()">
+                  View units
+                </button>
+              </div>
+            </div>
+          </header>
+
+          <div class="ld-booking-card">
+            <ul class="ld-booking-perks">
+              <li><span class="material-icons">check_circle</span> No sign-in required</li>
+              <li><span class="material-icons">check_circle</span> Landlord notified instantly</li>
+              <li><span class="material-icons">check_circle</span> M-PESA rent when you move in</li>
+            </ul>
+          </div>
+
+          @if (property.description) {
+            <section class="ld-section">
+              <h2>About this property</h2>
+              <p class="ld-copy">{{ property.description }}</p>
+            </section>
+          }
+
+          @if (property.unitTypes?.length) {
+            <section class="ld-section">
+              <h2>Unit types</h2>
+              <div class="ld-type-cards">
+                @for (type of property.unitTypes; track type.unitType) {
+                  <article class="ld-type-card">
+                    @if (type.sampleImageUrl) {
+                      <img [src]="type.sampleImageUrl" [alt]="type.label">
+                    } @else {
+                      <div class="ld-type-placeholder"><span class="material-icons">apartment</span></div>
+                    }
+                    <div class="ld-type-body">
+                      <strong>{{ type.label }}</strong>
+                      <span>{{ type.availableCount }} available</span>
+                      @if (type.minRent != null) {
+                        <em>
+                          @if (type.minRent === type.maxRent) {
+                            KES {{ type.minRent | number }}/mo
+                          } @else {
+                            KES {{ type.minRent | number }} – {{ type.maxRent | number }}/mo
+                          }
+                        </em>
+                      }
+                    </div>
+                  </article>
+                }
+              </div>
+            </section>
+          }
+
+          <section class="ld-section ld-section-units" id="available-units">
+            <div class="ld-section-head">
+              <h2>Available units</h2>
+              <p class="ld-section-sub">Choose a unit and express interest — no account required.</p>
+            </div>
+
+            @if (property.unitTypes?.length) {
+              <div class="ld-category-tabs">
+                <button type="button" class="ld-category-tab" [class.active]="!selectedCategory" (click)="selectCategory(null)">
+                  All ({{ units.length }})
+                </button>
+                @for (type of property.unitTypes; track type.unitType) {
+                  <button type="button"
+                          class="ld-category-tab"
+                          [class.active]="selectedCategory === type.unitType"
+                          (click)="selectCategory(type.unitType)">
+                    {{ type.label }} ({{ type.availableCount }})
+                  </button>
+                }
+              </div>
+            }
+
+            <div class="ld-unit-grid">
+              @for (unit of filteredUnits; track unit.unitId) {
+                <button type="button" class="ld-unit-card" (click)="openUnit(unit)">
+                  <div class="ld-unit-media">
+                    @if (unitImage(unit); as img) {
+                      <img [src]="img" [alt]="'Unit ' + unit.unitNumber">
+                    } @else {
+                      <div class="ld-unit-media-placeholder"><span class="material-icons">home</span></div>
+                    }
+                    <span class="ld-unit-type">{{ unit.unitTypeLabel || unit.unitType }}</span>
+                  </div>
+                  <div class="ld-unit-body">
+                    <div class="ld-unit-top">
+                      <strong>Unit {{ unit.unitNumber }}</strong>
+                      <em>KES {{ unit.rent | number }}/mo</em>
+                    </div>
+                    <div class="ld-unit-meta">
+                      @if (unit.bedrooms != null) {
+                        <span>{{ unit.bedrooms }} bed{{ unit.bedrooms === 1 ? '' : 's' }}</span>
+                      }
+                      @if (unit.deposit != null) {
+                        <span>Deposit KES {{ unit.deposit | number }}</span>
+                      }
+                      @if (floorLabel(unit)) {
+                        <span>{{ floorLabel(unit) }}</span>
+                      }
+                    </div>
+                    <span class="ld-unit-cta">Express interest →</span>
+                  </div>
+                </button>
+              }
+            </div>
+
+            @if (!filteredUnits.length) {
+              <p class="ld-empty-copy">No units in this category right now.</p>
+            }
+          </section>
+
+          <section class="ld-trust">
+            <article>
+              <span class="material-icons">verified_user</span>
+              <div>
+                <strong>Verified on Mkeja</strong>
+                <p>Listings are managed through Kenya's rental platform with KYC and M-PESA rent.</p>
+              </div>
+            </article>
+            <article>
+              <span class="material-icons">phone_iphone</span>
+              <div>
+                <strong>Express interest in seconds</strong>
+                <p>Share your name and phone — we'll link your profile if you're already on Mkeja.</p>
+              </div>
+            </article>
+          </section>
+
+          @if (toast) { <p class="ld-toast success">{{ toast }}</p> }
+      </div>
+    }
+  </div>
+</div>
+
+@if (modalUnit) {
+  <div class="ld-modal-backdrop" (click)="closeModal()">
+    <div class="ld-modal" (click)="$event.stopPropagation()">
+      <button type="button" class="ld-close" (click)="closeModal()" aria-label="Close">×</button>
+
+      <div class="ld-modal-grid">
+        <div class="ld-modal-media">
+          @if (modalImages(modalUnit).length) {
+            <div class="ld-carousel compact">
+              <button type="button" class="ld-carousel-nav prev" (click)="prevModalImage()" [disabled]="modalImages(modalUnit).length <= 1">‹</button>
+              <div class="ld-carousel-main">
+                <img [src]="modalImages(modalUnit)[modalImageIndex]" [alt]="'Unit ' + modalUnit.unitNumber">
+              </div>
+              <button type="button" class="ld-carousel-nav next" (click)="nextModalImage()" [disabled]="modalImages(modalUnit).length <= 1">›</button>
+            </div>
+          } @else {
+            <div class="ld-media-placeholder compact"><span class="material-icons">home</span></div>
+          }
+
+          <div class="ld-modal-facts">
+            <h2>Unit {{ modalUnit.unitNumber }}</h2>
+            <p class="ld-meta">{{ modalUnit.unitTypeLabel || modalUnit.unitType }} · KES {{ modalUnit.rent | number }}/mo</p>
+            @if (floorLabel(modalUnit)) {
+              <p class="ld-meta">{{ floorLabel(modalUnit) }}</p>
+            }
+            <div class="ld-fact-row">
+              @if (modalUnit.bedrooms != null) {
+                <span>{{ modalUnit.bedrooms }} bed{{ modalUnit.bedrooms === 1 ? '' : 's' }}</span>
+              }
+              @if (modalUnit.deposit != null) {
+                <span>Deposit KES {{ modalUnit.deposit | number }}</span>
+              }
+            </div>
+            @if (modalUnit.listingDescription) {
+              <p class="ld-copy">{{ modalUnit.listingDescription }}</p>
+            }
+          </div>
+        </div>
+
+        <form class="ld-form ld-modal-form" (ngSubmit)="expressInterest()">
+          <h3>Express interest</h3>
+          <p class="ld-form-lead">Leave your details and the landlord will reach out. Existing Mkeja tenants are matched automatically.</p>
+
+          <label class="ld-field">
+            <span>Full name</span>
+            <input type="text" name="fullName" [(ngModel)]="guestFullName" placeholder="Jane Doe" required>
+          </label>
+          <label class="ld-field">
+            <span>Phone number</span>
+            <input type="tel" name="phone" [(ngModel)]="guestPhone" placeholder="07XX XXX XXX" required>
+          </label>
+          <label class="ld-field">
+            <span>Message (optional)</span>
+            <textarea name="message" rows="3" [(ngModel)]="interestMessage" placeholder="When would you like to move in?"></textarea>
+          </label>
+
+          @if (error) { <p class="ld-toast error">{{ error }}</p> }
+
+          <button type="submit" class="ld-btn ld-btn-primary ld-btn-block" [disabled]="acting">
+            {{ acting ? 'Sending…' : "I'm interested" }}
+          </button>
+          <button type="button" class="ld-btn ld-btn-ghost ld-btn-block" (click)="closeModal()">Not now</button>
+        </form>
+      </div>
+    </div>
+  </div>
+}

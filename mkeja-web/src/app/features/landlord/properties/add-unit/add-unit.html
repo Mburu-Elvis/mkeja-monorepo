@@ -1,0 +1,167 @@
+<div class="add-unit-container" [class.modal-embedded]="isModal">
+  @if (!isModal) {
+    <div class="header">
+      <div class="header-left">
+        <h1>Add New Unit</h1>
+        @if (propertyName) {
+          <p>to {{ propertyName }}</p>
+        } @else {
+          <p>Add a new rental unit to your property</p>
+        }
+      </div>
+      @if (currentStep > 1) {
+        <div class="step-badge">
+          Step {{ currentStep }} of {{ totalSteps }}: {{ stepNames[currentStep] }}
+        </div>
+      }
+    </div>
+  }
+
+  @if (isModal && currentStep > 1) {
+    <div class="modal-step-bar">
+      <span class="step-pill">Step {{ currentStep }} of {{ totalSteps }}</span>
+      <span class="step-label">{{ stepNames[currentStep] }}</span>
+    </div>
+  }
+
+  @if (submitSuccess) {
+    <div class="success-message">
+      <div class="success-content">
+        <span class="success-icon" aria-hidden="true"></span>
+        <div>
+          <h3>Unit Added Successfully!</h3>
+          <p>The unit has been registered and is ready for tenant onboarding</p>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (submitError) {
+    <div class="error-message">
+      <span class="error-icon" aria-hidden="true"></span>
+      <span>{{ submitError }}</span>
+      <button class="close-error" type="button" (click)="submitError = null">×</button>
+    </div>
+  }
+
+  @if (currentStep === 1) {
+    <div class="step-1-container" [class.flat]="isModal">
+      <div class="step-intro">
+        <h2>Select unit category</h2>
+        <p class="step-hint">Choose the layout that best matches this unit. Categories already used on this property are listed first.</p>
+      </div>
+
+      <div class="unit-type-groups">
+        @if (apartmentUnitTypes.length) {
+          <section class="unit-type-group">
+            <div class="group-header">
+              <h3>Apartments</h3>
+              <p>Self-contained units with dedicated living spaces</p>
+            </div>
+            <div class="unit-types-grid">
+              @for (type of apartmentUnitTypes; track type.value) {
+                <button type="button" class="unit-type-card" (click)="selectUnitType(type)">
+                  <div class="unit-type-card-top">
+                    <span class="unit-type-badge">{{ typeMeta(type).badge }}</span>
+                    <span class="unit-type-tag">Apartment</span>
+                  </div>
+                  <h4>{{ type.label }}</h4>
+                  <p class="unit-type-desc">{{ typeMeta(type).description }}</p>
+                  <span class="unit-type-cta">Select category</span>
+                </button>
+              }
+            </div>
+          </section>
+        }
+
+        @if (roomUnitTypes.length) {
+          <section class="unit-type-group">
+            <div class="group-header">
+              <h3>Single rooms</h3>
+              <p>Individual rooms within a shared residential property</p>
+            </div>
+            <div class="unit-types-grid unit-types-grid--rooms">
+              @for (type of roomUnitTypes; track type.value) {
+                <button type="button" class="unit-type-card" (click)="selectUnitType(type)">
+                  <div class="unit-type-card-top">
+                    <span class="unit-type-badge">{{ typeMeta(type).badge }}</span>
+                    <span class="unit-type-tag">Room</span>
+                  </div>
+                  <h4>{{ type.label }}</h4>
+                  <p class="unit-type-desc">{{ typeMeta(type).description }}</p>
+                  <span class="unit-type-cta">Select category</span>
+                </button>
+              }
+            </div>
+          </section>
+        }
+      </div>
+
+      <div class="form-actions step1-actions">
+        <button type="button" class="btn-secondary" (click)="onCancel()">Cancel</button>
+      </div>
+    </div>
+  }
+
+  @if (currentStep === 2) {
+    <form [formGroup]="unitForm" (ngSubmit)="onSubmit()">
+      <div class="form-section" formGroupName="unitDetails">
+        <div class="section-header">
+          <h2>Unit details</h2>
+          <button type="button" class="back-to-types" (click)="goBackToTypeSelection()">
+            Change category
+          </button>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label>Unit Number *</label>
+            <input type="text" formControlName="unitNumber" placeholder="e.g., A101, Studio-F3-2">
+          </div>
+          <div class="form-field">
+            <label>Unit category *</label>
+            <select formControlName="type">
+              <option value="">Select category</option>
+              @for (type of platformUnitTypes; track type.value) {
+                <option [value]="type.value">{{ type.label }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Block / Wing</label>
+            <input type="text" formControlName="block" placeholder="e.g., A, North Wing">
+          </div>
+          <div class="form-field">
+            <label>Floor *</label>
+            <input type="number" formControlName="floor" placeholder="e.g. 2">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section" formGroupName="pricing">
+        <h2>Pricing</h2>
+        <div class="form-grid">
+          <div class="form-field">
+            <label>Monthly rent (KES) *</label>
+            <input type="number" formControlName="rent" placeholder="0">
+          </div>
+          <div class="form-field">
+            <label>Deposit (KES) *</label>
+            <input type="number" formControlName="deposit" placeholder="0">
+          </div>
+          <div class="form-field">
+            <label>Service charge (KES)</label>
+            <input type="number" formControlName="serviceCharge" placeholder="0">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="previousStep()">Back</button>
+        <button type="submit" class="btn-primary" [disabled]="isSubmitting || unitForm.invalid">
+          {{ isSubmitting ? 'Adding unit...' : 'Add unit' }}
+        </button>
+      </div>
+    </form>
+  }
+</div>

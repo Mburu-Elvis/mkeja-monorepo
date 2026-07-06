@@ -1,0 +1,50 @@
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 16px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  z-index: 100;
+}
+
+.bottom-nav .nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: all 0.2s ease;
+}
+
+.bottom-nav .nav-item svg {
+  width: 24px;
+  height: 24px;
+  stroke: var(--mpesa-gray-dark);
+}
+
+.bottom-nav .nav-item span {
+  font-size: 11px;
+  color: var(--mpesa-gray-dark);
+}
+
+.bottom-nav .nav-item.active {
+  opacity: 1;
+}
+
+.bottom-nav .nav-item.active svg {
+  stroke: var(--mpesa-primary);
+}
+
+.bottom-nav .nav-item.active span {
+  color: var(--mpesa-primary);
+  font-weight: 600;
+}
+
+.bottom-nav .nav-item:active {
+  transform: scale(0.95);
+}

@@ -1,0 +1,94 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-house-hunt-property-fields
+      author: mkeja
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            columnExists:
+              tableName: tbl_properties
+              columnName: house_hunt_enabled
+      changes:
+        - addColumn:
+            tableName: tbl_properties
+            columns:
+              - column:
+                  name: house_hunt_enabled
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: auto_recommend_enabled
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 004-property-image-table
+      author: mkeja
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: tbl_property_image
+      changes:
+        - createTable:
+            tableName: tbl_property_image
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: property_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: unit_id
+                  type: BIGINT
+              - column:
+                  name: storage_key
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: caption
+                  type: VARCHAR(500)
+              - column:
+                  name: is_primary
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sort_order
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+              - column:
+                  name: deleted_at
+                  type: TIMESTAMP
+        - addForeignKeyConstraint:
+            baseTableName: tbl_property_image
+            baseColumnNames: property_id
+            referencedTableName: tbl_properties
+            referencedColumnNames: id
+            constraintName: fk_property_image_property
+        - addForeignKeyConstraint:
+            baseTableName: tbl_property_image
+            baseColumnNames: unit_id
+            referencedTableName: tbl_property_unit
+            referencedColumnNames: id
+            constraintName: fk_property_image_unit

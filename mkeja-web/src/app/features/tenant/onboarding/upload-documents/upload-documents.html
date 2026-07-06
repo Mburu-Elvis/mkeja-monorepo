@@ -1,0 +1,154 @@
+<div class="upload-documents platform-page">
+  <form class="form-container" (ngSubmit)="onSubmit()">
+    <h2>{{ pageTitle }}</h2>
+    <p>{{ pageSubtitle }}</p>
+
+    @if (kycStatus) {
+      <div class="status-pill" [class]="kycStatus.toLowerCase()">
+        KYC status: {{ kycStatus.replace('_', ' ') }}
+      </div>
+    }
+
+    @if (contextError) {
+      <div class="context-banner error">
+        <p>{{ contextError }}</p>
+        @if (invitationCode) {
+          <a routerLink="/tenant/onboarding/verify-identity" [queryParams]="{ code: invitationCode }">
+            Continue identity verification
+          </a>
+        } @else {
+          <a routerLink="/auth/login">Sign in</a>
+        }
+      </div>
+    }
+
+    @if (hasExistingDocuments) {
+      <section class="existing-docs-panel">
+        <div class="panel-heading">
+          <h3>Uploaded documents</h3>
+          <p>Tap any document to open a full preview.</p>
+        </div>
+        <app-kyc-document-gallery
+          [documents]="galleryItems"
+          documentSource="profile">
+        </app-kyc-document-gallery>
+      </section>
+    }
+
+    <div class="upload-section">
+      <div class="upload-card">
+        <div class="upload-label">
+          {{ isUpdateMode ? 'Update ID Front' : 'ID Front *' }}
+          @if (slotHasNewFile('front') || slotHasExisting('front')) {
+            <span class="upload-check material-icons" aria-hidden="true">check_circle</span>
+          }
+        </div>
+        @if (slotHasExisting('front') && !slotHasNewFile('front')) {
+          <div class="existing-file-note">On file — tap below to replace</div>
+        }
+        <div class="upload-area" (click)="fileFront.click()">
+          @if (slotPreview('front')) {
+            <img [src]="slotPreview('front')" alt="ID Front">
+            <button type="button" class="clear-btn" (click)="clearFile('front', $event)">Remove new file</button>
+          } @else if (existingPreviews['front']?.loading) {
+            <span class="slot-state">Loading existing document...</span>
+          } @else if (existingPreviews['front']?.url) {
+            <img [src]="existingPreviews['front']!.url!" alt="ID Front on file">
+            <span class="slot-state">Tap to replace</span>
+          } @else {
+            <span class="material-icons upload-icon" aria-hidden="true">upload_file</span>
+            <span>{{ isUpdateMode ? 'Tap to add or replace' : 'Tap to upload' }}</span>
+          }
+        </div>
+        <input type="file" #fileFront hidden accept="image/*,application/pdf" (change)="onFileSelected($event, 'front')">
+        <p class="hint">JPEG, PNG, or PDF (max 5MB)</p>
+      </div>
+
+      <div class="upload-card">
+        <div class="upload-label">
+          {{ isUpdateMode ? 'Update ID Back' : 'ID Back *' }}
+          @if (slotHasNewFile('back') || slotHasExisting('back')) {
+            <span class="upload-check material-icons" aria-hidden="true">check_circle</span>
+          }
+        </div>
+        @if (slotHasExisting('back') && !slotHasNewFile('back')) {
+          <div class="existing-file-note">On file — tap below to replace</div>
+        }
+        <div class="upload-area" (click)="fileBack.click()">
+          @if (slotPreview('back')) {
+            <img [src]="slotPreview('back')" alt="ID Back">
+            <button type="button" class="clear-btn" (click)="clearFile('back', $event)">Remove new file</button>
+          } @else if (existingPreviews['back']?.loading) {
+            <span class="slot-state">Loading existing document...</span>
+          } @else if (existingPreviews['back']?.url) {
+            <img [src]="existingPreviews['back']!.url!" alt="ID Back on file">
+            <span class="slot-state">Tap to replace</span>
+          } @else {
+            <span class="material-icons upload-icon" aria-hidden="true">upload_file</span>
+            <span>{{ isUpdateMode ? 'Tap to add or replace' : 'Tap to upload' }}</span>
+          }
+        </div>
+        <input type="file" #fileBack hidden accept="image/*,application/pdf" (change)="onFileSelected($event, 'back')">
+        <p class="hint">JPEG, PNG, or PDF (max 5MB)</p>
+      </div>
+
+      <div class="upload-card">
+        <div class="upload-label">
+          {{ isUpdateMode ? 'Update Selfie' : 'Selfie / Liveness Check *' }}
+          @if (slotHasNewFile('selfie') || slotHasExisting('selfie')) {
+            <span class="upload-check material-icons" aria-hidden="true">check_circle</span>
+          }
+        </div>
+        @if (slotHasExisting('selfie') && !slotHasNewFile('selfie')) {
+          <div class="existing-file-note">On file — tap below to replace</div>
+        }
+        <div class="upload-area" (click)="fileSelfie.click()">
+          @if (slotPreview('selfie')) {
+            <img [src]="slotPreview('selfie')" alt="Selfie">
+            <button type="button" class="clear-btn" (click)="clearFile('selfie', $event)">Remove new file</button>
+          } @else if (existingPreviews['selfie']?.loading) {
+            <span class="slot-state">Loading existing document...</span>
+          } @else if (existingPreviews['selfie']?.url) {
+            <img [src]="existingPreviews['selfie']!.url!" alt="Selfie on file">
+            <span class="slot-state">Tap to replace</span>
+          } @else {
+            <span class="material-icons upload-icon" aria-hidden="true">photo_camera</span>
+            <span>{{ isUpdateMode ? 'Tap to add or replace' : 'Take a selfie' }}</span>
+          }
+        </div>
+        <input type="file" #fileSelfie hidden accept="image/*" capture="user" (change)="onFileSelected($event, 'selfie')">
+        <p class="hint">Take a clear photo of your face</p>
+      </div>
+    </div>
+
+    <p class="info-text">
+      Your documents are encrypted and securely stored.
+      Verification typically takes a few minutes once submitted.
+    </p>
+  </form>
+
+  <div class="submit-bar" role="region" aria-label="Document submission">
+    <p class="submit-hint">{{ submitHint }}</p>
+    <button
+      type="button"
+      class="submit-btn"
+      [class.ready]="canSubmit"
+      [disabled]="!canSubmit"
+      (click)="onSubmit()">
+      @if (uploading) {
+        <span class="spinner"></span>
+        Uploading...
+      } @else {
+        {{ submitLabel }}
+      }
+    </button>
+  </div>
+
+  @if (showToast) {
+    <app-toast
+      [type]="toastType"
+      [message]="toastMessage"
+      (close)="closeToast()">
+    </app-toast>
+  }
+</div>

@@ -1,0 +1,112 @@
+/* Shared empty-state pattern — use material-icons, no emoji */
+
+.app-empty-state {
+  text-align: center;
+  padding: 48px 28px;
+}
+
+.app-empty-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: var(--sf-green-pale, #E8F5E9);
+  color: var(--sf-green-dark, #2E7D32);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-empty-icon .material-icons {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.app-empty-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--sf-text-1, #111827);
+  margin: 0 0 8px;
+}
+
+.app-empty-text {
+  font-size: 14px;
+  color: var(--sf-text-3, #6B7280);
+  max-width: 420px;
+  margin: 0 auto 20px;
+  line-height: 1.55;
+}
+
+.app-empty-state .btn-primary,
+.app-empty-state .btn-secondary,
+.app-empty-state .invite-btn,
+.app-empty-state .add-property-btn,
+.app-empty-state .reset-btn {
+  margin-top: 4px;
+}
+
+/* Enhance existing empty containers */
+.empty-card.app-empty-state,
+.empty-state-panel.app-empty-state,
+.list-empty-state.app-empty-state,
+.empty-state.app-empty-state {
+  background: var(--sf-surface, #fff);
+  border-radius: 16px;
+}
+
+.empty-card:not(.app-empty-state),
+.empty-state-panel:not(.app-empty-state):not(.error-panel) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.empty-card:not(.app-empty-state) p,
+.empty-state-panel:not(.app-empty-state):not(.error-panel) p {
+  color: var(--sf-text-3, #6B7280);
+  font-size: 14px;
+  line-height: 1.55;
+  max-width: 420px;
+}
+
+.property-media-panel .empty.app-empty-state {
+  padding: 32px 20px;
+  border: 1px dashed var(--sf-border, #E5E7EB);
+  border-radius: 12px;
+  background: var(--sf-bg, #F9FAFB);
+}
+
+.auth-icon-circle {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: var(--sf-green-pale, #E8F5E9);
+  color: var(--sf-green-dark, #2E7D32);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-icon-circle .material-icons {
+  font-size: 26px;
+}
+
+.upload-card-icon.material-icons,
+.upload-card-zone-icon.material-icons {
+  font-size: 22px;
+  color: var(--sf-green-dark, #2E7D32);
+}
+
+.type-icon.material-icons {
+  font-size: 28px;
+  color: var(--sf-green-dark, #2E7D32);
+  margin-bottom: 8px;
+}
+
+.callout__icon.material-icons {
+  font-size: 20px;
+  color: var(--sf-info, #0288D1);
+  flex-shrink: 0;
+}

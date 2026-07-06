@@ -1,0 +1,38 @@
+<div class="transaction-item" [class.pending]="transaction.status === 'PENDING'" [class.failed]="transaction.status === 'FAILED'">
+  <div class="transaction-icon" [class.credit]="transaction.type === 'CREDIT'">
+    @if (transaction.type === 'CREDIT') {
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M12 5V19M12 19L19 12M12 19L5 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    } @else {
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M12 19V5M12 5L5 12M12 5L19 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    }
+  </div>
+  
+  <div class="transaction-details">
+    <span class="transaction-description">{{ transaction.description }}</span>
+    <div class="transaction-meta">
+      <span class="transaction-date">{{ transaction.date | date:'MMM d, h:mm a' }}</span>
+      @if (transaction.reference) {
+        <span class="transaction-ref">Ref: {{ transaction.reference }}</span>
+      }
+    </div>
+  </div>
+  
+  <div class="transaction-right">
+    <div class="transaction-amount" [class.credit]="transaction.type === 'CREDIT'">
+      {{ transaction.type === 'CREDIT' ? '+' : '-' }} KES {{ transaction.amount | number }}
+    </div>
+    <div class="transaction-status">
+      @if (transaction.status === 'SUCCESS') {
+        <span class="status-success">✓</span>
+      } @else if (transaction.status === 'PENDING') {
+        <span class="status-pending">⏳</span>
+      } @else {
+        <span class="status-failed">✗</span>
+      }
+    </div>
+  </div>
+</div>

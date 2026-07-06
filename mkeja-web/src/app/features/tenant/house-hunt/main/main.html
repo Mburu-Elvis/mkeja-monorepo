@@ -1,0 +1,99 @@
+<div class="house-hunt-shell platform-page">
+  <div class="hero-section">
+    <div class="hero-flex">
+      <div class="hero-text">
+        <p class="greeting-label">Discover your next home</p>
+        <h1 class="page-title">House Hunt</h1>
+        <p class="hero-subtitle">Browse verified properties by location and unit type. Open a property to see units, photos, and rent.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-chips">
+    <a routerLink="/tenant/house-hunt" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-chip">Browse</a>
+    <a routerLink="/tenant/house-hunt/recommended" routerLinkActive="active" class="nav-chip">For you</a>
+    <a routerLink="/tenant/house-hunt/saved" routerLinkActive="active" class="nav-chip">Saved</a>
+  </div>
+
+  @if (pendingInvitations.length) {
+    <section class="invites-panel card">
+      <div class="invites-head">
+        <div>
+          <strong>Landlord invitations</strong>
+          <p>You have {{ pendingInvitations.length }} pending invite{{ pendingInvitations.length === 1 ? '' : 's' }} to review.</p>
+        </div>
+      </div>
+      <div class="invites-list">
+        @for (invite of pendingInvitations; track invite.code) {
+          <a class="invite-card" [routerLink]="inviteLink(invite)">
+            <div class="invite-copy">
+              <strong>{{ invite.propertyName }} · Unit {{ invite.unitNumber }}</strong>
+              <span>From {{ invite.landlordName }} · KES {{ invite.monthlyRent | number }}/mo</span>
+              @if (invite.expiresAt) {
+                <span class="invite-expiry">Expires {{ invite.expiresAt | date:'mediumDate' }}</span>
+              }
+            </div>
+            <span class="invite-cta">View invite →</span>
+          </a>
+        }
+      </div>
+    </section>
+  }
+
+  <div class="filters-panel">
+    <div class="filters-row">
+      <input class="filter-search" type="text" [(ngModel)]="q" placeholder="Search area or property..." (keyup.enter)="search()" />
+      <input class="filter-county" type="text" [(ngModel)]="county" placeholder="County" />
+      <input class="filter-city" type="text" [(ngModel)]="city" placeholder="City" />
+      <input class="filter-beds" type="number" [(ngModel)]="minBedrooms" placeholder="Min beds" min="0" />
+      <div class="filter-actions">
+        <button type="button" class="btn-primary" (click)="search()">Search</button>
+        <button type="button" class="btn-text" (click)="clearFilters()">Clear</button>
+      </div>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading-state"><div class="spinner"></div><p>Finding properties...</p></div>
+  } @else if (error) {
+    <div class="error-card">{{ error }}</div>
+  } @else if (listings.length === 0) {
+    <div class="empty-card app-empty-state">
+      <div class="app-empty-icon"><span class="material-icons">search_off</span></div>
+      <h3 class="app-empty-title">No properties found</h3>
+      <p class="app-empty-text">No properties match your search yet. Try broadening your filters.</p>
+    </div>
+  } @else {
+    <div class="property-grid">
+      @for (item of listings; track item.propertyId) {
+        <a class="property-card" [routerLink]="['/tenant/house-hunt/property', item.propertyId]">
+          <div class="property-media">
+            @if (item.coverImageUrl) {
+              <img [src]="item.coverImageUrl" [alt]="item.propertyName" />
+            } @else {
+              <div class="media-placeholder">Property photos coming soon</div>
+            }
+            <div class="listing-badges">
+              @if (item.promoted) { <span class="badge promoted">Featured</span> }
+              @if (item.saved) { <span class="badge saved">Saved</span> }
+              @if (item.verifiedProperty) { <span class="badge verified">Verified</span> }
+            </div>
+            <span class="units-badge">{{ item.availableUnits }} units free</span>
+          </div>
+          <div class="property-body">
+            <strong class="property-name">{{ item.propertyName }}</strong>
+            <p class="location-line">{{ locationLabel(item) }}</p>
+            <div class="type-pills">
+              @for (type of item.unitTypes || []; track type.unitType) {
+                <span class="type-pill">{{ type.availableCount }} {{ type.label }}{{ type.availableCount === 1 ? '' : 's' }}</span>
+              }
+              @if (!item.unitTypes?.length) {
+                <span class="type-pill">{{ item.availableUnits }} units</span>
+              }
+            </div>
+          </div>
+        </a>
+      }
+    </div>
+  }
+</div>

@@ -1,0 +1,24 @@
+<div class="balance-card">
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <span>Loading balance...</span>
+    </div>
+  } @else {
+    <div class="balance-label">{{ label }}</div>
+    <div class="balance-amount">
+      <span class="currency">KES</span>
+      <span class="amount">{{ balance | number }}</span>
+    </div>
+    @if (subText) {
+      <div class="balance-sub">{{ subText }}</div>
+    }
+    @if (showAction) {
+      <div class="balance-actions">
+        <button class="action-btn" (click)="actionClick.emit()">
+          {{ actionText }}
+        </button>
+      </div>
+    }
+  }
+</div>

@@ -1,0 +1,95 @@
+<div class="admin-page daily-report">
+  <div class="page-header">
+    <div>
+      <p class="greeting-label">Reports</p>
+      <h1 class="page-title">Daily Report</h1>
+      <p class="page-subtitle">Contributions, loans, and rent sweeps for the selected date</p>
+    </div>
+  </div>
+
+  <div class="date-selector card">
+    <input type="date" [(ngModel)]="selectedDate" (change)="loadReport()">
+    <button class="download-btn" (click)="downloadCSV()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path d="M12 3V16M12 16L9 13M12 16L15 13M5 21H19" stroke="currentColor" stroke-width="2"/>
+      </svg>
+      Export CSV
+    </button>
+  </div>
+  
+  @if (loading) {
+    <app-loading-spinner [fullScreen]="true" message="Loading report..."></app-loading-spinner>
+  } @else {
+    <div class="report-section">
+      <h3>Contributions</h3>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="label">Total Contributions</span>
+          <span class="value">{{ report.totalContributions | number }}</span>
+        </div>
+        <div class="stat-card">
+          <span class="label">Total Amount</span>
+          <span class="value">KES {{ report.totalAmount | number }}</span>
+        </div>
+        <div class="stat-card">
+          <span class="label">Unique Payers</span>
+          <span class="value">{{ report.uniquePayers | number }}</span>
+        </div>
+        <div class="stat-card">
+          <span class="label">Average Contribution</span>
+          <span class="value">KES {{ report.averageContribution | number }}</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="report-section">
+      <h3>Loans (Rent Fuliza)</h3>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="label">Disbursements</span>
+          <span class="value">{{ report.loanDisbursements | number }}</span>
+        </div>
+        <div class="stat-card">
+          <span class="label">Loan Amount</span>
+          <span class="value">KES {{ report.loanAmount | number }}</span>
+        </div>
+        <div class="stat-card">
+          <span class="label">Loan Fees</span>
+          <span class="value">KES {{ report.loanFees | number }}</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="report-section">
+      <h3>Rent & Fees</h3>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="label">Rent Sweeps</span>
+          <span class="value">{{ report.rentSweeps | number }}</span>
+        </div>
+        <div class="stat-card">
+          <span class="label">Sweep Amount</span>
+          <span class="value">KES {{ report.sweepAmount | number }}</span>
+        </div>
+        <div class="stat-card">
+          <span class="label">Mkeja Fees</span>
+          <span class="value">KES {{ report.mkejaFees | number }}</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="report-section">
+      <h3>Top Ups</h3>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="label">Top Ups</span>
+          <span class="value">{{ report.topUps | number }}</span>
+        </div>
+        <div class="stat-card">
+          <span class="label">Top Up Amount</span>
+          <span class="value">KES {{ report.topUpAmount | number }}</span>
+        </div>
+      </div>
+    </div>
+  }
+</div>

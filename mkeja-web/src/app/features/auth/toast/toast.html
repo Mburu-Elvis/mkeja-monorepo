@@ -1,0 +1,4 @@
+<div *ngIf="message" class="toast-container" [class.toast-success]="type === 'success'" [class.toast-error]="type === 'error'" [class.toast-info]="type === 'info'">
+  <span class="toast-icon">{{ type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ' }}</span>
+  <span class="toast-message">{{ message }}</span>
+</div>

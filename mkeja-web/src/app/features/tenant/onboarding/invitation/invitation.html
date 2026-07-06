@@ -1,0 +1,52 @@
+<div class="invitation-screen ">
+
+    <header class="auth-brand">
+    <div class="auth-brand-badge">
+      <img src="/logo-mkeja.png" alt="Mkeja" class="auth-brand-logo">
+    </div>
+    <h1>Welcome back</h1>
+    <p>Sign in to continue to your dashboard</p>
+  </header>
+
+  @if (loading) {
+    <app-loading-spinner [fullScreen]="true" message="Loading invitation..."></app-loading-spinner>
+  } @else if (invitationData) {
+    <div class="invitation-card">
+      <div class="invitation-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+          <path d="M3 8L12 13L21 8M5 19H19C20.1 19 21 18.1 21 17V7C21 5.9 20.1 5 19 5H5C3.9 5 3 5.9 3 7V17C3 18.1 3.9 19 5 19Z" stroke="#00A859" stroke-width="2"/>
+        </svg>
+      </div>
+      
+      <h2>You're Invited!</h2>
+      <p>{{ invitationData.landlordName }} has invited you to pay rent through Mkeja</p>
+      
+      <div class="invitation-details">
+        <div class="detail">
+          <span class="label">Property</span>
+          <span class="value">{{ invitationData.unitName }}</span>
+        </div>
+        <div class="detail">
+          <span class="label">Monthly Rent</span>
+          <span class="value">KES {{ invitationData.monthlyRent | number }}</span>
+        </div>
+        <div class="detail">
+          <span class="label">Address</span>
+          <span class="value">{{ invitationData.address }}</span>
+        </div>
+      </div>
+      
+      <button class="accept-btn" (click)="acceptInvitation()" [disabled]="accepting">
+        {{ accepting ? 'Accepting...' : 'Accept Invitation' }}
+      </button>
+      
+      <p class="help-text">
+        Having issues? Call us at 0800 123 456
+      </p>
+    </div>
+  } @else if (errorMessage) {
+    <div class="invitation-card">
+      <p>{{ errorMessage }}</p>
+    </div>
+  }
+</div>

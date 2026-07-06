@@ -1,0 +1,112 @@
+<div class="global-status-strip"></div>
+
+<app-header
+  [userName]="currentUser?.fullName || 'Admin'"
+  [userEmail]="userEmail"
+  userRoleLabel="Platform Admin"
+  profileLink="/admin/dashboard"
+  supportLink="/admin/kyc-queue"
+  (logout)="logout()"
+></app-header>
+
+<div class="platform-dashboard" [class.sidebar-collapsed]="sidebarCollapsed">
+  <aside class="desktop-sidebar">
+    <div class="sidebar-header">
+      <div class="logo-area" [class.collapsed]="sidebarCollapsed">
+        <img src="/logo-mkeja.png" alt="Mkeja" class="mkeja-logo">
+      </div>
+      <button class="collapse-btn" type="button" (click)="toggleSidebar()" aria-label="Toggle sidebar">
+        <mat-icon [svgIcon]="sidebarCollapsed ? 'chevronRight' : 'chevronLeft'"></mat-icon>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-item" routerLink="/admin/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon svgIcon="pieChart"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Dashboard</span>
+      </a>
+      <a class="sidebar-item" routerLink="/admin/kyc-queue" routerLinkActive="active">
+        <mat-icon svgIcon="shield"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">KYC Queue</span>
+        <span class="nav-badge" *ngIf="!sidebarCollapsed && kycActionCount > 0">{{ kycActionCount }}</span>
+      </a>
+      <a class="sidebar-item" routerLink="/admin/users" routerLinkActive="active">
+        <mat-icon svgIcon="users"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Users</span>
+      </a>
+      <a class="sidebar-item" routerLink="/admin/properties" routerLinkActive="active">
+        <mat-icon svgIcon="home"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Properties</span>
+      </a>
+      <a class="sidebar-item" routerLink="/admin/tenancies" routerLinkActive="active">
+        <mat-icon svgIcon="fileText"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Tenancies</span>
+      </a>
+      <a class="sidebar-item" routerLink="/admin/invitations" routerLinkActive="active">
+        <mat-icon svgIcon="mail"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Invitations</span>
+      </a>
+      <a class="sidebar-item" routerLink="/admin/reports" routerLinkActive="active">
+        <mat-icon svgIcon="barChart"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Reports</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer" *ngIf="!sidebarCollapsed">
+      <div class="user-mini">
+        <div class="avatar-mini">{{ userInitials }}</div>
+        <div class="user-info">
+          <span class="user-name">{{ currentUser?.fullName || 'Admin' }}</span>
+          <span class="user-unit">Platform Admin</span>
+        </div>
+      </div>
+      <button class="logout-btn" type="button" (click)="logout()">
+        <mat-icon svgIcon="logout"></mat-icon>
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <main class="dashboard-main">
+    <div class="mobile-status">
+      <span class="status-time">{{ currentTime }}</span>
+      <div class="status-icons">
+        <mat-icon svgIcon="signal"></mat-icon>
+        <mat-icon svgIcon="wifi"></mat-icon>
+        <mat-icon svgIcon="battery"></mat-icon>
+      </div>
+    </div>
+    <router-outlet></router-outlet>
+  </main>
+</div>
+
+<nav class="bottom-nav">
+  <a class="nav-item" routerLink="/admin/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+    <mat-icon svgIcon="pieChart"></mat-icon>
+    <span>Home</span>
+  </a>
+  <a class="nav-item" routerLink="/admin/kyc-queue" routerLinkActive="active">
+    <mat-icon svgIcon="shield"></mat-icon>
+    <span>KYC</span>
+  </a>
+  <a class="nav-item" routerLink="/admin/users" routerLinkActive="active">
+    <mat-icon svgIcon="users"></mat-icon>
+    <span>Users</span>
+  </a>
+  <a class="nav-item" routerLink="/admin/properties" routerLinkActive="active">
+    <mat-icon svgIcon="home"></mat-icon>
+    <span>Props</span>
+  </a>
+  <a class="nav-item" routerLink="/admin/tenancies" routerLinkActive="active">
+    <mat-icon svgIcon="fileText"></mat-icon>
+    <span>Leases</span>
+  </a>
+  <a class="nav-item" routerLink="/admin/invitations" routerLinkActive="active">
+    <mat-icon svgIcon="mail"></mat-icon>
+    <span>Invites</span>
+  </a>
+  <a class="nav-item" routerLink="/admin/reports" routerLinkActive="active">
+    <mat-icon svgIcon="barChart"></mat-icon>
+    <span>Reports</span>
+  </a>
+</nav>

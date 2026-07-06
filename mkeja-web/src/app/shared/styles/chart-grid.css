@@ -1,0 +1,74 @@
+/* Horizontal + vertical grid lines for CSS bar / trend charts */
+
+.chart-bars,
+.trend-line {
+  position: relative;
+}
+
+.chart-grid {
+  position: absolute;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  z-index: 0;
+  --chart-grid-line: rgba(229, 231, 235, 0.95);
+  --chart-grid-line-faint: rgba(229, 231, 235, 0.55);
+  background-image:
+    repeating-linear-gradient(
+      to top,
+      var(--chart-grid-line) 0,
+      var(--chart-grid-line) 1px,
+      transparent 1px,
+      transparent 25%
+    ),
+    repeating-linear-gradient(
+      to right,
+      transparent 0,
+      transparent calc(100% / 6 - 0.5px),
+      var(--chart-grid-line-faint) calc(100% / 6 - 0.5px),
+      var(--chart-grid-line-faint) calc(100% / 6 + 0.5px)
+    );
+  border-bottom: 1px solid var(--chart-grid-line, #E5E7EB);
+}
+
+.chart-bars .chart-grid {
+  bottom: 35px;
+  height: 200px;
+}
+
+.trend-line .chart-grid {
+  bottom: 22px;
+  top: 22px;
+  height: auto;
+}
+
+.chart-bar-group,
+.trend-point {
+  position: relative;
+  z-index: 1;
+}
+
+.trend-line {
+  align-items: stretch;
+}
+
+.trend-point {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.trend-plot {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.trend-bar {
+  width: 100%;
+}

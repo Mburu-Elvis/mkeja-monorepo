@@ -1,0 +1,106 @@
+<div class="global-status-strip"></div>
+
+<app-header
+  [userName]="currentUser?.fullName || 'Agent'"
+  [userEmail]="userEmail"
+  userRoleLabel="Property Agent"
+  profileLink="/agent/profile"
+  supportLink="/agent/support"
+  (logout)="logout()"
+></app-header>
+
+<div class="platform-dashboard" [class.sidebar-collapsed]="sidebarCollapsed">
+  <aside class="desktop-sidebar">
+    <div class="sidebar-header">
+      <div class="logo-area" [class.collapsed]="sidebarCollapsed">
+        <img src="/logo-mkeja.png" alt="Mkeja" class="mkeja-logo">
+      </div>
+      <button class="collapse-btn" type="button" (click)="toggleSidebar()" aria-label="Toggle sidebar">
+        <mat-icon [svgIcon]="sidebarCollapsed ? 'chevronRight' : 'chevronLeft'"></mat-icon>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-item" routerLink="/agent/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon svgIcon="home"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Agent Functions</span>
+      </a>
+
+      <ng-container *ngFor="let section of sidebarSections">
+        <div class="sidebar-section-label" *ngIf="!sidebarCollapsed">{{ section.title }}</div>
+        <a
+          class="sidebar-item"
+          *ngFor="let link of section.links"
+          [routerLink]="link.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: link.route === '/agent/dashboard' }"
+        >
+          <mat-icon [svgIcon]="link.icon"></mat-icon>
+          <span *ngIf="!sidebarCollapsed">{{ link.label }}</span>
+        </a>
+      </ng-container>
+
+      <a class="sidebar-item" routerLink="/agent/profile" routerLinkActive="active">
+        <mat-icon svgIcon="user"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Profile</span>
+      </a>
+      <a class="sidebar-item" routerLink="/agent/support" routerLinkActive="active">
+        <mat-icon svgIcon="help"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Support</span>
+      </a>
+      <a class="sidebar-item" routerLink="/agent/notifications" routerLinkActive="active">
+        <mat-icon svgIcon="clipboard"></mat-icon>
+        <span *ngIf="!sidebarCollapsed">Notifications</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer" *ngIf="!sidebarCollapsed">
+      <div class="user-mini">
+        <div class="avatar-mini">{{ userInitials }}</div>
+        <div class="user-info">
+          <span class="user-name">{{ currentUser?.fullName || 'Agent' }}</span>
+          <span class="user-unit">Property Agent</span>
+        </div>
+      </div>
+      <button class="logout-btn" type="button" (click)="logout()">
+        <mat-icon svgIcon="logout"></mat-icon>
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <main class="dashboard-main">
+    <div class="mobile-status">
+      <span class="status-time">{{ currentTime }}</span>
+      <div class="status-icons">
+        <mat-icon svgIcon="signal"></mat-icon>
+        <mat-icon svgIcon="wifi"></mat-icon>
+        <mat-icon svgIcon="battery"></mat-icon>
+      </div>
+    </div>
+    <router-outlet></router-outlet>
+  </main>
+</div>
+
+<nav class="bottom-nav">
+  <a class="nav-item" routerLink="/agent/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+    <mat-icon svgIcon="home"></mat-icon>
+    <span>Hub</span>
+  </a>
+  <a class="nav-item" routerLink="/agent/properties" routerLinkActive="active">
+    <mat-icon svgIcon="building"></mat-icon>
+    <span>Properties</span>
+  </a>
+  <a class="nav-item" routerLink="/agent/leads" routerLinkActive="active">
+    <mat-icon svgIcon="search"></mat-icon>
+    <span>Leads</span>
+  </a>
+  <a class="nav-item" routerLink="/agent/tenants" routerLinkActive="active">
+    <mat-icon svgIcon="users"></mat-icon>
+    <span>Tenants</span>
+  </a>
+  <a class="nav-item" routerLink="/agent/profile" routerLinkActive="active">
+    <mat-icon svgIcon="user"></mat-icon>
+    <span>Profile</span>
+  </a>
+</nav>

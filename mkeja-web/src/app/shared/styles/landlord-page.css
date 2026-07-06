@@ -1,0 +1,255 @@
+/* Unified landlord list/detail page theme — tokens in shared/styles/tokens.css */
+
+.landlord-page {
+  font-family: var(--font-sans);
+  color: var(--gray-800);
+}
+
+/* Header — portfolio-header parity */
+.landlord-page .hero-section {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  border-radius: var(--radius-3xl);
+  padding: 32px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow-lg);
+}
+
+.landlord-page .greeting-label {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.landlord-page .page-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: -0.02em;
+}
+
+.landlord-page .hero-subtitle {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.5;
+}
+
+.landlord-page .refresh-btn {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.landlord-page .refresh-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Cards & stat grid */
+.landlord-page .card {
+  background: white;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--gray-200);
+  box-shadow: var(--shadow-sm);
+}
+
+.landlord-page .card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.landlord-page .stat-card {
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.landlord-page .stat-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary-light);
+}
+
+.landlord-page .stat-card.highlight {
+  border-color: #C8E6C9;
+  background: linear-gradient(135deg, #fff, var(--primary-light));
+}
+
+.landlord-page .card-icon {
+  background: var(--primary-light);
+  border-radius: 12px;
+}
+
+.landlord-page .card-icon mat-icon {
+  color: var(--primary-color);
+}
+
+.landlord-page .stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--gray-500);
+}
+
+.landlord-page .stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--gray-900);
+  font-family: var(--font-mono);
+}
+
+/* Buttons — shared/styles/buttons.css; toggle-btn — ui-patterns.css */
+
+/* Filters toolbar */
+.landlord-page .action-toolbar,
+.landlord-page .filters.card {
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.landlord-page .search-input,
+.landlord-page .filter-select,
+.landlord-page .filters .search-box,
+.landlord-page .filters select {
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  background: var(--gray-50);
+}
+
+.landlord-page .search-input:focus,
+.landlord-page .filter-select:focus,
+.landlord-page .filters input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(15, 76, 58, 0.1);
+}
+
+.landlord-page .toggle-btn.active {
+  background: var(--primary-light);
+  color: var(--primary-color);
+  border-color: #C8E6C9;
+}
+
+/* toggle-btn base — ui-patterns.css */
+
+/* Status chips & badges */
+.landlord-page .status-chip.active,
+.landlord-page .badge-active {
+  background: var(--primary-light);
+  color: var(--success);
+}
+
+.landlord-page .status-chip.pending,
+.landlord-page .badge-pending {
+  background: #FFF3E0;
+  color: var(--warning);
+}
+
+.landlord-page .kyc-chip.success {
+  background: var(--primary-light);
+  color: var(--success);
+}
+
+/* Loading spinner */
+.landlord-page .spinner {
+  border-color: var(--primary-light);
+  border-top-color: var(--primary-color);
+}
+
+/* Property / tenant cards */
+.landlord-page .property-card:hover,
+.landlord-page .tenant-card:hover {
+  border-color: var(--primary-light);
+}
+
+.landlord-page .tenant-avatar {
+  background: var(--primary-light);
+  color: var(--primary-color);
+}
+
+.landlord-page .occupancy-ring {
+  background: conic-gradient(var(--primary-color) var(--pct), var(--gray-100) 0);
+}
+
+.landlord-page .occupancy-ring span {
+  color: var(--primary-color);
+}
+
+.landlord-page .meta-chip {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+}
+
+.landlord-page .next-due-banner {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+/* action-btn colors — shared/styles/buttons.css */
+
+.landlord-page .progress-fill {
+  background: var(--primary-color);
+}
+
+.landlord-page .property-table th {
+  background: var(--gray-50);
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 11px;
+}
+
+.landlord-page .property-table td {
+  color: var(--gray-800);
+}
+
+.landlord-page .table-actions button:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.landlord-page .detail-item span {
+  font-family: var(--font-mono);
+}
+
+.landlord-page .tenant-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.landlord-page .tenant-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.landlord-page .tenant-info h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--gray-900);
+  margin: 0 0 2px;
+}
+
+.landlord-page .tenant-info p {
+  font-size: 13px;
+  color: var(--gray-500);
+  margin: 0;
+}
+
+.landlord-page .status-chip {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+}
+
+@media (max-width: 640px) {
+  .landlord-page .hero-section {
+    padding: 24px 20px;
+    border-radius: var(--radius-xl);
+  }
+
+  .landlord-page .page-title {
+    font-size: 24px;
+  }
+}

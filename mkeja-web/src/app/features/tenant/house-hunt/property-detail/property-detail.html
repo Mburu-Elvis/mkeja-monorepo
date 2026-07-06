@@ -1,0 +1,180 @@
+<div class="house-hunt-shell platform-page detail-page">
+  <a routerLink="/tenant/house-hunt" class="back-link">← Back to properties</a>
+
+  @if (loading) {
+    <div class="loading-state"><div class="spinner"></div></div>
+  } @else if (error && !property) {
+    <div class="error-card">{{ error }}</div>
+  } @else if (property) {
+    <section class="overview-hero card">
+      @if (overviewImages.length) {
+        <div class="carousel">
+          <button type="button" class="carousel-nav prev" (click)="prevOverview()" [disabled]="overviewImages.length <= 1">‹</button>
+          <div class="carousel-main">
+            <img [src]="overviewImages[overviewIndex]" [alt]="property.propertyName" />
+          </div>
+          <button type="button" class="carousel-nav next" (click)="nextOverview()" [disabled]="overviewImages.length <= 1">›</button>
+          @if (overviewImages.length > 1) {
+            <div class="carousel-dots">
+              @for (image of overviewImages; track image; let i = $index) {
+                <button type="button" class="dot" [class.active]="overviewIndex === i" (click)="overviewIndex = i"></button>
+              }
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="media-placeholder">Property photos coming soon</div>
+      }
+
+      <div class="overview-copy">
+        <div class="title-row">
+          <h1>{{ property.propertyName }}</h1>
+          @if (property.promoted) { <span class="badge promoted">Featured</span> }
+          @if (property.verifiedProperty) { <span class="badge verified">Verified</span> }
+        </div>
+        <p class="location-line">{{ locationLabel() }}</p>
+        <div class="type-pills">
+          @for (type of property.unitTypes; track type.unitType) {
+            <span class="type-pill">{{ type.availableCount }} {{ type.label }}{{ type.availableCount === 1 ? '' : 's' }}</span>
+          }
+        </div>
+        @if (property.description) {
+          <p class="description">{{ property.description }}</p>
+        }
+      </div>
+    </section>
+
+    <section class="browse-panel card">
+      <h2>Browse available units</h2>
+      <p class="panel-sub">Filter by type, rent, or floor. Sample photos for each type appear below the filters.</p>
+
+      <div class="filter-toolbar">
+        <div class="filter-field">
+          <label>Unit type</label>
+          <select [(ngModel)]="selectedCategory" (ngModelChange)="selectCategory($event || null)">
+            <option [ngValue]="null">All types</option>
+            @for (type of property.unitTypes; track type.unitType) {
+              <option [ngValue]="type.unitType">{{ type.label }} ({{ type.availableCount }})</option>
+            }
+          </select>
+        </div>
+        <div class="filter-field">
+          <label>Min rent</label>
+          <input type="number" [(ngModel)]="filterMinRent" placeholder="KES" />
+        </div>
+        <div class="filter-field">
+          <label>Max rent</label>
+          <input type="number" [(ngModel)]="filterMaxRent" placeholder="KES" />
+        </div>
+        <div class="filter-field">
+          <label>Floor</label>
+          <select [(ngModel)]="filterFloor">
+            <option [ngValue]="null">Any floor</option>
+            @for (floor of availableFloors; track floor) {
+              <option [ngValue]="floor">Floor {{ floor }}</option>
+            }
+          </select>
+        </div>
+        <button type="button" class="btn-text" (click)="clearFilters()">Clear filters</button>
+      </div>
+
+      <div class="category-tabs">
+        <button type="button" class="category-tab" [class.active]="!selectedCategory" (click)="selectCategory(null)">
+          All ({{ property.units.length }})
+        </button>
+        @for (type of property.unitTypes; track type.unitType) {
+          <button type="button"
+                  class="category-tab"
+                  [class.active]="selectedCategory === type.unitType"
+                  (click)="selectCategory(type.unitType)">
+            {{ type.label }} ({{ type.availableCount }})
+          </button>
+        }
+      </div>
+
+      @if (selectedCategory && typeImages.length) {
+        <div class="type-carousel-wrap">
+          <h3>{{ selectedType?.label }} sample photos</h3>
+          <div class="carousel compact">
+            <button type="button" class="carousel-nav prev" (click)="prevTypeImage()" [disabled]="typeImages.length <= 1">‹</button>
+            <div class="carousel-main">
+              <img [src]="typeImages[typeIndex]" [alt]="selectedType?.label || 'Unit type'" />
+            </div>
+            <button type="button" class="carousel-nav next" (click)="nextTypeImage()" [disabled]="typeImages.length <= 1">›</button>
+          </div>
+        </div>
+      }
+
+      <div class="units-list-section">
+        <h3>{{ filteredUnits.length }} unit{{ filteredUnits.length === 1 ? '' : 's' }} match your filters</h3>
+        <div class="unit-list">
+          @for (unit of filteredUnits; track unit.unitId) {
+            <button type="button" class="unit-row" (click)="openUnitModal(unit)">
+              <div>
+                <strong>Unit {{ unit.unitNumber }}</strong>
+                <p>{{ unit.unitTypeLabel || unit.unitType }} · KES {{ unit.rent | number }}/mo</p>
+                @if (floorLabel(unit)) {
+                  <p class="floor-line">{{ floorLabel(unit) }}</p>
+                }
+              </div>
+              <span class="view-link">View →</span>
+            </button>
+          }
+          @if (filteredUnits.length === 0) {
+            <p class="empty-units">No units match these filters. Try adjusting rent or floor.</p>
+          }
+        </div>
+      </div>
+    </section>
+
+    @if (toast) { <p class="toast success">{{ toast }}</p> }
+    @if (error) { <p class="toast error">{{ error }}</p> }
+  }
+
+  @if (modalUnit) {
+    <div class="unit-modal-backdrop" (click)="closeUnitModal()">
+      <div class="unit-modal card" (click)="$event.stopPropagation()">
+        <button type="button" class="modal-close" (click)="closeUnitModal()">×</button>
+        <h2>Unit {{ modalUnit.unitNumber }}</h2>
+        <p class="meta-line">{{ modalUnit.unitTypeLabel || modalUnit.unitType }} · KES {{ modalUnit.rent | number }}/mo</p>
+        @if (floorLabel(modalUnit)) {
+          <p class="floor-line">{{ floorLabel(modalUnit) }}</p>
+        }
+
+        @if (modalImages(modalUnit).length) {
+          <div class="carousel compact">
+            <button type="button" class="carousel-nav prev" (click)="prevModalImage()" [disabled]="modalImages(modalUnit).length <= 1">‹</button>
+            <div class="carousel-main">
+              <img [src]="modalImages(modalUnit)[modalImageIndex]" [alt]="'Unit ' + modalUnit.unitNumber" />
+            </div>
+            <button type="button" class="carousel-nav next" (click)="nextModalImage()" [disabled]="modalImages(modalUnit).length <= 1">›</button>
+          </div>
+        }
+
+        @if (modalUnit.bedrooms != null || modalUnit.deposit != null) {
+          <div class="unit-facts">
+            @if (modalUnit.bedrooms != null) {
+              <span>{{ modalUnit.bedrooms }} bed{{ modalUnit.bedrooms === 1 ? '' : 's' }}</span>
+            }
+            @if (modalUnit.deposit != null) {
+              <span>Deposit KES {{ modalUnit.deposit | number }}</span>
+            }
+          </div>
+        }
+
+        @if (modalUnit.listingDescription) {
+          <p class="unit-desc">{{ modalUnit.listingDescription }}</p>
+        }
+
+        <div class="detail-actions">
+          <button type="button" class="btn-secondary" [disabled]="acting" (click)="toggleSaveUnit()">
+            {{ modalUnit.saved ? 'Unsave unit' : 'Save unit' }}
+          </button>
+          <button type="button" class="btn-primary" [disabled]="acting" (click)="expressInterest()">
+            I'm interested in this unit
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

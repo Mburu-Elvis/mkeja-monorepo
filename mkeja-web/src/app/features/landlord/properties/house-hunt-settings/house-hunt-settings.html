@@ -1,0 +1,96 @@
+<div class="house-hunt-settings-page platform-page landlord-page">
+  <a [routerLink]="['/landlord/properties', propertyId]" class="back-link">← Back to property</a>
+
+  @if (loading) {
+    <div class="loading-state card">
+      <div class="spinner"></div>
+      <p>Loading House Hunt setup...</p>
+    </div>
+  } @else if (!settings) {
+    <div class="empty-state-panel card">
+      <p>{{ error || 'Unable to load House Hunt settings.' }}</p>
+    </div>
+  } @else {
+    <div class="hero-section">
+      <div class="hero-flex">
+        <div class="hero-text">
+          <p class="greeting-label">House Hunt</p>
+          <h1 class="page-title">{{ settings.propertyName }}</h1>
+          <p class="hero-subtitle">
+            Control discovery for this property. Vacant units list automatically when House Hunt is on.
+          </p>
+        </div>
+        <div class="hero-actions">
+          <a class="btn-secondary hero-btn" routerLink="/landlord/leads">View leads</a>
+          <a class="btn-secondary hero-btn" [routerLink]="['/landlord/properties', propertyId]" [queryParams]="{ tab: 'settings' }">Listing media</a>
+        </div>
+      </div>
+    </div>
+
+    @if (error) { <div class="kyc-banner rejected">{{ error }}</div> }
+    @if (success) { <div class="success-banner">{{ success }}</div> }
+
+    <div class="dashboard-grid stats-grid">
+      <div class="card stat-card">
+        <div class="card-content">
+          <span class="stat-label">Vacant units</span>
+          <strong class="stat-value">{{ settings.vacantUnits }}</strong>
+        </div>
+      </div>
+      <div class="card stat-card highlight">
+        <div class="card-content">
+          <span class="stat-label">Auto-listed</span>
+          <strong class="stat-value">{{ settings.listedUnits }}</strong>
+        </div>
+      </div>
+      <div class="card stat-card">
+        <div class="card-content">
+          <span class="stat-label">Recommendations</span>
+          <strong class="stat-value">{{ settings.autoRecommendUnits }}</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-panel card">
+      <div class="panel-header">
+        <div>
+          <h2>Discovery controls</h2>
+          <p class="panel-sub">Turn discovery on for this property and optionally enable smart recommendations. Upload photos under Property → Settings → Listing media.</p>
+        </div>
+      </div>
+
+      <div class="eligibility-card" [class.ready]="canEnableHouseHunt">
+        <strong>{{ canEnableHouseHunt ? 'Ready to go live' : 'Requirements pending' }}</strong>
+        <p>{{ eligibilityMessage }}</p>
+        <ul class="checklist">
+          <li [class.done]="kycApproved">Landlord KYC approved</li>
+          <li [class.done]="settings.verified">Property verified</li>
+        </ul>
+      </div>
+
+      <div class="toggle-grid">
+        <label class="toggle-card" [class.active]="settings.houseHuntEnabled">
+          <div class="toggle-copy">
+            <strong>Enable House Hunt</strong>
+            <span>Auto-list vacant units on the tenant property catalog</span>
+          </div>
+          <input type="checkbox"
+                 [checked]="settings.houseHuntEnabled"
+                 [disabled]="savingProperty || (!canEnableHouseHunt && !settings.houseHuntEnabled)"
+                 (click)="onHouseHuntToggle($event)" />
+        </label>
+
+        <label class="toggle-card" [class.active]="settings.autoRecommendEnabled">
+          <div class="toggle-copy">
+            <strong>Smart recommendations</strong>
+            <span>Suggest this property to matching tenants</span>
+          </div>
+          <input type="checkbox"
+                 [checked]="settings.autoRecommendEnabled"
+                 [disabled]="savingProperty || !settings.houseHuntEnabled || (!canEnableHouseHunt && !settings.autoRecommendEnabled)"
+                 (click)="onAutoRecommendToggle($event)" />
+        </label>
+      </div>
+    </div>
+  }
+</div>

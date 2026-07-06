@@ -1,0 +1,232 @@
+<div class="platform-page landlord-page">
+  @if (kycNotApproved) {
+    <div class="kyc-banner">
+      <strong>KYC verification required.</strong> Complete landlord KYC approval before adding properties or inviting tenants.
+    </div>
+  }
+
+  <div class="hero-section">
+    <div class="hero-flex">
+      <div class="hero-text">
+        <p class="greeting-label">Portfolio</p>
+        <h1 class="page-title">My Properties</h1>
+        <p class="hero-subtitle">
+          {{ totalProperties }} properties · {{ totalUnits }} units ·
+          KES {{ monthlyRentRoll | number }} rent roll · {{ occupancyRate | number:'1.0-0' }}% occupied
+        </p>
+      </div>
+      <div class="hero-actions">
+        <button class="refresh-btn" type="button" (click)="loadProperties()" [disabled]="loading">
+          <mat-icon svgIcon="refresh"></mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-grid">
+    <div class="card stat-card">
+      <div class="card-icon"><mat-icon svgIcon="building"></mat-icon></div>
+      <div class="card-content">
+        <span class="stat-label">Properties</span>
+        <strong class="stat-value">{{ totalProperties }}</strong>
+      </div>
+    </div>
+    <div class="card stat-card">
+      <div class="card-icon"><mat-icon svgIcon="unlock"></mat-icon></div>
+      <div class="card-content">
+        <span class="stat-label">Vacant units</span>
+        <strong class="stat-value">{{ totalVacant }}</strong>
+      </div>
+    </div>
+    <div class="card stat-card highlight">
+      <div class="card-icon"><mat-icon svgIcon="mail"></mat-icon></div>
+      <div class="card-content">
+        <span class="stat-label">Pending invites</span>
+        <strong class="stat-value">{{ totalPendingInvites }}</strong>
+      </div>
+    </div>
+    <div class="card stat-card">
+      <div class="card-icon"><mat-icon svgIcon="banknote"></mat-icon></div>
+      <div class="card-content">
+        <span class="stat-label">Monthly rent roll</span>
+        <strong class="stat-value">KES {{ monthlyRentRoll | number:'1.0-0' }}</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-toolbar card">
+    <div class="toolbar-left">
+      <button class="btn-primary" type="button" (click)="addProperty()">+ Add Property</button>
+      @if (totalVacant > 0) {
+        <button class="btn-secondary" type="button" (click)="inviteTenant()">Link tenant to unit</button>
+      }
+      <button class="btn-secondary" type="button" routerLink="/landlord/leads">House Hunt leads</button>
+    </div>
+    <div class="filters">
+      <input type="text" placeholder="Search name or location..." [(ngModel)]="searchTerm" (input)="onSearchChange()" class="search-input">
+      <select [(ngModel)]="statusFilter" (change)="onStatusChange()" class="filter-select">
+        <option *ngFor="let opt of statusOptions" [value]="opt.value">{{ opt.label }}</option>
+      </select>
+      <div class="view-toggle">
+        <button class="toggle-btn" type="button" [class.active]="viewMode === 'grid'" (click)="setViewMode('grid')">Grid</button>
+        <button class="toggle-btn" type="button" [class.active]="viewMode === 'list'" (click)="setViewMode('list')">List</button>
+      </div>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading-state"><div class="spinner"></div><p>Loading properties...</p></div>
+  } @else if (allProperties.length === 0) {
+    <div class="empty-state-panel card app-empty-state">
+      <div class="app-empty-icon"><span class="material-icons">apartment</span></div>
+      <h2 class="app-empty-title">No properties yet</h2>
+      <p class="app-empty-text">Add a property with units, set when rent is due each month, then link tenants to vacant units.</p>
+      <button class="btn-primary" type="button" (click)="addProperty()">Add Property</button>
+    </div>
+  } @else if (filteredProperties.length === 0) {
+    <div class="empty-state-panel card app-empty-state">
+      <div class="app-empty-icon"><span class="material-icons">filter_alt_off</span></div>
+      <h2 class="app-empty-title">No matching properties</h2>
+      <p class="app-empty-text">Adjust your search or filters to find a property.</p>
+      <button class="btn-secondary" type="button" (click)="searchTerm=''; statusFilter='all'; typeFilter='all'; applyFilters()">Reset filters</button>
+    </div>
+  } @else if (viewMode === 'grid') {
+    <div class="list-summary">
+      Showing {{ showingFrom }}–{{ showingTo }} of {{ filteredProperties.length }} properties
+    </div>
+    <div class="properties-grid">
+      @for (p of paginatedProperties; track p.id) {
+        <article class="property-card card">
+          <div class="property-card-header">
+            <div class="property-icon"><mat-icon [svgIcon]="getTypeIcon(p.type)"></mat-icon></div>
+            <div class="property-info">
+              <h4>
+                <a class="property-name-link" [routerLink]="propertyDetailLink(p.id)" (click)="$event.stopPropagation()">
+                  {{ p.name }}
+                </a>
+              </h4>
+              <p>{{ p.address }}@if (p.city) { · {{ p.city }} }</p>
+            </div>
+            <span class="status-badge" [class]="getStatusBadgeClass(p.status)">{{ p.verified ? 'Verified' : 'Pending' }}</span>
+          </div>
+
+          <div class="occupancy-ring-wrap">
+            <div class="occupancy-ring" [style.--pct]="getOccupancyPercent(p.occupiedCount, p.unitsCount) + '%'">
+              <span>{{ getOccupancyPercent(p.occupiedCount, p.unitsCount) | number:'1.0-0' }}%</span>
+            </div>
+            <div class="occupancy-meta">
+              <div><strong>{{ p.occupiedCount }}</strong> occupied</div>
+              <div><strong>{{ p.vacantCount }}</strong> vacant</div>
+              <div><strong>{{ p.unitsCount }}</strong> total units</div>
+            </div>
+          </div>
+
+          <div class="property-meta-row">
+            <div class="meta-chip rent-roll">
+              <span>Rent roll</span>
+              <strong>KES {{ p.monthlyRentRoll | number }}</strong>
+            </div>
+            <div class="meta-chip due-day">
+              <span>Rent due</span>
+              <strong>{{ formatRentDue(p.rentDueDay) }}</strong>
+            </div>
+          </div>
+
+          @if (p.nextRentDueLabel) {
+            <div class="next-due-banner">{{ p.nextRentDueLabel }}</div>
+          }
+
+          @if (p.pendingInvites > 0) {
+            <div class="invite-pending-banner">{{ p.pendingInvites }} invite(s) awaiting tenant action</div>
+          }
+
+          <div class="quick-actions">
+            @if (p.vacantCount > 0) {
+              <button class="action-btn primary" type="button" (click)="inviteTenant(p.id)">Link tenant</button>
+              <button class="action-btn house-hunt" type="button" (click)="openHouseHuntListings(p.id)">House Hunt</button>
+            }
+            <button class="action-btn secondary" type="button" (click)="addUnitToProperty(p.id)">Add unit</button>
+            <a class="action-btn outline" [routerLink]="propertyDetailLink(p.id)">View details</a>
+          </div>
+        </article>
+      }
+    </div>
+  } @else {
+    <div class="list-summary">
+      Showing {{ showingFrom }}–{{ showingTo }} of {{ filteredProperties.length }} properties
+    </div>
+    <div class="properties-list-view card">
+      <table class="property-table">
+        <thead>
+          <tr>
+            <th>Property</th>
+            <th>Units</th>
+            <th>Rent roll</th>
+            <th>Rent due</th>
+            <th>Invites</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of paginatedProperties; track p.id) {
+            <tr>
+              <td>
+                <a class="property-name-link" [routerLink]="propertyDetailLink(p.id)"><strong>{{ p.name }}</strong></a>
+                <div class="sub">{{ p.address }}</div>
+              </td>
+              <td>{{ p.occupiedCount }}/{{ p.unitsCount }} occupied</td>
+              <td>KES {{ p.monthlyRentRoll | number }}</td>
+              <td>{{ formatRentDue(p.rentDueDay) }}</td>
+              <td>{{ p.pendingInvites || '—' }}</td>
+              <td class="table-actions">
+                @if (p.vacantCount > 0) {
+                  <button type="button" (click)="inviteTenant(p.id)">Link tenant</button>
+                  <button type="button" (click)="openHouseHuntListings(p.id)">House Hunt</button>
+                }
+                <a class="table-view-link" [routerLink]="propertyDetailLink(p.id)">View</a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (!loading && filteredProperties.length > 0 && totalPages > 1) {
+    <div class="pagination card">
+      <button class="btn-secondary" type="button" [disabled]="page <= 1" (click)="prevPage()">Previous</button>
+      <span>Page {{ page }} of {{ totalPages }}</span>
+      <button class="btn-secondary" type="button" [disabled]="page >= totalPages" (click)="nextPage()">Next</button>
+    </div>
+  }
+</div>
+
+@if (showAddUnitModal) {
+  <div class="modal-overlay" (click)="onCancelAddUnit()">
+    <div class="modal-container modal-wide add-unit-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title-section">
+          <div class="modal-icon"><mat-icon svgIcon="building"></mat-icon></div>
+          <div>
+            <h2>Add New Unit</h2>
+            @if (selectedPropertyName) {
+              <p class="modal-subtitle">Add a rental unit to {{ selectedPropertyName }}</p>
+            }
+          </div>
+        </div>
+        <button class="modal-close icon-close-btn" type="button" (click)="onCancelAddUnit()" aria-label="Close">
+          <span class="material-icons" aria-hidden="true">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <app-add-unit
+          presentation="modal"
+          [propertyId]="selectedPropertyId"
+          [propertyName]="selectedPropertyName"
+          (unitAdded)="onUnitAdded($event)"
+          (cancel)="onCancelAddUnit()">
+        </app-add-unit>
+      </div>
+    </div>
+  </div>
+}

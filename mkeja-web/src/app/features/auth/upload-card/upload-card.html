@@ -1,0 +1,30 @@
+<div class="upload-card" [class.upload-card-uploaded]="preview">
+  <div class="upload-card-header" [class.upload-card-header-uploaded]="preview">
+    <span class="upload-card-icon material-icons" *ngIf="icon">{{ icon }}</span>
+    {{ label }}
+    <span *ngIf="preview" class="upload-card-badge">UPLOADED</span>
+  </div>
+  
+  <div *ngIf="preview; else uploadZone" class="upload-card-preview">
+    <img [src]="preview" [alt]="label" class="upload-card-image" />
+    <button (click)="clear.emit()" class="upload-card-clear icon-close-btn" type="button" aria-label="Remove file">
+      <span class="material-icons" aria-hidden="true">close</span>
+    </button>
+  </div>
+  
+  <ng-template #uploadZone>
+    <div 
+      (click)="triggerUpload()" 
+      class="upload-card-zone"
+      [class.upload-card-zone-hover]="hover"
+      (mouseenter)="onMouseEnter()"
+      (mouseleave)="onMouseLeave()"
+    >
+      <div class="upload-card-zone-icon material-icons">upload_file</div>
+      <div class="upload-card-zone-title">Click to upload</div>
+      <div class="upload-card-zone-hint">{{ hint || 'JPEG, PNG or PDF · Max 5MB' }}</div>
+    </div>
+  </ng-template>
+  
+  <input #fileInput type="file" accept="image/jpeg,image/png,application/pdf" style="display: none" (change)="upload.emit($event)" />
+</div>

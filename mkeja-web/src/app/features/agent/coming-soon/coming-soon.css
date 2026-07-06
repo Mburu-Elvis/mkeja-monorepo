@@ -1,0 +1,54 @@
+@import '../../../shared/styles/platform-page.css';
+
+.coming-soon-page {
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.coming-soon-card {
+  max-width: 520px;
+  width: 100%;
+  padding: 32px 28px;
+  text-align: center;
+}
+
+.icon-wrap {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px;
+  border-radius: 16px;
+  background: var(--sf-green-pale, #E8F5E9);
+  color: var(--sf-green-dark, #2E7D32);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-wrap mat-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.coming-soon-card h1 {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 10px;
+  color: var(--sf-text-1, #111827);
+}
+
+.coming-soon-card p {
+  color: var(--sf-text-3, #6B7280);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.back-link {
+  color: var(--sf-green-dark, #2E7D32);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}

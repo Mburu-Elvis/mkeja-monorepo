@@ -1,0 +1,6 @@
+<!-- field.component.html -->
+<div class="field-container">
+  <label *ngIf="label" class="field-label">{{ label }}</label>
+  <ng-content></ng-content>
+  <div *ngIf="error" class="field-error">{{ error }}</div>
+</div>

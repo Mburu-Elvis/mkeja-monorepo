@@ -1,0 +1,45 @@
+<div class="house-hunt-shell platform-page">
+  <a routerLink="/tenant/house-hunt" class="back-link">Browse all listings</a>
+
+  <div class="hero-section">
+    <div class="hero-text">
+      <p class="greeting-label">Curated for you</p>
+      <h1 class="page-title">Recommended properties</h1>
+      <p class="hero-subtitle">Verified properties with units that match your preferences.</p>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading-state"><div class="spinner"></div><p>Building recommendations...</p></div>
+  } @else if (error) {
+    <div class="error-card">{{ error }}</div>
+  } @else if (listings.length === 0) {
+    <div class="empty-card app-empty-state">
+      <div class="app-empty-icon"><span class="material-icons">recommend</span></div>
+      <h3 class="app-empty-title">No recommendations yet</h3>
+      <p class="app-empty-text">Browse listings or update your preferences to see curated properties.</p>
+      <a class="btn-primary" routerLink="/tenant/house-hunt">Browse listings</a>
+    </div>
+  } @else {
+    <div class="listing-grid">
+      @for (item of listings; track item.propertyId) {
+        <a class="listing-card" [routerLink]="['/tenant/house-hunt/property', item.propertyId]">
+          <div class="listing-media">
+            @if (item.coverImageUrl) {
+              <img [src]="item.coverImageUrl" [alt]="item.propertyName" />
+            } @else {
+              <div class="media-placeholder">Property photos coming soon</div>
+            }
+          </div>
+          <div class="listing-body">
+            <strong>{{ item.propertyName }}</strong>
+            <p class="unit-line">{{ unitTypeSummary(item) }}</p>
+            @if (item.matchReasons?.length) {
+              <p class="reason-line">{{ item.matchReasons![0] }}</p>
+            }
+          </div>
+        </a>
+      }
+    </div>
+  }
+</div>

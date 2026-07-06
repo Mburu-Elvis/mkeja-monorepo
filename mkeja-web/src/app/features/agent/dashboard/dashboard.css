@@ -1,0 +1,250 @@
+@import '../../../shared/styles/platform-page.css';
+
+.agent-dashboard {
+  padding: 24px;
+}
+
+.hero-copy {
+  color: rgba(255, 255, 255, 0.88);
+  max-width: 640px;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 12px;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  padding: 16px 20px;
+  min-width: 120px;
+  text-align: center;
+}
+
+.stat-value {
+  display: block;
+  font-size: 28px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.stat-label {
+  display: block;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 4px;
+}
+
+.function-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.function-group {
+  padding: 20px;
+}
+
+.group-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.group-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--sf-green-pale, #E8F5E9);
+  color: var(--sf-green-dark, #2E7D32);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.group-icon mat-icon {
+  width: 22px;
+  height: 22px;
+}
+
+.group-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--sf-text-1, #111827);
+  margin-bottom: 4px;
+}
+
+.group-header p {
+  color: var(--sf-text-3, #6B7280);
+  font-size: 14px;
+}
+
+.live-badge {
+  margin-left: auto;
+  background: var(--sf-green-pale, #E8F5E9);
+  color: var(--sf-green-dark, #2E7D32);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.function-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.function-card {
+  border: 1px solid var(--sf-border, #E5E7EB);
+  border-radius: 14px;
+  padding: 16px;
+  background: #fff;
+  min-height: 130px;
+  display: flex;
+  flex-direction: column;
+}
+
+.function-card.live {
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.function-card.live:hover {
+  border-color: var(--sf-green, #4CAF50);
+  box-shadow: 0 8px 24px rgba(46, 125, 50, 0.08);
+}
+
+.function-card h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--sf-text-1, #111827);
+  margin-bottom: 6px;
+}
+
+.function-card p {
+  font-size: 13px;
+  color: var(--sf-text-3, #6B7280);
+  line-height: 1.45;
+  flex: 1;
+}
+
+.card-cta {
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sf-green-dark, #2E7D32);
+}
+
+.soon-badge {
+  margin-top: 12px;
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--sf-text-4, #9CA3AF);
+  background: var(--sf-bg, #F9FAFB);
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+
+.function-card.soon {
+  background: var(--sf-bg, #F9FAFB);
+}
+
+.function-card.locked {
+  background: #FFFBEB;
+  border-color: #FCD34D;
+  cursor: not-allowed;
+}
+
+.locked-badge {
+  margin-top: 12px;
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #B45309;
+  background: #FEF3C7;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+@media (max-width: 768px) {
+  .agent-dashboard {
+    padding: 16px;
+  }
+
+  .group-header {
+    flex-wrap: wrap;
+  }
+
+  .live-badge {
+    margin-left: 0;
+  }
+}
+
+.support-hub {
+  margin-top: 20px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.support-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.support-text {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.support-text mat-icon {
+  width: 22px;
+  height: 22px;
+  color: #00A859;
+}
+
+.support-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.support-actions .btn-outline,
+.support-actions .help-link {
+  text-decoration: none;
+}
+
+.help-link {
+  font-size: 13px;
+  color: #6B7280;
+}
+
+.help-link:hover {
+  color: #047857;
+}
+
+.kyc-banner a {
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+}

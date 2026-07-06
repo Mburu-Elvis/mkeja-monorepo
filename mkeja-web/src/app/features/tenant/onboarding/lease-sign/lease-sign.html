@@ -1,0 +1,42 @@
+<app-header></app-header>
+
+<div class="lease-sign-screen">
+  @if (loading) {
+    <app-loading-spinner></app-loading-spinner>
+  } @else if (errorMessage) {
+    <div class="error-box">{{ errorMessage }}</div>
+  } @else if (lease) {
+    <div class="form-container">
+      <h2>Review &amp; Sign Lease</h2>
+      <p class="subtitle">Review your tenancy terms before continuing.</p>
+
+      <div class="lease-card">
+        <div class="row"><span>Landlord</span><strong>{{ lease.landlordName }}</strong></div>
+        <div class="row"><span>Unit</span><strong>{{ lease.unitName }}</strong></div>
+        <div class="row"><span>Property</span><strong>{{ lease.propertyAddress }}</strong></div>
+        <div class="row"><span>Monthly Rent</span><strong>KES {{ lease.monthlyRent | number }}</strong></div>
+        @if (lease.depositAmount) {
+          <div class="row"><span>Deposit</span><strong>KES {{ lease.depositAmount | number }}</strong></div>
+        }
+        @if (lease.leaseStartDate) {
+          <div class="row"><span>Start Date</span><strong>{{ lease.leaseStartDate }}</strong></div>
+        }
+        @if (lease.leaseEndDate) {
+          <div class="row"><span>End Date</span><strong>{{ lease.leaseEndDate }}</strong></div>
+        }
+      </div>
+
+      <p class="terms-note">
+        By signing digitally you accept the lease terms and authorize Mkeja to create your tenancy record.
+      </p>
+
+      <button class="submit-btn" [disabled]="signing" (click)="signLease()">
+        {{ signing ? 'Signing…' : 'Sign Lease & Continue' }}
+      </button>
+    </div>
+  }
+</div>
+
+@if (showToast) {
+  <app-toast [type]="toastType" [message]="toastMessage" (close)="closeToast()"></app-toast>
+}

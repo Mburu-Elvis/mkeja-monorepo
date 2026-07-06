@@ -1,0 +1,59 @@
+<div class="topup-screen platform-page">
+  <div class="form-container">
+    <div class="wallet-balance">
+      <span class="label">Current Balance</span>
+      <span class="value">KES 3,400</span>
+    </div>
+    
+    <div class="preset-amounts">
+      <p>Quick Amounts</p>
+      <div class="amount-grid">
+        @for (amt of presetAmounts; track amt) {
+          <button class="amount-btn" [class.selected]="amount === amt" (click)="selectAmount(amt)">
+            KES {{ amt | number }}
+          </button>
+        }
+      </div>
+    </div>
+    
+    <div class="custom-amount">
+      <label>Or enter custom amount</label>
+      <div class="amount-input">
+        <span class="currency">KES</span>
+        <input 
+          type="number" 
+          [(ngModel)]="customAmount"
+          (ngModelChange)="onCustomAmountChange()"
+          placeholder="Enter amount"
+          min="10"
+          max="50000">
+      </div>
+    </div>
+    
+    <div class="selected-amount">
+      <span>You are about to top up</span>
+      <strong>KES {{ amount | number }}</strong>
+    </div>
+    
+    <button class="pay-btn" [disabled]="amount < 10 || processing" (click)="onSubmit()">
+      @if (processing) {
+        <span class="spinner"></span>
+        Processing...
+      } @else {
+        Continue to M-Pesa
+      }
+    </button>
+    
+    <p class="info-text">
+      You'll receive an M-Pesa STK Push prompt to enter your PIN
+    </p>
+  </div>
+  
+  @if (showToast) {
+    <app-toast 
+      [type]="toastType" 
+      [message]="toastMessage"
+      (close)="closeToast()">
+    </app-toast>
+  }
+</div>

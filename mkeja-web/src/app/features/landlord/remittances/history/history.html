@@ -1,0 +1,62 @@
+<div class="remittances-history">
+
+  <div class="summary-card">
+    <div class="summary-item">
+      <span class="label">Total Remitted (YTD)</span>
+      <span class="value">KES {{ remittances.reduce((sum, r) => sum + r.netAmount, 0) | number }}</span>
+    </div>
+    <div class="summary-item">
+      <span class="label">Total Fees (YTD)</span>
+      <span class="value">KES {{ remittances.reduce((sum, r) => sum + r.fee, 0) | number }}</span>
+    </div>
+  </div>
+  
+  @if (loading) {
+    <app-loading-spinner [fullScreen]="true" message="Loading remittances..."></app-loading-spinner>
+  } @else {
+    <div class="remittances-list">
+      @for (remittance of remittances; track remittance.id) {
+        <div class="remittance-card">
+          <div class="remittance-header">
+            <div>
+              <h4>{{ remittance.period }}</h4>
+              <div class="status-badge" [class]="getStatusClass(remittance.status)">
+                {{ getStatusText(remittance.status) }}
+              </div>
+            </div>
+            <div class="remittance-date">
+              {{ remittance.sentDate | date:'MMM d, yyyy' }}
+            </div>
+          </div>
+          
+          <div class="remittance-details">
+            <div class="detail-row">
+              <span>Gross Rent</span>
+              <span>KES {{ remittance.grossAmount | number }}</span>
+            </div>
+            <div class="detail-row fee">
+              <span>Mkeja Fee (2.5%)</span>
+              <span>- KES {{ remittance.fee | number }}</span>
+            </div>
+            <div class="detail-row total">
+              <span>Net Remittance</span>
+              <span>KES {{ remittance.netAmount | number }}</span>
+            </div>
+          </div>
+          
+          @if (remittance.bankReference) {
+            <div class="remittance-footer">
+              <span>Ref: {{ remittance.bankReference }}</span>
+              <button class="download-btn" (click)="downloadReceipt(remittance)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 3V16M12 16L9 13M12 16L15 13M5 21H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Receipt
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

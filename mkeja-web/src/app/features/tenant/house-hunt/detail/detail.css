@@ -1,0 +1,32 @@
+@import '../house-hunt-shared.css';
+
+.detail-page {
+  padding-bottom: 96px;
+}
+
+.description,
+.meta-line {
+  color: #555;
+  line-height: 1.6;
+  margin: 10px 0 0;
+}
+
+.reasons {
+  margin: 16px 0 0;
+  padding-left: 18px;
+  color: #333;
+}
+
+.gallery-thumb {
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.toast {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.toast.success { color: #0f5132; }
+.toast.error { color: #842029; }

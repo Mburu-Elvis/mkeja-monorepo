@@ -1,0 +1,88 @@
+<div class="security-deposit-page">
+
+  <header class="auth-brand">
+    <div class="auth-brand-badge">
+      <img src="/logo-mkeja.png" alt="Mkeja" class="auth-brand-logo">
+    </div>
+    <h1>Complete Your Setup</h1>
+    <p>One final step before your tenancy becomes active</p>
+  </header>
+
+  <div class="security-deposit-card">
+
+    @if (kycStatus === 'PENDING') {
+
+      <div class="kyc-status">
+
+        <div class="spinner-large"></div>
+
+        <h2>Verifying Your Identity</h2>
+
+        <p>
+          We're reviewing your documents.
+          Verification typically takes 2–5 minutes.
+        </p>
+
+      </div>
+
+    } @else {
+
+      <div class="success-icon">
+        <span class="material-icons">check_circle</span>
+      </div>
+
+      <h2>Identity Verified!</h2>
+
+      <p class="subtitle">
+        Your account is ready. Complete your security deposit payment
+        to activate your tenancy.
+      </p>
+
+      <div class="deposit-card">
+
+        <div class="deposit-label">
+          Security Deposit Required
+        </div>
+
+        <div class="deposit-amount">
+          KES {{ securityDeposit | number }}
+        </div>
+
+        <div class="deposit-info">
+          This amount will be securely held in your wallet and returned
+          when your tenancy ends, subject to any applicable deductions.
+        </div>
+
+      </div>
+
+      <button
+        class="pay-btn"
+        [disabled]="processing"
+        (click)="payDeposit()">
+
+        @if (processing) {
+          <span class="spinner"></span>
+          Processing Payment...
+        } @else {
+          Pay with M-Pesa
+        }
+
+      </button>
+
+      <p class="info-text">
+        You'll receive an M-Pesa STK Push notification on your phone.
+      </p>
+
+    }
+
+  </div>
+
+  @if (showToast) {
+    <app-toast
+      [type]="toastType"
+      [message]="toastMessage"
+      (close)="closeToast()">
+    </app-toast>
+  }
+
+</div>

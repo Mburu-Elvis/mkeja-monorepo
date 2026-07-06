@@ -1,0 +1,123 @@
+.progress-card {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  margin: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.progress-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.progress-card .card-header .unit-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--mpesa-black);
+  margin: 0 0 4px 0;
+}
+
+.progress-card .card-header .landlord-name {
+  font-size: 12px;
+  color: var(--mpesa-gray);
+  margin: 0;
+}
+
+.progress-card .card-header .status-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.progress-card .card-header .status-badge.success {
+  background: #E8F5E9;
+  color: #2E7D32;
+}
+
+.progress-card .card-header .status-badge.warning {
+  background: #FFF3E0;
+  color: #E65100;
+}
+
+.progress-card .card-header .status-badge.danger {
+  background: #FFEBEE;
+  color: #C62828;
+}
+
+.progress-card .amounts {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.progress-card .amounts .paid,
+.progress-card .amounts .total {
+  text-align: center;
+}
+
+.progress-card .amounts .paid .label,
+.progress-card .amounts .total .label {
+  font-size: 12px;
+  color: var(--mpesa-gray);
+  display: block;
+}
+
+.progress-card .amounts .paid .amount,
+.progress-card .amounts .total .amount {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--mpesa-black);
+}
+
+.progress-card .amounts .divider {
+  font-size: 20px;
+  color: var(--mpesa-gray);
+}
+
+.progress-card .progress-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.progress-card .progress-wrapper .progress-bar {
+  flex: 1;
+  height: 8px;
+  background: #F0F0F0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-card .progress-wrapper .progress-bar .progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--mpesa-primary), var(--mpesa-primary-dark));
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.progress-card .progress-wrapper .percent-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--mpesa-primary);
+}
+
+.progress-card .card-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--mpesa-gray);
+}
+
+.progress-card .card-footer .due-date,
+.progress-card .card-footer .plan {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}

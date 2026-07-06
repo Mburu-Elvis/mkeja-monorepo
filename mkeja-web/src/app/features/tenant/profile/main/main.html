@@ -1,0 +1,169 @@
+<div class="profile-page platform-page">
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading profile...</p>
+    </div>
+  } @else if (profile) {
+    @if (kycPending || kycRejected) {
+      <div class="kyc-banner" [class.rejected]="kycRejected">
+        @if (kycRejected) {
+          <strong>Profile not verified.</strong> Your KYC was rejected. Re-upload your documents or contact support.
+        } @else {
+          <strong>Profile not verified.</strong> Complete identity verification to unlock your financial dashboard.
+        }
+      </div>
+    }
+
+    <section class="hero-section profile-hero">
+      <div class="hero-flex">
+        <div class="hero-identity">
+          <div class="avatar-large">{{ profile.fullName?.charAt(0) || 'T' }}</div>
+          <div>
+            <p class="greeting-label">My profile</p>
+            <h1 class="page-title">{{ profile.fullName }}</h1>
+            <p class="hero-subtitle">{{ profile.phone }} · {{ roleDisplayName }}</p>
+            <div class="hero-meta">
+              <span class="unit-pill">
+                <span class="status-dot" [class]="kycStatusClass"></span>
+                KYC {{ kycStatusLabel }}
+              </span>
+              @if (profile.joinedDate) {
+                <span class="unit-pill">Member since {{ profile.joinedDate | date:'MMM yyyy' }}</span>
+              }
+            </div>
+          </div>
+        </div>
+        <div class="hero-actions">
+          <a class="btn-hero-light" routerLink="/tenant/onboarding/upload-documents">
+            {{ documentsButtonLabel }}
+          </a>
+        </div>
+      </div>
+    </section>
+
+    @if (profile.tenancyCount != null || profile.activeTenancyCount != null) {
+      <div class="profile-stats">
+        <div class="card stat-card">
+          <strong>{{ profile.tenancyCount ?? 0 }}</strong>
+          <span>Total tenancies</span>
+        </div>
+        <div class="card stat-card highlight">
+          <strong>{{ profile.activeTenancyCount ?? 0 }}</strong>
+          <span>Active now</span>
+        </div>
+      </div>
+    }
+
+    <div class="profile-layout">
+      <div class="profile-stack">
+        <div class="card details-section">
+          <div class="card-header-row">
+            <div>
+              <div class="section-title">Account</div>
+              <p class="section-desc">Contact details and verification status.</p>
+            </div>
+            <span class="status-pill" [class]="kycStatusClass">{{ kycStatusLabel }}</span>
+          </div>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="label">Email</span>
+              <span class="value">{{ profile.email || 'Not provided' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Phone</span>
+              <span class="value">{{ profile.phone }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Role</span>
+              <span class="value">{{ roleDisplayName }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Member since</span>
+              <span class="value">{{ profile.joinedDate | date:'MMM d, yyyy' }}</span>
+            </div>
+          </div>
+          <div class="section-actions">
+            <a class="btn-primary btn-full" routerLink="/tenant/onboarding/upload-documents">
+              {{ documentsButtonLabel }}
+            </a>
+          </div>
+        </div>
+
+        <div class="card details-section">
+          <div class="section-title">Security</div>
+          <p class="section-desc">Manage how you sign in to Mkeja.</p>
+          <button class="profile-action-row" type="button" (click)="toggleChangePin()">
+            <span class="action-copy">
+              <span>Change PIN</span>
+              <small>Update your 4–6 digit sign-in PIN</small>
+            </span>
+            <svg class="action-chevron" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </button>
+
+          @if (showChangePin) {
+            <div class="change-pin-form">
+              <div class="form-group">
+                <label>Current PIN</label>
+                <input type="password" [(ngModel)]="currentPin" maxlength="6" placeholder="Enter current PIN">
+              </div>
+              <div class="form-group">
+                <label>New PIN</label>
+                <input type="password" [(ngModel)]="newPin" maxlength="6" placeholder="Enter new PIN">
+              </div>
+              <div class="form-group">
+                <label>Confirm new PIN</label>
+                <input type="password" [(ngModel)]="confirmPin" maxlength="6" placeholder="Confirm new PIN">
+              </div>
+              <button class="btn-primary btn-full" type="button" [disabled]="changingPin" (click)="changePin()">
+                @if (changingPin) {
+                  <span class="spinner"></span>
+                  Saving...
+                } @else {
+                  Save PIN
+                }
+              </button>
+            </div>
+          }
+        </div>
+
+        <div class="card details-section">
+          <div class="section-title">Tenancy</div>
+          <p class="section-desc">View properties and leases linked to your account.</p>
+          <a class="profile-action-row" routerLink="/tenant/tenancies">
+            <span class="action-copy">
+              <span>Tenancy history</span>
+              <small>Properties, units, and lease dates</small>
+            </span>
+            <svg class="action-chevron" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="profile-stack">
+        <app-user-profile-panels [profile]="profile" documentSource="profile"></app-user-profile-panels>
+      </div>
+    </div>
+
+    <div class="profile-footer">
+      <button class="logout-btn danger-outline" type="button" (click)="logout()">Sign out</button>
+    </div>
+  } @else {
+    <div class="card profile-error">
+      <p>We couldn't load your profile right now.</p>
+      <button class="btn-primary btn-full" type="button" (click)="loadProfile()">Try again</button>
+    </div>
+  }
+
+  @if (showToast) {
+    <app-toast
+      [type]="toastType"
+      [message]="toastMessage"
+      (close)="closeToast()">
+    </app-toast>
+  }
+</div>

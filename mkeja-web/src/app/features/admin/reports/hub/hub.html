@@ -1,0 +1,250 @@
+<div class="admin-page reports-hub">
+  <div class="page-header">
+    <div>
+      <p class="greeting-label">Source of Truth</p>
+      <h1 class="page-title">Reports & Ledger</h1>
+      <p class="page-subtitle">Comprehensive platform metrics, transactions, and reconciliation for dispute resolution</p>
+    </div>
+  </div>
+
+  <div class="tab-navigation">
+    <button class="tab-btn" [class.active]="activeTab === 'overview'" type="button" (click)="setActiveTab('overview')">Overview</button>
+    <button class="tab-btn" [class.active]="activeTab === 'daily'" type="button" (click)="setActiveTab('daily')">Daily</button>
+    <button class="tab-btn" [class.active]="activeTab === 'monthly'" type="button" (click)="setActiveTab('monthly')">Monthly</button>
+    <button class="tab-btn" [class.active]="activeTab === 'ledger'" type="button" (click)="setActiveTab('ledger')">Ledger</button>
+    <button class="tab-btn" [class.active]="activeTab === 'reconcile'" type="button" (click)="setActiveTab('reconcile')">Reconciliation</button>
+  </div>
+
+  @if (error) {
+    <div class="alert-banner alert-danger">{{ error }}</div>
+  }
+
+  @if (loading) {
+    <app-loading-spinner [fullScreen]="true" message="Loading report data..."></app-loading-spinner>
+  } @else {
+    @if (activeTab === 'overview') {
+      <div class="tab-content">
+        <span class="source-badge">Live onboarding data · Payment wallet integration pending</span>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <span class="kpi-label">Monthly Rent Roll</span>
+            <span class="kpi-value">{{ formatCurrency(dashboard?.financial?.monthlyRentRoll || 0) }}</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Security Deposits</span>
+            <span class="kpi-value">{{ formatCurrency(dashboard?.financial?.totalSecurityDeposits || 0) }}</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Active Tenancies</span>
+            <span class="kpi-value">{{ dashboard?.activeTenancies || 0 }}</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Platform Users</span>
+            <span class="kpi-value">{{ dashboard?.totalUsers || 0 }}</span>
+          </div>
+        </div>
+
+        <div class="report-section card">
+          <h3>Business Snapshot</h3>
+          <div class="stats-grid">
+            <div class="stat-card"><span class="label">Properties</span><span class="value">{{ dashboard?.business?.totalProperties || 0 }}</span></div>
+            <div class="stat-card"><span class="label">Units</span><span class="value">{{ dashboard?.business?.totalUnits || 0 }}</span></div>
+            <div class="stat-card"><span class="label">Occupancy</span><span class="value">{{ dashboard?.business?.occupancyRate || 0 }}%</span></div>
+            <div class="stat-card"><span class="label">New Users (30d)</span><span class="value">{{ dashboard?.business?.newUsersLast30Days || 0 }}</span></div>
+          </div>
+        </div>
+
+        <div class="report-section card">
+          <h3>Operations</h3>
+          <div class="stats-grid">
+            <div class="stat-card"><span class="label">KYC Pending</span><span class="value">{{ dashboard?.kycPending || 0 }}</span></div>
+            <div class="stat-card"><span class="label">Manual Review</span><span class="value">{{ dashboard?.kycManualReview || 0 }}</span></div>
+            <div class="stat-card"><span class="label">Properties Pending</span><span class="value">{{ dashboard?.propertiesPendingVerification || 0 }}</span></div>
+            <div class="stat-card"><span class="label">Failed Ratiba</span><span class="value">{{ dashboard?.operational?.failedStandingOrders || 0 }}</span></div>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (activeTab === 'daily') {
+      <div class="tab-content">
+        <div class="date-selector card">
+          <input type="date" [(ngModel)]="selectedDate" (change)="loadDaily()">
+        </div>
+        @if (dailyReport) {
+          <span class="source-badge">Data source: {{ dailyReport.dataSource }}</span>
+          <div class="kpi-grid">
+            <div class="kpi-card"><span class="kpi-label">New Users</span><span class="kpi-value">{{ dailyReport.newUsers }}</span></div>
+            <div class="kpi-card"><span class="kpi-label">New Tenancies</span><span class="kpi-value">{{ dailyReport.newTenancies }}</span></div>
+            <div class="kpi-card"><span class="kpi-label">Ledger Volume</span><span class="kpi-value">{{ formatCurrency(dailyReport.ledgerVolume) }}</span></div>
+            <div class="kpi-card"><span class="kpi-label">Active Rent Roll</span><span class="kpi-value">{{ formatCurrency(dailyReport.rentRollActive) }}</span></div>
+          </div>
+          <div class="report-section card">
+            <h3>Onboarding Activity — {{ dailyReport.date }}</h3>
+            <div class="stats-grid">
+              <div class="stat-card"><span class="label">New Landlords</span><span class="value">{{ dailyReport.newLandlords }}</span></div>
+              <div class="stat-card"><span class="label">New Tenants</span><span class="value">{{ dailyReport.newTenants }}</span></div>
+              <div class="stat-card"><span class="label">New Properties</span><span class="value">{{ dailyReport.newProperties }}</span></div>
+              <div class="stat-card"><span class="label">Security Deposits</span><span class="value">{{ dailyReport.securityDeposits }} · {{ formatCurrency(dailyReport.securityDepositAmount) }}</span></div>
+              <div class="stat-card"><span class="label">Standing Orders</span><span class="value">{{ dailyReport.standingOrders }} · {{ formatCurrency(dailyReport.standingOrderAmount) }}</span></div>
+              <div class="stat-card"><span class="label">Ledger Entries</span><span class="value">{{ dailyReport.ledgerEntries }}</span></div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    @if (activeTab === 'monthly') {
+      <div class="tab-content">
+        <div class="month-selector card">
+          <button class="nav-btn" type="button" (click)="previousMonth()" aria-label="Previous month">
+            <span class="material-icons" aria-hidden="true">chevron_left</span>
+          </button>
+          <span class="month-year">{{ months[selectedMonth - 1] }} {{ selectedYear }}</span>
+          <button class="nav-btn" type="button" (click)="nextMonth()" aria-label="Next month">
+            <span class="material-icons" aria-hidden="true">chevron_right</span>
+          </button>
+        </div>
+        @if (monthlyReport) {
+          <span class="source-badge">Data source: {{ monthlyReport.dataSource }}</span>
+          <div class="kpi-grid">
+            <div class="kpi-card"><span class="kpi-label">New Users</span><span class="kpi-value">{{ monthlyReport.newUsers }}</span></div>
+            <div class="kpi-card"><span class="kpi-label">Active Tenants</span><span class="kpi-value">{{ monthlyReport.activeTenants }}</span></div>
+            <div class="kpi-card"><span class="kpi-label">Active Landlords</span><span class="kpi-value">{{ monthlyReport.activeLandlords }}</span></div>
+            <div class="kpi-card"><span class="kpi-label">Rent Roll (EOM)</span><span class="kpi-value">{{ formatCurrency(monthlyReport.rentRollEndOfMonth) }}</span></div>
+          </div>
+          <div class="report-section card">
+            <h3>{{ monthlyReport.monthLabel }} Summary</h3>
+            <div class="stats-grid">
+              <div class="stat-card"><span class="label">New Tenants</span><span class="value">{{ monthlyReport.newTenants }}</span></div>
+              <div class="stat-card"><span class="label">New Landlords</span><span class="value">{{ monthlyReport.newLandlords }}</span></div>
+              <div class="stat-card"><span class="label">New Properties</span><span class="value">{{ monthlyReport.newProperties }}</span></div>
+              <div class="stat-card"><span class="label">New Tenancies</span><span class="value">{{ monthlyReport.newTenancies }}</span></div>
+              <div class="stat-card"><span class="label">Deposits</span><span class="value">{{ monthlyReport.securityDeposits }} · {{ formatCurrency(monthlyReport.securityDepositAmount) }}</span></div>
+              <div class="stat-card"><span class="label">Ratiba Setup</span><span class="value">{{ monthlyReport.standingOrders }} · {{ formatCurrency(monthlyReport.standingOrderAmount) }}</span></div>
+            </div>
+          </div>
+          @if (monthlyReport.dailyBreakdown.length > 0) {
+            <div class="chart-card">
+              <div class="card-header">
+                <div>
+                  <h3>Daily Sign-ups</h3>
+                  <p class="chart-subtitle">New users per day in {{ monthlyReport.monthLabel }}</p>
+                </div>
+              </div>
+              <div class="trend-line mini-trend">
+                <div class="chart-grid" aria-hidden="true"></div>
+                @for (day of monthlyReport.dailyBreakdown; track day.period) {
+                  @if (+day.shortLabel % 3 === 1 || +day.shortLabel === 1) {
+                    <div class="trend-point">
+                      <div class="trend-value">{{ day.users }}</div>
+                      <div class="trend-plot">
+                        <div class="trend-bar" [style.height.%]="barHeight(day.users, maxDailyActivity)"></div>
+                      </div>
+                      <div class="trend-label">{{ day.shortLabel }}</div>
+                    </div>
+                  }
+                }
+              </div>
+            </div>
+          }
+        }
+      </div>
+    }
+
+    @if (activeTab === 'ledger') {
+      <div class="tab-content">
+        <div class="filters card">
+          <div class="search-box">
+            <input type="text" [(ngModel)]="ledgerSearch" (ngModelChange)="applyLedgerFilters()" placeholder="Search tenant or reference">
+          </div>
+          <select [(ngModel)]="ledgerType" (change)="applyLedgerFilters()">
+            <option value="all">All types</option>
+            <option value="SECURITY_DEPOSIT">Security Deposits</option>
+            <option value="STANDING_ORDER">Standing Orders</option>
+          </select>
+          <input type="date" [(ngModel)]="ledgerStartDate" (change)="applyLedgerFilters()">
+          <input type="date" [(ngModel)]="ledgerEndDate" (change)="applyLedgerFilters()">
+          <button class="btn-secondary" type="button" (click)="clearLedgerFilters()">Clear</button>
+        </div>
+
+        <span class="source-badge">Onboarding ledger · Deposits & ratiba from platform records</span>
+
+        @if (filteredLedger.length === 0) {
+          <div class="list-empty-state card ledger-empty-state">
+            <div class="list-empty-icon" aria-hidden="true">
+              <span class="material-icons">receipt_long</span>
+            </div>
+            <h3 class="list-empty-title">
+              {{ hasLedgerFilters ? 'No matching ledger entries' : 'No ledger entries yet' }}
+            </h3>
+            <p class="list-empty-text">
+              @if (hasLedgerFilters) {
+                Try broadening your search, type, or date range to find deposits and standing orders.
+              } @else {
+                Ledger entries appear when tenants complete security deposits or ratiba setup on the platform.
+              }
+            </p>
+            @if (hasLedgerFilters) {
+              <button class="btn-secondary" type="button" (click)="clearLedgerFilters()">Clear filters</button>
+            }
+          </div>
+        } @else {
+          <div class="transactions-table card">
+            <div class="table-header">
+              <span>Date</span>
+              <span>Type</span>
+              <span>Tenant</span>
+              <span>Amount</span>
+              <span>Reference</span>
+              <span>Status</span>
+            </div>
+            @for (tx of filteredLedger; track tx.id) {
+              <div class="table-row">
+                <span>{{ tx.timestamp | date:'MMM d, h:mm a' }}</span>
+                <span>{{ getTypeLabel(tx.type) }}</span>
+                <span>{{ tx.tenantName }}</span>
+                <span class="amount" [class.credit]="tx.direction === 'CREDIT'">
+                  {{ tx.direction === 'CREDIT' ? '+' : '-' }} {{ formatCurrency(tx.amount) }}
+                </span>
+                <span class="ref">{{ tx.reference }}</span>
+                <span class="status-badge" [class]="getStatusClass(tx.status)">{{ tx.status }}</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    @if (activeTab === 'reconcile') {
+      <div class="tab-content">
+        <div class="date-selector card">
+          <label>Reconciliation date</label>
+          <input type="date" [(ngModel)]="selectedDate" (change)="loadReconcile()">
+        </div>
+        <span class="source-badge">M-Pesa integration pending · Showing onboarding ledger totals</span>
+        <div class="summary-cards">
+          <div class="summary-card">
+            <span class="label">External (M-Pesa)</span>
+            <span class="value">{{ formatCurrency(reconcileMpesaTotal) }}</span>
+          </div>
+          <div class="summary-card">
+            <span class="label">Mkeja Ledger</span>
+            <span class="value">{{ formatCurrency(reconcileMkejaTotal) }}</span>
+          </div>
+          <div class="summary-card" [class.warning]="reconcileDifference !== 0">
+            <span class="label">Difference</span>
+            <span class="value">{{ formatCurrency(reconcileDifference) }}</span>
+          </div>
+        </div>
+        @if (reconcileDifference === 0) {
+          <div class="success-state card">
+            <h3>Balanced</h3>
+            <p>No discrepancies for {{ selectedDate }} based on available onboarding records.</p>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

@@ -1,0 +1,57 @@
+.kyc-pending {
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+.pending-card {
+  max-width: 480px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.icon,
+.pending-icon-wrap {
+  margin-bottom: 1rem;
+}
+
+.pending-icon-wrap {
+  width: 64px;
+  height: 64px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 50%;
+  background: var(--primary-light);
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pending-icon-wrap .material-icons {
+  font-size: 32px;
+}
+
+.status {
+  margin: 1rem 0;
+}
+
+.hint {
+  color: var(--sf-text-3);
+  font-size: 0.9rem;
+}
+
+.kyc-pending .btn-primary {
+  margin-top: 1.5rem;
+}
+
+.reupload-link {
+  display: inline-block;
+  margin-top: 1rem;
+  color: var(--primary-color);
+  font-weight: 600;
+  text-decoration: none;
+}

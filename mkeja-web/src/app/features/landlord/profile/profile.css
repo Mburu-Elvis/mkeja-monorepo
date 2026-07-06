@@ -1,0 +1,7 @@
+@import '../../../shared/styles/platform-page.css';
+
+:host {
+  --ov-radius-lg: 12px;
+  --ov-radius-xl: 16px;
+  display: block;
+}

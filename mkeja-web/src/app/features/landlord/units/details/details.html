@@ -1,0 +1,66 @@
+<div class="platform-page landlord-page unit-details-page">
+  <div class="page-top">
+    <a class="back-link" routerLink="/landlord/tenants">Back to tenants</a>
+  </div>
+
+  @if (loading) {
+    <div class="loading-state card"><div class="spinner"></div><p>Loading unit history...</p></div>
+  } @else {
+    @if (error && !unit) {
+      <div class="alert-banner">{{ error }}</div>
+    }
+
+    @if (unit) {
+      <div class="hero-section compact">
+        <p class="greeting-label">Unit</p>
+        <h1 class="page-title">{{ unit.propertyName }} · Unit {{ unit.unitNumber }}</h1>
+        <p class="hero-subtitle">{{ locationLabel() }} · KES {{ unit.rent | number }}/mo · {{ unit.status }}</p>
+        @if (isVacantUnit()) {
+          <a class="listing-link" [routerLink]="['/landlord/properties', unit.propertyId, 'house-hunt']" [queryParams]="{ unitId: unit.unitId }">
+            Manage House Hunt listing →
+          </a>
+        }
+      </div>
+    }
+
+    @if (usingDemoData) {
+      <div class="demo-banner card">{{ demoLabel }}</div>
+    }
+
+    <div class="card history-panel">
+      <div class="panel-header">
+        <h2>Tenancy history</h2>
+        <span>{{ tenancies.length }} record(s)</span>
+      </div>
+
+      @if (tenancies.length === 0) {
+        <div class="empty-state app-empty-state">
+          <div class="app-empty-icon"><span class="material-icons">assignment</span></div>
+          <h3 class="app-empty-title">No tenancy records</h3>
+          <p class="app-empty-text">Lease history for this unit will appear here once a tenant is linked.</p>
+        </div>
+      } @else {
+        <div class="timeline">
+          @for (item of tenancies; track item.tenancyId) {
+            <div class="timeline-item">
+              <div class="timeline-marker" [class]="statusClass(item.status)"></div>
+              <div class="timeline-body">
+                <div class="timeline-head">
+                  <strong>{{ item.tenantName || 'Unknown tenant' }}</strong>
+                  <span class="status-badge" [class]="statusClass(item.status)">{{ item.status }}</span>
+                </div>
+                <p class="timeline-meta">+{{ item.tenantPhone || '—' }} · KES {{ item.monthlyRent | number }}/mo</p>
+                <div class="timeline-dates">
+                  <span><label>Move in</label> {{ formatDate(item.moveInDate) }}</span>
+                  <span><label>Lease start</label> {{ formatDate(item.leaseStartDate) }}</span>
+                  <span><label>Lease end</label> {{ formatDate(item.leaseEndDate) }}</span>
+                  <span><label>Move out</label> {{ formatDate(item.moveOutDate) }}</span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -1,0 +1,400 @@
+/* Profile pages — tenant, landlord, agent (extends platform-page) */
+
+.profile-page.platform-page {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.profile-page .profile-hero {
+  margin-bottom: 24px;
+}
+
+.profile-page .hero-identity {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  min-width: 0;
+}
+
+.profile-page .hero-identity .avatar-large {
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+  font-size: 28px;
+}
+
+.profile-page .hero-actions {
+  flex-shrink: 0;
+}
+
+.profile-page .btn-hero-light {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: #fff;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  transition: background 0.2s ease;
+}
+
+.profile-page .btn-hero-light:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.profile-page .status-dot.approved {
+  background: #81C784;
+}
+
+.profile-page .status-dot.pending {
+  background: #FFB74D;
+}
+
+.profile-page .status-dot.rejected {
+  background: #EF5350;
+}
+
+/* Quick stats */
+.profile-page .profile-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.profile-page .profile-stats .stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 18px 20px;
+  text-align: left;
+}
+
+.profile-page .profile-stats .stat-card strong {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--sf-text-1);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.profile-page .profile-stats .stat-card span {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sf-text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.profile-page .profile-stats .stat-card.highlight {
+  border-color: #A5D6A7;
+  background: linear-gradient(135deg, #fff, var(--sf-green-xpale));
+}
+
+/* Two-column layout */
+.profile-page .profile-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.profile-page .profile-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Cards */
+.profile-page .card {
+  padding: 22px 24px;
+  margin-bottom: 0;
+}
+
+.profile-page .card-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.profile-page .section-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--sf-text-3);
+  margin: 0 0 4px;
+}
+
+.profile-page .section-desc {
+  margin: 0;
+  font-size: 13px;
+  color: var(--sf-text-4);
+  line-height: 1.45;
+}
+
+.profile-page .status-pill {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+}
+
+.profile-page .status-pill.approved {
+  background: var(--sf-success-bg);
+  color: var(--sf-success);
+}
+
+.profile-page .status-pill.pending {
+  background: var(--sf-warning-bg);
+  color: var(--sf-warning);
+}
+
+.profile-page .status-pill.rejected {
+  background: var(--sf-danger-bg);
+  color: var(--sf-danger);
+}
+
+.profile-page .info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 20px;
+}
+
+.profile-page .info-item .label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sf-text-4);
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.profile-page .info-item .value {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--sf-text-1);
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.profile-page .section-actions {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--gray-100);
+}
+
+/* Action rows */
+.profile-page .profile-action-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--gray-100);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--sf-text-1);
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.profile-page .profile-action-row:last-child {
+  border-bottom: none;
+}
+
+.profile-page .profile-action-row:hover {
+  color: var(--primary-color);
+}
+
+.profile-page .profile-action-row .action-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  text-align: left;
+}
+
+.profile-page .profile-action-row .action-copy small {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--sf-text-4);
+}
+
+.profile-page .profile-action-row mat-icon,
+.profile-page .profile-action-row .action-chevron {
+  flex-shrink: 0;
+  color: var(--primary-color);
+}
+
+.profile-page .profile-action-row .action-chevron {
+  width: 18px;
+  height: 18px;
+}
+
+/* Change PIN form */
+.profile-page .change-pin-form {
+  margin-top: 4px;
+  padding-top: 16px;
+  border-top: 1px solid var(--gray-100);
+}
+
+.profile-page .change-pin-form .form-group {
+  margin-bottom: 14px;
+}
+
+.profile-page .change-pin-form .form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--sf-text-3);
+}
+
+.profile-page .change-pin-form .form-group input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--sf-border);
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  font-family: var(--font-sans);
+}
+
+.profile-page .change-pin-form .form-group input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(15, 76, 58, 0.1);
+}
+
+/* Documents panel inside profile */
+.profile-page .documents-section {
+  padding: 22px 24px;
+}
+
+.profile-page .documents-section .section-header {
+  margin-bottom: 16px;
+}
+
+.profile-page .documents-section .section-helper {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--sf-text-4);
+}
+
+/* Footer */
+.profile-page .profile-footer {
+  margin-top: 24px;
+  padding-top: 8px;
+}
+
+.profile-page .profile-footer .logout-btn {
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+/* States */
+.profile-page .loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  gap: 16px;
+  color: var(--sf-text-3);
+}
+
+.profile-page .loading-state .spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--sf-green-pale);
+  border-top-color: var(--sf-green);
+  border-radius: 50%;
+  animation: profile-spin 0.8s linear infinite;
+}
+
+.profile-page .profile-error {
+  text-align: center;
+  padding: 32px 24px;
+}
+
+.profile-page .profile-error p {
+  margin-bottom: 16px;
+  color: var(--sf-text-3);
+  font-size: 14px;
+}
+
+@keyframes profile-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Dashboard shell integration */
+.dashboard-main .profile-page.platform-page {
+  min-height: auto;
+  padding-bottom: 24px;
+}
+
+@media (max-width: 1023px) {
+  .dashboard-main .profile-page.platform-page {
+    padding-bottom: 88px;
+  }
+
+  .profile-page .hero-flex {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .profile-page .hero-actions {
+    width: 100%;
+  }
+
+  .profile-page .btn-hero-light {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .profile-page .profile-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-page .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-page .card {
+    padding: 18px 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  .profile-page .hero-identity {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .profile-page .hero-identity .hero-meta {
+    justify-content: center;
+  }
+}

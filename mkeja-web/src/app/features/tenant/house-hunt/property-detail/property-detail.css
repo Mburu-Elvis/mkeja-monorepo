@@ -1,0 +1,263 @@
+@import '../house-hunt-shared.css';
+
+.detail-page { padding-bottom: 96px; }
+
+.overview-hero,
+.browse-panel {
+  margin-bottom: 18px;
+  padding: 20px;
+}
+
+.overview-hero {
+  display: grid;
+  gap: 18px;
+}
+
+.carousel {
+  position: relative;
+}
+
+.carousel.compact .carousel-main {
+  aspect-ratio: 16 / 10;
+}
+
+.carousel-main {
+  aspect-ratio: 16 / 9;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #EEE;
+}
+
+.carousel-main img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.carousel-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  font-size: 22px;
+  line-height: 1;
+  z-index: 2;
+}
+
+.carousel-nav.prev { left: 10px; }
+.carousel-nav.next { right: 10px; }
+.carousel-nav:disabled { opacity: 0.35; cursor: default; }
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: #CBD5E1;
+  padding: 0;
+  cursor: pointer;
+}
+
+.dot.active { background: #1B5E20; }
+
+.browse-panel h2,
+.browse-panel h3 {
+  margin: 0 0 8px;
+}
+
+.panel-sub {
+  margin: 0 0 16px;
+  color: #666;
+  font-size: 14px;
+}
+
+.filter-toolbar {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  align-items: end;
+  margin-bottom: 16px;
+  padding: 14px;
+  background: #FAFAFA;
+  border-radius: 12px;
+  border: 1px solid #EEE;
+}
+
+.filter-field label {
+  display: block;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.filter-field input,
+.filter-field select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.media-placeholder {
+  aspect-ratio: 16 / 9;
+  border-radius: 16px;
+  background: #EEE;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #777;
+}
+
+.type-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.type-pill {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #F1FAF3;
+  color: #1B5E20;
+  font-size: 13px;
+}
+
+.unit-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 10px 0;
+  font-size: 14px;
+  color: #444;
+}
+
+.category-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.category-tab {
+  padding: 9px 14px;
+  border-radius: 999px;
+  border: 1px solid #E5E7EB;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.category-tab.active {
+  background: #F1FAF3;
+  border-color: #1B5E20;
+  color: #1B5E20;
+  font-weight: 600;
+}
+
+.type-carousel-wrap {
+  margin-bottom: 20px;
+}
+
+.unit-list {
+  display: grid;
+  gap: 10px;
+}
+
+.unit-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  border: 1px solid #E5E7EB;
+  border-radius: 14px;
+  padding: 14px 16px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.unit-row:hover {
+  border-color: #1B5E20;
+  background: #FAFFFB;
+}
+
+.unit-row p {
+  margin: 4px 0 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.view-link {
+  color: #1B5E20;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.empty-units {
+  color: #666;
+  padding: 16px 0;
+}
+
+.unit-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.unit-modal {
+  width: min(520px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+  padding: 20px;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  border: none;
+  background: #F3F4F6;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.floor-line,
+.unit-desc {
+  color: #666;
+  font-size: 14px;
+}
+
+.toast { margin-top: 12px; font-size: 14px; }
+.toast.success { color: #0f5132; }
+.toast.error { color: #842029; }
+
+@media (min-width: 961px) {
+  .overview-hero {
+    grid-template-columns: 1.4fr 1fr;
+    align-items: start;
+  }
+}

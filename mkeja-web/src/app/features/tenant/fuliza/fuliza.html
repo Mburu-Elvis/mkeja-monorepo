@@ -1,0 +1,268 @@
+<!-- components/fuliza/fuliza.component.html -->
+<div class="fuliza-container">
+    <!-- Credit Score Card -->
+    <div class="card credit-score-card">
+        <div class="card-header">
+            <span>Your Credit Score</span>
+            <span class="tier-badge" [class]="'tier-' + fulizaData?.creditTier?.toLowerCase()">
+                {{ fulizaData?.creditTier }} Tier
+            </span>
+        </div>
+        <div class="credit-score-display">
+            <div class="score-gauge">
+                <div class="gauge-value">{{ fulizaData?.creditScore }}</div>
+                <div class="gauge-range">300 - 850</div>
+                <div class="gauge-description">{{ getCreditTierDescription(fulizaData?.creditTier) }}</div>
+            </div>
+            <div class="score-factors">
+                <div class="factor-item">
+                    <span class="factor-label">Payment Consistency</span>
+                    <div class="factor-bar">
+                        <div class="factor-fill" [style.width.%]="fulizaData?.paymentStats?.consistencyScore || 90"></div>
+                    </div>
+                    <span class="factor-value">{{ fulizaData?.paymentStats?.consistencyScore || 90 }}%</span>
+                </div>
+                <div class="factor-item">
+                    <span class="factor-label">Payment Frequency</span>
+                    <div class="factor-bar">
+                        <div class="factor-fill" [style.width.%]="fulizaData?.paymentStats?.frequencyScore || 85"></div>
+                    </div>
+                    <span class="factor-value">{{ fulizaData?.paymentStats?.frequencyScore || 85 }}%</span>
+                </div>
+                <div class="factor-item">
+                    <span class="factor-label">Loan Repayment</span>
+                    <div class="factor-bar">
+                        <div class="factor-fill" [style.width.%]="fulizaData?.repaymentScore || 75"></div>
+                    </div>
+                    <span class="factor-value">{{ fulizaData?.repaymentScore || 75 }}%</span>
+                </div>
+                <div class="factor-item">
+                    <span class="factor-label">Tenure on Platform</span>
+                    <div class="factor-bar">
+                        <div class="factor-fill" [style.width.%]="fulizaData?.tenureScore || 60"></div>
+                    </div>
+                    <span class="factor-value">{{ fulizaData?.tenureMonths || 6 }} months</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Borrowing Limits -->
+    <div class="card borrowing-limits-card">
+        <div class="card-header">
+            <span>Your Borrowing Power</span>
+            <button class="info-btn" matTooltip="Higher tiers unlock better rates and higher limits">
+                <mat-icon svgIcon="help"></mat-icon>
+            </button>
+        </div>
+        <div class="limits-grid">
+            <div class="limit-item" [class.active]="fulizaData?.creditTier === 'BRONZE'">
+                <div class="limit-icon">B</div>
+                <span>Bronze</span>
+                <strong>Up to 50%</strong>
+                <small>5% fee</small>
+            </div>
+            <div class="limit-item" [class.active]="fulizaData?.creditTier === 'SILVER'">
+                <div class="limit-icon">S</div>
+                <span>Silver</span>
+                <strong>Up to 75%</strong>
+                <small>4% fee</small>
+            </div>
+            <div class="limit-item" [class.active]="fulizaData?.creditTier === 'GOLD'">
+                <div class="limit-icon">G</div>
+                <span>Gold</span>
+                <strong>Up to 100%</strong>
+                <small>3% fee</small>
+            </div>
+            <div class="limit-item" [class.active]="fulizaData?.creditTier === 'PLATINUM'">
+                <div class="limit-icon">P</div>
+                <span>Platinum</span>
+                <strong>Up to 150%</strong>
+                <small>2.5% fee</small>
+            </div>
+        </div>
+        <div class="current-limit">
+            <span>Your current limit</span>
+            <strong>KES {{ fulizaData?.totalLimit | number }}</strong>
+        </div>
+        <div class="limit-utilization">
+            <div class="utilization-label">
+                <span>Utilized</span>
+                <span>{{ utilizedPercentage | number:'1.0-0' }}%</span>
+            </div>
+            <div class="utilization-bar">
+                <div class="utilization-fill" [style.width.%]="utilizedPercentage"></div>
+            </div>
+        </div>
+        <div class="limit-note" *ngIf="fulizaData?.creditTier !== 'PLATINUM'">
+            <mat-icon svgIcon="trendingUp"></mat-icon>
+            <span>Make {{ fulizaData?.creditTier === 'BRONZE' ? '10' : fulizaData?.creditTier === 'SILVER' ? '15' : '20' }} more on-time payments to reach next tier</span>
+        </div>
+    </div>
+
+    <!-- Active Loan Section -->
+    <div class="card active-loan-card" *ngIf="fulizaData?.activeLoan">
+        <div class="card-header">
+            <span>Active Loan</span>
+            <span class="status-badge warning">REPAYING</span>
+        </div>
+        <div class="loan-summary">
+            <div class="loan-amount">
+                <span>Loan Amount</span>
+                <strong>{{ formatCurrency(fulizaData.activeLoan.amount) }}</strong>
+            </div>
+            <div class="loan-fee">
+                <span>Fee ({{ fulizaData.activeLoan.feePercentage || 4 }}%)</span>
+                <strong>{{ formatCurrency(fulizaData.activeLoan.fee) }}</strong>
+            </div>
+            <div class="loan-total">
+                <span>Total Repayable</span>
+                <strong>{{ formatCurrency(fulizaData.activeLoan.totalRepayable) }}</strong>
+            </div>
+        </div>
+        <div class="loan-repayment-progress">
+            <div class="progress-label">Repayment Progress</div>
+            <div class="progress-track">
+                <div class="progress-fill" [style.width.%]="calculateLoanRepaymentProgress(fulizaData.activeLoan)"></div>
+            </div>
+            <div class="progress-stats">
+                <span>Repaid: {{ formatCurrency(fulizaData.activeLoan.repaid) }}</span>
+                <span>Remaining: {{ formatCurrency(fulizaData.activeLoan.totalRepayable - fulizaData.activeLoan.repaid) }}</span>
+            </div>
+        </div>
+        <div class="repayment-schedule">
+            <div class="schedule-item">
+                <mat-icon svgIcon="clock"></mat-icon>
+                <span>Auto-deduction from daily contributions</span>
+                <strong>KES {{ getDailyRepaymentAmount() }}/day</strong>
+            </div>
+            <div class="schedule-item" *ngIf="getRemainingDays() > 0">
+                <mat-icon svgIcon="calendar"></mat-icon>
+                <span>Estimated completion</span>
+                <strong>{{ getRemainingDays() }} days</strong>
+            </div>
+        </div>
+        <div class="loan-actions">
+            <button class="btn-secondary" (click)="makeExtraLoanPayment()">Make Extra Payment</button>
+        </div>
+    </div>
+
+    <!-- Active Loan Alert (when no active loan but limit available) -->
+    <div class="card info-card" *ngIf="!fulizaData?.activeLoan && fulizaData?.availableLimit > 0">
+        <mat-icon svgIcon="zap"></mat-icon>
+        <div>
+            <strong>Credit Available</strong>
+            <p>You have KES {{ fulizaData.availableLimit | number }} in credit available. Auto-Fuliza will automatically cover any rent shortfall on the due date.</p>
+            <button class="btn-link btn-link--icon" (click)="requestLoanManually()">
+              Request manual loan
+              <span class="material-icons" aria-hidden="true">arrow_forward</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Loan History -->
+    <div class="card loan-history-card" *ngIf="fulizaData?.loanHistory?.length > 0">
+        <div class="card-header">
+            <span>Loan History</span>
+            <span class="history-count">{{ fulizaData.loanHistory.length }} loans</span>
+        </div>
+        <div class="history-items">
+            <div class="loan-history-item" *ngFor="let loan of fulizaData.loanHistory">
+                <div class="loan-date">{{ formatDate(loan.date) }}</div>
+                <div class="loan-details-summary">
+                    <strong>{{ formatCurrency(loan.amount) }}</strong>
+                    <span>+ {{ formatCurrency(loan.fee) }} fee</span>
+                    <span class="loan-purpose">{{ loan.purpose }}</span>
+                </div>
+                <div class="loan-status" [class]="loan.status.toLowerCase()">
+                    {{ loan.status }}
+                </div>
+                <button class="view-details-btn" (click)="viewLoanDetails(loan)" matTooltip="View details">
+                    <mat-icon svgIcon="external"></mat-icon>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auto-Fuliza Settings -->
+    <div class="card settings-card">
+        <div class="card-header">
+            <span>Auto-Fuliza Settings</span>
+        </div>
+        <div class="setting-item">
+            <div class="setting-info">
+                <mat-icon svgIcon="zap"></mat-icon>
+                <div>
+                    <strong>Automatic Loan Coverage</strong>
+                    <p>When enabled, we'll automatically advance a loan to cover any rent shortfall on due date</p>
+                </div>
+            </div>
+            <label class="toggle-switch">
+                <input type="checkbox" [checked]="fulizaData?.autoTopUpEnabled" (change)="toggleAutoFuliza()">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+        <div class="info-note" *ngIf="fulizaData?.autoTopUpEnabled">
+            <mat-icon svgIcon="check-circle"></mat-icon>
+            <span>Auto-Fuliza is active. We'll cover rent shortfalls up to your available credit limit of KES {{ fulizaData?.availableLimit | number }}.</span>
+        </div>
+        <div class="warning-note" *ngIf="!fulizaData?.autoTopUpEnabled">
+            <mat-icon svgIcon="alert"></mat-icon>
+            <span>Auto-Fuliza is disabled. You'll need to manually request loans to cover any rent shortfalls.</span>
+        </div>
+    </div>
+</div>
+
+<!-- Loan Details Modal -->
+<div class="modal-overlay" *ngIf="showLoanDetails" (click)="closeLoanDetails()">
+    <div class="modal-content small" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2>Loan Details</h2>
+            <button class="close-modal" (click)="closeLoanDetails()">
+                <mat-icon svgIcon="x-circle"></mat-icon>
+            </button>
+        </div>
+        <div class="modal-body" *ngIf="selectedLoanForDetails">
+            <div class="loan-detail-item">
+                <span>Loan ID</span>
+                <strong>{{ selectedLoanForDetails.id }}</strong>
+            </div>
+            <div class="loan-detail-item">
+                <span>Loan Amount</span>
+                <strong>{{ formatCurrency(selectedLoanForDetails.amount) }}</strong>
+            </div>
+            <div class="loan-detail-item">
+                <span>Processing Fee</span>
+                <strong>{{ formatCurrency(selectedLoanForDetails.fee) }}</strong>
+            </div>
+            <div class="loan-detail-item">
+                <span>Total Repayable</span>
+                <strong>{{ formatCurrency(selectedLoanForDetails.totalRepayable) }}</strong>
+            </div>
+            <div class="loan-detail-item">
+                <span>Date Taken</span>
+                <strong>{{ formatDate(selectedLoanForDetails.date) }}</strong>
+            </div>
+            <div class="loan-detail-item" *ngIf="selectedLoanForDetails.repaidDate">
+                <span>Date Repaid</span>
+                <strong>{{ formatDate(selectedLoanForDetails.repaidDate) }}</strong>
+            </div>
+            <div class="loan-detail-item">
+                <span>Status</span>
+                <strong [class]="selectedLoanForDetails.status.toLowerCase()">{{ selectedLoanForDetails.status }}</strong>
+            </div>
+            <div class="loan-detail-item">
+                <span>Purpose</span>
+                <strong>{{ selectedLoanForDetails.purpose }}</strong>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" (click)="closeLoanDetails()">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Extra Payment Modal -->
+<div class="modal-overlay" *ngIf="extraPaymentForm.get('amount')?.value && false" (click)="closeExtraPayment()">
+    <!-- Hidden by default, would be triggered by button -->
+</div>

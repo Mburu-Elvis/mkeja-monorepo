@@ -1,0 +1,664 @@
+MKEJA ONBOARDING MICROSERVICE – MASTER PRODUCT PROMPT, IMPLEMENTATION INSTRUCTIONS, AND END-TO-END USER JOURNEY
+PRODUCT MISSION
+
+Design and build a production-grade, event-driven onboarding microservice for MKEJA, a digital property management and rental ecosystem. The onboarding service is responsible for onboarding landlords, property owners, property management companies, agents, properties, units, tenants, lease agreements, and tenancy relationships.
+
+The platform must support the complete lifecycle from landlord registration to tenant move-in while maintaining strict separation between a Tenant (Person) and a Tenancy (Relationship).
+
+This service acts as the system of record for onboarding and tenancy creation while integrating with external microservices through asynchronous events.
+
+CORE DOMAIN PRINCIPLES
+Tenant vs Tenancy
+
+A Tenant is a person.
+
+A Tenancy is a contractual and operational relationship between a tenant and a property unit.
+
+A tenant can have multiple tenancies over time.
+
+A property unit can have multiple tenancies over time.
+
+A property unit can only have one active tenancy at any given moment.
+
+Example:
+
+Tenant:
+John Doe
+
+Tenancies:
+
+Apartment A101 (2023)
+Apartment B204 (2024)
+Apartment C305 (Future)
+
+The tenant remains the same person while the tenancy changes.
+
+This distinction must be reflected throughout:
+
+Database design
+API design
+Domain models
+Event contracts
+User interfaces
+Reporting
+SYSTEM OBJECTIVES
+
+The onboarding service shall:
+
+Register landlords.
+Register property management agents.
+Verify identities and KYC.
+Register and manage properties.
+Register and manage units.
+Generate tenant invitations.
+Support QR-based onboarding.
+Support SMS onboarding.
+Support Email onboarding.
+Support self-service tenant onboarding.
+Create leases.
+Create tenancies.
+Maintain tenancy history.
+Manage lease signing.
+Manage occupancy status.
+Publish onboarding events.
+Track complete audit trails.
+
+The onboarding service shall not:
+
+Process payments.
+Maintain wallets.
+Calculate credit scores.
+Process M-Pesa transactions.
+Perform rent collection.
+Perform bank remittances.
+
+These functions belong to dedicated services.
+
+PRIMARY USER ROLES
+Property Owner / Landlord
+
+Can:
+
+Register properties
+Create units
+Invite tenants
+Manage tenancies
+View occupancy
+View lease status
+Property Management Agent
+
+Can:
+
+Manage properties on behalf of owners
+Invite tenants
+Create leases
+Manage occupancy
+View assigned properties
+
+Permissions are controlled through Agent-Owner contracts.
+
+Tenant
+
+Can:
+
+Receive invitations
+Register themselves
+Complete KYC
+Sign lease agreements
+Accept tenancy offers
+View tenancy history
+Manage profile information
+DOMAIN MODULES
+Identity Module
+
+Responsibilities:
+
+Registration
+Login
+MFA
+Password reset
+Session management
+JWT issuance
+
+Entities:
+
+User
+Role
+Permission
+Session
+MFA Configuration
+Landlord Module
+
+Responsibilities:
+
+Individual registration
+Company registration
+KYC verification
+Bank account registration
+
+Entities:
+
+Landlord
+Company
+KYC Profile
+Bank Account
+
+Statuses:
+
+PENDING
+VERIFIED
+REJECTED
+SUSPENDED
+Agent Module
+
+Responsibilities:
+
+Agent onboarding
+License verification
+Property management contracts
+
+Entities:
+
+Agent
+Agent License
+Agent Owner Contract
+
+Statuses:
+
+PENDING
+VERIFIED
+REJECTED
+Property Module
+
+Responsibilities:
+
+Property onboarding
+Property verification
+Unit creation
+
+Entities:
+
+Property
+Property Unit
+Property Media
+Verification Record
+
+Property Status:
+
+DRAFT
+PENDING_VERIFICATION
+VERIFIED
+REJECTED
+
+Unit Status:
+
+VACANT
+RESERVED
+OCCUPIED
+MAINTENANCE
+INACTIVE
+Tenant Module
+
+Responsibilities:
+
+Tenant registration
+KYC
+Guarantor management
+Employment information
+
+Entities:
+
+Tenant
+Emergency Contact
+Employment Profile
+Guarantor
+KYC Profile
+
+Tenant Status:
+
+PENDING
+VERIFIED
+ACTIVE
+BLOCKED
+Invitation Module
+
+Responsibilities:
+
+Invitation creation
+Token generation
+QR generation
+Expiry management
+Reminder management
+
+Invitation Status:
+
+PENDING
+VIEWED
+ACCEPTED
+EXPIRED
+CANCELLED
+Lease Module
+
+Responsibilities:
+
+Lease creation
+Lease signing
+Lease lifecycle
+
+Lease Status:
+
+DRAFT
+PENDING_SIGNATURE
+ACTIVE
+EXPIRED
+TERMINATED
+Tenancy Module
+
+Responsibilities:
+
+Tenancy creation
+Occupancy management
+Historical tracking
+
+Tenancy Status:
+
+PENDING
+ACTIVE
+EXPIRED
+TERMINATED
+COMPLETED
+COMPLETE USER JOURNEY
+Journey 1: Landlord Registration
+
+Step 1
+
+Landlord downloads MKEJA app or accesses portal.
+
+Step 2
+
+Landlord selects:
+
+Individual Owner
+Company Owner
+
+Step 3
+
+Landlord provides:
+
+Full Name
+Phone Number
+Email
+Password
+National ID
+KRA PIN
+Bank Account
+
+Step 4
+
+System creates:
+
+User Account
+Landlord Profile
+
+Step 5
+
+System triggers KYC verification.
+
+Step 6
+
+Landlord uploads:
+
+ID document
+Selfie
+Proof of bank ownership
+
+Step 7
+
+Verification completed.
+
+Outcome:
+
+Landlord status becomes VERIFIED.
+
+Journey 2: Agent Registration
+
+Step 1
+
+Agent selects Register as Agent.
+
+Step 2
+
+Agent submits:
+
+Personal details
+Company details
+License details
+
+Step 3
+
+System validates license.
+
+Step 4
+
+Agent profile created.
+
+Outcome:
+
+Agent becomes VERIFIED.
+
+Journey 3: Property Onboarding
+
+Step 1
+
+Landlord selects Create Property.
+
+Step 2
+
+Landlord enters:
+
+Property name
+Property type
+Location
+Amenities
+Description
+
+Step 3
+
+Uploads:
+
+Photos
+Ownership documents
+
+Step 4
+
+Property created.
+
+Status:
+
+PENDING_VERIFICATION
+
+Step 5
+
+Verification completed.
+
+Status:
+
+VERIFIED
+
+Journey 4: Unit Creation
+
+Step 1
+
+Landlord opens property.
+
+Step 2
+
+Adds units.
+
+Each unit includes:
+
+Unit number
+Floor
+Bedrooms
+Bathrooms
+Size
+Rent amount
+Deposit amount
+
+Step 3
+
+System creates units.
+
+Status:
+
+VACANT
+
+Step 4
+
+QR code generated.
+
+Outcome:
+
+Units ready for occupancy.
+
+Journey 5: Tenant Invitation
+
+Step 1
+
+Landlord selects vacant unit.
+
+Step 2
+
+Landlord enters:
+
+Tenant phone
+Tenant email
+
+Step 3
+
+Landlord defines:
+
+Start date
+End date
+Rent amount
+Deposit amount
+
+Step 4
+
+System generates:
+
+Invitation token
+Invitation link
+QR code
+
+Step 5
+
+System sends:
+
+SMS
+Email
+QR invitation
+
+Outcome:
+
+Invitation status = PENDING
+
+Journey 6: Tenant Self-Onboarding
+
+Step 1
+
+Tenant clicks invitation link or scans QR.
+
+Step 2
+
+System validates invitation.
+
+Step 3
+
+If tenant already exists:
+
+Login
+Review invitation
+
+If tenant is new:
+
+Register account
+Verify phone
+Verify email
+
+Step 4
+
+Tenant completes profile:
+
+Full name
+National ID
+Date of birth
+Employment details
+Emergency contact
+Guarantor
+
+Step 5
+
+Tenant uploads:
+
+ID image
+Selfie
+
+Step 6
+
+System performs KYC.
+
+Step 7
+
+Tenant reviews lease.
+
+Step 8
+
+Tenant accepts terms.
+
+Step 9
+
+Tenant signs lease digitally.
+
+Step 10
+
+Tenant optionally pays deposit.
+
+Outcome:
+
+Invitation becomes ACCEPTED.
+
+Journey 7: Tenancy Creation
+
+System automatically:
+
+Creates tenant record
+Creates lease agreement
+Creates tenancy record
+Links tenant to unit
+Marks invitation accepted
+
+Unit Status:
+
+OCCUPIED
+
+Tenancy Status:
+
+ACTIVE
+
+Lease Status:
+
+ACTIVE
+
+Journey 8: Post-Onboarding Automation
+
+System publishes:
+
+TENANT_ONBOARDED
+
+Consumers:
+
+Wallet Service
+Credit Service
+Notification Service
+
+System publishes:
+
+TENANCY_CREATED
+
+Consumers:
+
+Payment Service
+Notification Service
+
+System publishes:
+
+LEASE_SIGNED
+
+Consumers:
+
+Document Service
+Notification Service
+
+Outcome:
+
+Tenant is fully operational within the MKEJA ecosystem.
+
+EVENT DRIVEN INTEGRATION REQUIREMENTS
+
+Publish:
+
+LANDLORD_REGISTERED
+AGENT_REGISTERED
+PROPERTY_CREATED
+PROPERTY_VERIFIED
+UNIT_CREATED
+INVITATION_SENT
+INVITATION_ACCEPTED
+TENANT_ONBOARDED
+LEASE_SIGNED
+TENANCY_CREATED
+TENANCY_TERMINATED
+
+Consume:
+
+KYC_VERIFIED
+WALLET_CREATED
+CREDIT_PROFILE_CREATED
+DEPOSIT_PAYMENT_RECEIVED
+
+All events must include:
+
+Event ID
+Correlation ID
+Timestamp
+Aggregate ID
+Version
+Event Type
+NON-FUNCTIONAL REQUIREMENTS
+
+Architecture:
+
+Spring Boot
+PostgreSQL
+Kafka
+Redis
+Docker
+Kubernetes
+Hexagonal Architecture
+Domain Driven Design
+Outbox Pattern
+Saga Pattern
+
+Security:
+
+JWT Authentication
+MFA
+RBAC
+Encrypted PII
+Audit Logging
+
+Scalability Targets:
+
+1,000,000+ tenants
+100,000+ properties
+10,000,000+ tenancy records
+
+Availability:
+
+99.9% uptime
+
+Auditability:
+
+Every action traceable
+Every status change recorded
+Complete tenancy history retained permanently
+
+Success Criteria:
+
+Landlord can onboard a property in under 10 minutes.
+Tenant can complete onboarding in under 5 minutes.
+Invitation acceptance rate exceeds 90%.
+Unit occupancy updates automatically.
+No manual tenant data entry required.
+Complete legal and operational tenancy lifecycle is maintained.

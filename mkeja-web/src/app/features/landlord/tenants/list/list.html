@@ -1,0 +1,119 @@
+<div class="platform-page landlord-page">
+  <div class="hero-section">
+    <div class="hero-flex">
+      <div class="hero-text">
+        <p class="greeting-label">Tenants</p>
+        <h1 class="page-title">Tenancies & invites</h1>
+        <p class="hero-subtitle">Filter by property and floor, or search by name, phone, or property.</p>
+      </div>
+      <div class="hero-actions">
+        <button class="btn-secondary invite-btn" type="button" routerLink="/landlord/leads">House Hunt leads</button>
+        <button class="btn-primary invite-btn" type="button" routerLink="/landlord/tenants/invite">Link tenant to unit</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="filters card">
+    <div class="search-box">
+      <input
+        type="search"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChange()"
+        placeholder="Search name, phone or property">
+    </div>
+    <select [(ngModel)]="filterPropertyId" (change)="onPropertyFilterChange()">
+      <option value="all">All properties</option>
+      @for (property of propertyOptions; track property.id) {
+        <option [value]="property.id">{{ property.name }}</option>
+      }
+    </select>
+    @if (showFloorFilter) {
+      <select [(ngModel)]="filterFloor" (change)="onFloorFilterChange()">
+        <option value="all">All floors</option>
+        @for (floor of availableFloors; track floor) {
+          <option [value]="floor">Floor {{ floor }}</option>
+        }
+      </select>
+    }
+    <select [(ngModel)]="filterStatus" (change)="onStatusFilterChange()">
+      <option value="all">All status</option>
+      <option value="active">Active tenancies</option>
+      <option value="pending_invite">Pending invites</option>
+      <option value="kyc_pending">KYC pending</option>
+    </select>
+  </div>
+
+  @if (loading) {
+    <div class="loading-state"><div class="spinner"></div><p>Loading tenants...</p></div>
+  } @else if (hasNoTenants) {
+    <div class="empty-state card app-empty-state">
+      <div class="app-empty-icon"><span class="material-icons">group_add</span></div>
+      <h3 class="app-empty-title">No tenants linked yet</h3>
+      <p class="app-empty-text">Add properties with units, then link a tenant by phone.</p>
+      <button class="invite-btn" type="button" routerLink="/landlord/tenants/invite">Link tenant to unit</button>
+    </div>
+  } @else if (isFilteredEmpty) {
+    <div class="empty-state card app-empty-state">
+      <div class="app-empty-icon"><span class="material-icons">filter_alt_off</span></div>
+      <h3 class="app-empty-title">No matching tenants</h3>
+      <p class="app-empty-text">Try a different search or reset your filters.</p>
+      <button class="btn-secondary" type="button" (click)="resetFilters()">Reset filters</button>
+    </div>
+  } @else {
+    <div class="list-meta-bar">
+      <span>{{ filteredRows.length }} record(s) · showing {{ showingFrom }}–{{ showingTo }}</span>
+    </div>
+
+    <div class="tenants-table card">
+      <div class="table-header">
+        <span>Tenant</span>
+        <span>Property / Unit</span>
+        <span>Location</span>
+        <span>Rent</span>
+        <span>Status</span>
+        <span></span>
+      </div>
+      @for (row of paginatedRows; track row.id) {
+        <div class="table-row" [class.pending]="row.kind === 'pending'" (click)="row.kind === 'tenancy' ? viewTenant(row.tenantId) : null">
+          <div class="cell-tenant">
+            <div class="tenant-avatar"><span>{{ row.name.charAt(0) }}</span></div>
+            <div>
+              <strong>{{ row.name }}</strong>
+              <small>+{{ row.phone }}</small>
+            </div>
+          </div>
+          <div class="cell-property">
+            <strong>{{ row.propertyName }}</strong>
+            <button class="unit-link" type="button" (click)="viewUnit(row.unitId, $event)">Unit {{ row.unitRef }}</button>
+          </div>
+          <div class="cell-location">{{ locationLabel(row) }}</div>
+          <div class="cell-rent">
+            <strong>KES {{ row.monthlyRent | number }}</strong>
+            <small>Due {{ formatRentDue(row.rentDueDay) }}</small>
+          </div>
+          <div class="cell-status">
+            @if (row.kind === 'pending') {
+              <span class="status-chip pending">Invite sent</span>
+            } @else {
+              <span class="status-chip active">Active</span>
+            }
+            <span class="kyc-chip" [class]="getKycBadgeClass(row.kycStatus)">{{ getKycText(row.kycStatus) }}</span>
+          </div>
+          <div class="cell-action">
+            @if (row.kind === 'tenancy') {
+              <button class="action-btn" type="button" (click)="viewTenant(row.tenantId); $event.stopPropagation()">View</button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (totalPages > 1) {
+      <div class="pagination card">
+        <button class="btn-secondary" type="button" [disabled]="page <= 1" (click)="prevPage()">Previous</button>
+        <span>Page {{ page }} of {{ totalPages }}</span>
+        <button class="btn-secondary" type="button" [disabled]="page >= totalPages" (click)="nextPage()">Next</button>
+      </div>
+    }
+  }
+</div>

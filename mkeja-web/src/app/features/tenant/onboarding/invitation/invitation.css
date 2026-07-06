@@ -1,0 +1,135 @@
+@import '../../../auth/auth-shared.css';
+
+.invitation-screen {
+  min-height: 100vh;
+  background: var(--sf-bg);
+  padding: 32px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.auth-brand {
+  width: 100%;
+  max-width: 420px;
+  margin-bottom: 24px;
+}
+
+.invitation-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--sf-surface);
+  border: 1px solid var(--sf-border);
+  border-radius: var(--radius-xl);
+  padding: 32px 24px;
+  text-align: center;
+  box-shadow: var(--shadow-modal);
+}
+
+.invitation-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: var(--sf-green-xpale);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.invitation-card h2 {
+  margin: 0 0 8px;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--sf-text-1);
+}
+
+.invitation-card > p {
+  margin: 0 0 24px;
+  color: var(--sf-text-3);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.invitation-details {
+  background: var(--sf-bg);
+  border: 1px solid var(--sf-border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin: 24px 0;
+  text-align: left;
+}
+
+.detail {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+}
+
+.detail:not(:last-child) {
+  border-bottom: 1px solid var(--sf-border);
+}
+
+.label {
+  color: var(--sf-text-3);
+  font-size: 13px;
+}
+
+.value {
+  color: var(--sf-text-1);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.accept-btn {
+  width: 100%;
+  min-height: 52px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    135deg,
+    var(--sf-green),
+    var(--sf-green-dark)
+  );
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.accept-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.accept-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.help-text {
+  margin: 16px 0 0;
+  font-size: 12px;
+  color: var(--sf-text-4);
+}
+
+@media (max-width: 480px) {
+  .invitation-screen {
+    padding: 24px 16px;
+  }
+
+  .invitation-card {
+    padding: 24px 20px;
+  }
+
+  .detail {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .value {
+    text-align: left;
+  }
+}

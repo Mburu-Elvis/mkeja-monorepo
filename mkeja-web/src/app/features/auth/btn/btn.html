@@ -1,0 +1,19 @@
+<button
+  (click)="onClick.emit()"
+  [disabled]="disabled"
+  class="btn"
+  [class.btn-primary]="variant === 'primary'"
+  [class.btn-secondary]="variant === 'secondary'"
+  [class.btn-outline]="variant === 'outline'"
+  [class.btn-ghost]="variant === 'ghost'"
+  [class.btn-success]="variant === 'success'"
+  [class.btn-danger]="variant === 'danger'"
+  [class.btn-warning]="variant === 'warning'"
+  [class.btn-full]="full"
+  [class.btn-hover]="hov && !disabled"
+  [class.btn-disabled]="disabled"
+  (mouseenter)="hov = true"
+  (mouseleave)="hov = false"
+>
+  <ng-content></ng-content>
+</button>

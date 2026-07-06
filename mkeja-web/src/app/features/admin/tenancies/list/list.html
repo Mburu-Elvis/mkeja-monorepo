@@ -1,0 +1,185 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div>
+      <p class="greeting-label">Operations</p>
+      <h1 class="page-title">Tenancies</h1>
+      <p class="page-subtitle">
+        {{ tenancies.length }} total · {{ activeCount }} active · {{ pendingCount }} pending
+      </p>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="card stat-card">
+      <strong>{{ tenancies.length }}</strong>
+      <span>All tenancies</span>
+    </div>
+    <div class="card stat-card">
+      <strong>{{ activeCount }}</strong>
+      <span>Active</span>
+    </div>
+    <div class="card stat-card">
+      <strong>{{ pendingCount }}</strong>
+      <span>Pending</span>
+    </div>
+    <div class="card stat-card">
+      <strong>{{ totalRentRoll | number:'1.0-0' }}</strong>
+      <span>Active rent roll (KES)</span>
+    </div>
+  </div>
+
+  <div class="filters card">
+    <div class="search-box">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (keyup.enter)="onSearch()"
+        placeholder="Search tenant, property, unit, phone, or ID">
+    </div>
+    <div class="filter-selects">
+      <select [(ngModel)]="filterStatus" (change)="load()">
+        <option value="all">All status</option>
+        <option value="ACTIVE">Active</option>
+        <option value="PENDING">Pending</option>
+        <option value="TERMINATED">Terminated</option>
+        <option value="EXPIRED">Expired</option>
+      </select>
+    </div>
+    @if (hasActiveFilters) {
+      <button class="btn-secondary" type="button" (click)="resetFilters()">Reset</button>
+    }
+  </div>
+
+  @if (error) {
+    <div class="alert-banner alert-danger">{{ error }}</div>
+  }
+
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading tenancies...</p>
+    </div>
+  } @else if (filtered.length === 0) {
+    <div class="list-empty-state card">
+      <div class="list-empty-icon" aria-hidden="true"><span class="material-icons">assignment</span></div>
+      <h3 class="list-empty-title">{{ hasActiveFilters ? 'No matching tenancies' : 'No tenancies yet' }}</h3>
+      <p class="list-empty-text">
+        @if (hasActiveFilters) {
+          Adjust your search or status filter to find a lease record.
+        } @else {
+          Active and pending tenancies will show up here for admin actions.
+        }
+      </p>
+      @if (hasActiveFilters) {
+        <button class="btn-secondary" type="button" (click)="resetFilters()">Clear filters</button>
+      }
+    </div>
+  } @else {
+    <div class="card tenancies-table">
+      <div class="table-header">
+        <span>Tenant</span>
+        <span>Property & unit</span>
+        <span>Rent</span>
+        <span>Status</span>
+        <span>Actions</span>
+      </div>
+
+      @for (tenancy of filtered; track tenancy.id) {
+        <div class="table-row tenancy-row">
+          <div class="tenant-cell">
+            <div class="tenant-avatar">{{ (tenancy.tenantName || 'T').charAt(0) }}</div>
+            <div>
+              <div class="tenant-name">{{ tenancy.tenantName || 'Tenant' }}</div>
+              <div class="sub-meta">#{{ tenancy.id }} · {{ tenancy.tenantPhone || '—' }}</div>
+              @if (tenancy.landlordName) {
+                <div class="sub-meta">Landlord: {{ tenancy.landlordName }}</div>
+              }
+            </div>
+          </div>
+
+          <div class="property-cell">
+            <div class="property-name">{{ tenancy.propertyName || 'Property' }}</div>
+            <div class="sub-meta">Unit {{ tenancy.unitNumber || '—' }}</div>
+            @if (tenancy.moveInDate) {
+              <div class="sub-meta">Move-in {{ tenancy.moveInDate | date:'MMM d, yyyy' }}</div>
+            }
+          </div>
+
+          <div class="rent-cell">
+            <strong>KES {{ tenancy.monthlyRent | number }}</strong>
+            <span class="sub-meta">per month</span>
+          </div>
+
+          <div>
+            <span class="status-badge" [class]="statusClass(tenancy.status)">
+              {{ statusLabel(tenancy.status) }}
+            </span>
+          </div>
+
+          <div class="actions-cell">
+            @if (tenancy.tenantUserId) {
+              <a class="action-btn outline" [routerLink]="['/admin/users', tenancy.tenantUserId]">Tenant</a>
+            }
+            @if (tenancy.propertyId) {
+              <a class="action-btn outline" [routerLink]="['/admin/properties', tenancy.propertyId]">Property</a>
+            }
+            @if (isActionable(tenancy.status)) {
+              <button
+                class="action-btn outline warn"
+                type="button"
+                [disabled]="actingId === tenancy.id"
+                (click)="openReassign(tenancy)">
+                Reassign
+              </button>
+              <button
+                class="action-btn outline danger"
+                type="button"
+                [disabled]="actingId === tenancy.id"
+                (click)="terminate(tenancy)">
+                {{ actingId === tenancy.id ? 'Working…' : 'Terminate' }}
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (reassignTarget) {
+    <div class="modal-backdrop" (click)="closeReassign()">
+      <div class="modal-card card" (click)="$event.stopPropagation()">
+        <h2 class="modal-title">Reassign tenancy</h2>
+        <p class="modal-lead">
+          Move <strong>{{ reassignTarget.tenantName }}</strong> from unit
+          <strong>{{ reassignTarget.unitNumber }}</strong> on {{ reassignTarget.propertyName }}.
+        </p>
+        <label class="field-label">Target unit</label>
+        @if (loadingVacantUnits) {
+          <p class="hint">Loading vacant units…</p>
+        } @else if (vacantUnits.length === 0) {
+          <input type="number" [(ngModel)]="reassignUnitId" placeholder="Vacant unit ID">
+          <p class="hint">No vacant units listed — enter a vacant unit ID manually.</p>
+        } @else {
+          <select [(ngModel)]="reassignUnitId">
+            <option [ngValue]="null">Select vacant unit</option>
+            @for (unit of vacantUnits; track unit.id) {
+              <option [ngValue]="unit.id">
+                {{ unit.unitNumber }} · Floor {{ unit.floorNumber ?? '—' }} · KES {{ unit.rent | number }}
+              </option>
+            }
+          </select>
+        }
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="closeReassign()">Cancel</button>
+          <button
+            type="button"
+            class="btn-primary"
+            [disabled]="!reassignUnitId || actingId !== null"
+            (click)="confirmReassign()">
+            Reassign tenant
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

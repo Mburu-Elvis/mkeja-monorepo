@@ -1,0 +1,80 @@
+<div class="admin-page reconcile-screen">
+  <div class="page-header">
+    <div>
+      <p class="greeting-label">Finance</p>
+      <h1 class="page-title">Ledger Reconciliation</h1>
+      <p class="page-subtitle">Compare internal balances against external payment records</p>
+    </div>
+  </div>
+
+  <div class="date-selector card">
+    <label>Select Date</label>
+    <input type="date" [(ngModel)]="selectedDate">
+    <button class="run-btn" [disabled]="reconciling" (click)="runReconciliation()">
+      @if (reconciling) {
+        <span class="spinner"></span>
+        Running...
+      } @else {
+        Run Reconciliation
+      }
+    </button>
+  </div>
+  
+  @if (loading) {
+    <app-loading-spinner [fullScreen]="true" message="Loading reconciliation data..."></app-loading-spinner>
+  } @else {
+    <div class="summary-cards">
+      <div class="summary-card">
+        <span class="label">M-Pesa Total</span>
+        <span class="value">KES {{ mpesaTotal | number }}</span>
+      </div>
+      <div class="summary-card">
+        <span class="label">Mkeja Total</span>
+        <span class="value">KES {{ mkejaTotal | number }}</span>
+      </div>
+      <div class="summary-card" [class.warning]="difference !== 0">
+        <span class="label">Difference</span>
+        <span class="value">KES {{ difference | number }}</span>
+      </div>
+    </div>
+    
+    @if (discrepancies.length > 0) {
+      <div class="discrepancies-section">
+        <h3>Discrepancies Found</h3>
+        <div class="discrepancies-list">
+          @for (d of discrepancies; track d.ref) {
+            <div class="discrepancy-card">
+              <div class="discrepancy-info">
+                <span class="ref">{{ d.ref }}</span>
+                <span class="amount">KES {{ d.amount | number }}</span>
+                <span class="status" [class]="d.status">
+                  {{ d.status === 'missing_in_mkeja' ? 'Missing in Mkeja' : 'Amount Mismatch' }}
+                </span>
+              </div>
+              @if (d.status === 'amount_mismatch') {
+                <div class="mismatch-detail">
+                  Expected: KES {{ d.expected | number }} | Actual: KES {{ d.actual | number }}
+                </div>
+              }
+              <button class="resolve-btn" (click)="resolveDiscrepancy(d)">Resolve</button>
+            </div>
+          }
+        </div>
+      </div>
+    } @else {
+      <div class="success-state">
+        <div class="success-icon"><span class="material-icons">check_circle</span></div>
+        <h3>All Reconciled</h3>
+        <p>No discrepancies found for {{ selectedDate }}</p>
+      </div>
+    }
+  }
+  
+  @if (showToast) {
+    <app-toast 
+      [type]="toastType" 
+      [message]="toastMessage"
+      (close)="closeToast()">
+    </app-toast>
+  }
+</div>

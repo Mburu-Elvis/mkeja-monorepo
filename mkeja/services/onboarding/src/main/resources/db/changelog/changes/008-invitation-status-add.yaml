@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: invitation-code-enum-update-agent
+      author: mkeja
+      dbms: postgresql
+      changes:
+        - sql:
+            sql: |
+              ALTER TABLE tbl_tenant_invitations
+              DROP CONSTRAINT tbl_tenant_invitations_status_check;
+              
+              ALTER TABLE tbl_tenant_invitations
+              ADD CONSTRAINT tbl_tenant_invitations_status_check
+              CHECK (
+              status IN (
+              'PENDING',
+              'VIEWED',
+              'ACCEPTED',
+              'REJECTED',
+              'EXPIRED'
+              )
+              );

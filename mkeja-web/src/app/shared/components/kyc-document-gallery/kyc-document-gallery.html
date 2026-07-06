@@ -1,0 +1,114 @@
+@if (loadedDocuments.length === 0) {
+  <p class="kyc-gallery-empty">{{ emptyMessage }}</p>
+} @else {
+  <div class="kyc-gallery-grid">
+    @for (doc of loadedDocuments; track doc.item.documentId; let i = $index) {
+      <button
+        type="button"
+        class="kyc-gallery-card"
+        [class.is-loading]="doc.loading"
+        [class.is-failed]="doc.failed"
+        [class.is-ready]="!doc.loading && !doc.failed && doc.url"
+        [disabled]="doc.loading || doc.failed || !doc.url"
+        (click)="openViewer(i)">
+        <div class="kyc-card-preview">
+          @if (doc.loading) {
+            <div class="kyc-card-state">
+              <span class="material-icons spin">progress_activity</span>
+              <span>Loading</span>
+            </div>
+          } @else if (doc.failed || !doc.url) {
+            <div class="kyc-card-state muted">
+              <span class="material-icons">error_outline</span>
+              <span>Unavailable</span>
+            </div>
+          } @else if (doc.kind === 'image') {
+            <img [src]="doc.url" [alt]="doc.item.label" class="kyc-thumb-image">
+          } @else {
+            <div class="kyc-card-placeholder" [class.pdf]="doc.kind === 'pdf'">
+              <span class="material-icons">{{ thumbnailIcon(doc.kind) }}</span>
+              <span>{{ doc.kind === 'pdf' ? 'PDF document' : 'Document file' }}</span>
+            </div>
+          }
+          @if (!doc.loading && !doc.failed && doc.url) {
+            <div class="kyc-card-overlay">
+              <span class="material-icons">zoom_in</span>
+              <span>View document</span>
+            </div>
+          }
+        </div>
+        <div class="kyc-card-meta">
+          <div class="kyc-card-title">{{ doc.item.label }}</div>
+          @if (doc.item.status) {
+            <span class="kyc-status-pill" [class]="statusClass(doc.item.status)">
+              {{ formatStatus(doc.item.status) }}
+            </span>
+          }
+        </div>
+      </button>
+    }
+  </div>
+}
+
+@if (activeDocument) {
+  <div class="kyc-viewer-overlay" (click)="closeViewer()" role="presentation">
+    <div class="kyc-viewer-panel" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+      <header class="kyc-viewer-header">
+        <div class="kyc-viewer-heading">
+          <p class="kyc-viewer-eyebrow">KYC Document</p>
+          <h3>{{ activeDocument.item.label }}</h3>
+          @if (activeDocument.item.status) {
+            <span class="kyc-status-pill" [class]="statusClass(activeDocument.item.status)">
+              {{ formatStatus(activeDocument.item.status) }}
+            </span>
+          }
+        </div>
+        <button type="button" class="kyc-viewer-close" aria-label="Close viewer" (click)="closeViewer()">
+          <span class="material-icons">close</span>
+        </button>
+      </header>
+
+      <div class="kyc-viewer-body">
+        @if (activeDocument.kind === 'pdf' && activeDocument.safeUrl) {
+          <iframe
+            [src]="activeDocument.safeUrl"
+            [title]="activeDocument.item.label"
+            class="kyc-viewer-pdf">
+          </iframe>
+        } @else if (activeDocument.kind === 'image' && activeDocument.url) {
+          <img
+            [src]="activeDocument.url"
+            [alt]="activeDocument.item.label"
+            class="kyc-viewer-image">
+        } @else if (activeDocument.url) {
+          <div class="kyc-viewer-fallback">
+            <span class="material-icons">description</span>
+            <p>This file type opens best in a separate tab.</p>
+            <a class="kyc-viewer-link" [href]="activeDocument.url" target="_blank" rel="noopener">
+              Open document
+            </a>
+          </div>
+        }
+      </div>
+
+      <footer class="kyc-viewer-footer">
+        <div class="kyc-viewer-nav">
+          <button type="button" class="btn-ghost" [disabled]="!hasPrevious" (click)="showPrevious()">
+            <span class="material-icons">chevron_left</span>
+            Previous
+          </button>
+          <span class="kyc-viewer-counter">{{ viewerCounter }}</span>
+          <button type="button" class="btn-ghost" [disabled]="!hasNext" (click)="showNext()">
+            Next
+            <span class="material-icons">chevron_right</span>
+          </button>
+        </div>
+        @if (activeDocument.url) {
+          <a class="btn-secondary" [href]="activeDocument.url" target="_blank" rel="noopener" download>
+            Download
+          </a>
+        }
+      </footer>
+    </div>
+  </div>
+}

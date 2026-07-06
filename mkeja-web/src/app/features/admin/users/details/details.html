@@ -1,0 +1,145 @@
+<div class="admin-page">
+  <button class="back-btn" type="button" (click)="onBack()">Back to users</button>
+
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading user details...</p>
+    </div>
+  } @else if (user) {
+    <div class="user-header card admin-hero">
+      <div class="user-avatar">{{ user.fullName.charAt(0) }}</div>
+      <div class="user-info">
+        <h1 class="page-title">{{ user.fullName }}</h1>
+        <p class="page-subtitle">{{ user.role }} · {{ user.status }} · KYC {{ user.kycStatus }}</p>
+      </div>
+      <div class="header-actions">
+        @if (user.status === 'active') {
+          <button class="btn-warning" type="button" (click)="toggleStatus()">Suspend</button>
+        } @else {
+          <button class="btn-primary" type="button" (click)="toggleStatus()">Activate</button>
+        }
+        <button class="btn-secondary" type="button" (click)="startEdit()">Edit</button>
+      </div>
+    </div>
+
+    @if (editing) {
+      <div class="card edit-form">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" [(ngModel)]="editData.fullName">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" [(ngModel)]="editData.email">
+        </div>
+        <div class="edit-actions">
+          <button class="btn-primary" type="button" (click)="saveUser()">Save</button>
+          <button class="btn-secondary" type="button" (click)="cancelEdit()">Cancel</button>
+        </div>
+      </div>
+    }
+
+    <div class="card details-section">
+      <div class="section-title">Contact & Account</div>
+      <div class="info-grid">
+        <div class="info-item"><span class="label">Phone</span><span class="value">{{ user.phone }}</span></div>
+        <div class="info-item"><span class="label">Email</span><span class="value">{{ user.email || '—' }}</span></div>
+        <div class="info-item"><span class="label">Joined</span><span class="value">{{ user.joinedDate | date:'MMM d, yyyy' }}</span></div>
+        <div class="info-item"><span class="label">Last Login</span><span class="value">{{ user.lastLoginAt ? (user.lastLoginAt | date:'MMM d, yyyy h:mm a') : '—' }}</span></div>
+      </div>
+    </div>
+
+    <app-user-profile-panels
+      [profile]="user"
+      documentSource="admin"
+      [showAccountMeta]="true">
+    </app-user-profile-panels>
+
+    @if (user.role === 'LANDLORD' || user.role === 'AGENT') {
+      <div class="stats-grid">
+        <div class="card stat-card"><strong>{{ user.propertyCount ?? 0 }}</strong><span>Properties</span></div>
+        <div class="card stat-card"><strong>{{ user.unitCount ?? 0 }}</strong><span>Units</span></div>
+        <div class="card stat-card"><strong>{{ user.tenantCount ?? 0 }}</strong><span>Active Tenants</span></div>
+        <div class="card stat-card"><strong>{{ user.activeTenancyCount ?? 0 }}</strong><span>Active Tenancies</span></div>
+      </div>
+
+      @if (user.properties?.length) {
+        <div class="card details-section">
+          <div class="section-title">Properties</div>
+          @for (property of user.properties; track property.id) {
+            <div class="list-item">
+              <div class="list-main">
+                <strong>{{ property.name }}</strong>
+                <span>{{ property.address || property.city || 'No address' }} · {{ property.status }}</span>
+              </div>
+              <div class="list-actions">
+                <span class="meta-pill">{{ property.occupiedUnits ?? 0 }}/{{ property.totalUnits ?? 0 }} occupied</span>
+                <a class="action-link" [routerLink]="['/admin/properties', property.id]">Manage</a>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      @if (user.tenancies?.length) {
+        <div class="card details-section">
+          <div class="section-title">Tenancies</div>
+          @for (tenancy of user.tenancies; track tenancy.id) {
+            <div class="list-item">
+              <div class="list-main">
+                <strong>{{ tenancy.tenantName || 'Tenant' }}</strong>
+                <span>{{ tenancy.propertyName }} · Unit {{ tenancy.unitNumber }}</span>
+              </div>
+              <div class="list-actions">
+                <span class="status-badge">{{ tenancy.status }}</span>
+                @if (tenancy.tenantUserId) {
+                  <a class="action-link" [routerLink]="['/admin/users', tenancy.tenantUserId]">Tenant</a>
+                }
+                <button class="action-link btn-link" type="button" (click)="manageTenancy(tenancy.id!)">Manage</button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+
+    @if (user.role === 'TENANT') {
+      <div class="stats-grid">
+        <div class="card stat-card"><strong>{{ user.tenancyCount ?? 0 }}</strong><span>Total Tenancies</span></div>
+        <div class="card stat-card"><strong>{{ user.activeTenancyCount ?? 0 }}</strong><span>Active</span></div>
+      </div>
+
+      @if (user.tenancies?.length) {
+        <div class="card details-section">
+          <div class="section-title">Tenancy History</div>
+          @for (tenancy of user.tenancies; track tenancy.id) {
+            <div class="list-item">
+              <div class="list-main">
+                <strong>{{ tenancy.propertyName || 'Property' }}</strong>
+                <span>Unit {{ tenancy.unitNumber || '—' }} · KES {{ tenancy.monthlyRent | number }} · {{ tenancy.moveInDate | date:'MMM d, yyyy' }}</span>
+              </div>
+              <div class="list-actions">
+                <span class="status-badge">{{ tenancy.status }}</span>
+                @if (tenancy.propertyId) {
+                  <a class="action-link" [routerLink]="['/admin/properties', tenancy.propertyId]">Property</a>
+                }
+                <button class="action-link btn-link" type="button" (click)="manageTenancy(tenancy.id!)">Manage</button>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="card empty-state app-empty-state">
+          <div class="app-empty-icon"><span class="material-icons">assignment</span></div>
+          <h3 class="app-empty-title">No tenancy records yet</h3>
+          <p class="app-empty-text">Active and past tenancies for this user will appear here.</p>
+        </div>
+      }
+    }
+  }
+
+  @if (showToast) {
+    <app-toast [type]="toastType" [message]="toastMessage" (close)="closeToast()"></app-toast>
+  }
+</div>
