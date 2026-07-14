@@ -6,6 +6,7 @@ import co.ke.mkeja.notification.channel.PushChannel;
 import co.ke.mkeja.notification.channel.SmsChannel;
 import co.ke.mkeja.notification.channel.WebChannel;
 import co.ke.mkeja.notification.dto.PlatformEventRequest;
+import co.ke.mkeja.notification.dto.SmsResponse;
 import co.ke.mkeja.notification.model.entity.Notification;
 import co.ke.mkeja.notification.model.enums.DeliveryChannel;
 import lombok.RequiredArgsConstructor;
@@ -78,5 +79,10 @@ public class NotificationEngine {
         }
 
         return draft.userId() != null;
+    }
+
+    public SmsResponse processCallback(SmsResponse response) {
+        log.info("SMS callback: {}", response);
+        return response;
     }
 }

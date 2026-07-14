@@ -2,7 +2,7 @@
 
 .platform-page,
 .admin-page {
-  width: 150%;
+  width: 100%;
 }
 
 .platform-page .kyc-banner,
@@ -252,7 +252,7 @@
   to { transform: rotate(360deg); }
 }
 
-/* @media () {
+@media (max-width: 1280px) {
   .platform-page .dashboard-grid,
   .admin-page .dashboard-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -281,4 +281,4 @@
     padding: 20px;
     border-radius: 16px;
   }
-} */
+}

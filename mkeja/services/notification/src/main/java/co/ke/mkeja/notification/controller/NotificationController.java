@@ -1,9 +1,6 @@
 package co.ke.mkeja.notification.controller;
 
-import co.ke.mkeja.notification.dto.RegisterPushDeviceRequest;
-import co.ke.mkeja.notification.dto.NotificationResponse;
-import co.ke.mkeja.notification.dto.PlatformEventRequest;
-import co.ke.mkeja.notification.dto.UnreadCountResponse;
+import co.ke.mkeja.notification.dto.*;
 import co.ke.mkeja.notification.engine.NotificationEngine;
 import co.ke.mkeja.notification.security.AuthUser;
 import co.ke.mkeja.notification.service.NotificationService;
@@ -34,6 +31,12 @@ public class NotificationController {
         Long userId = userContextService.requireUserIdByPhone(user.phone());
         return notificationService.listForUser(userId);
     }
+
+    @PostMapping("/callback")
+    public SmsResponse processCallback(SmsResponse response) {
+        return notificationEngine.processCallback(response);
+    }
+
 
     @GetMapping("/unread-count")
     public UnreadCountResponse unreadCount(@AuthenticationPrincipal AuthUser user) {
